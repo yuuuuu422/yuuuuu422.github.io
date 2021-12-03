@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#20293a">
+	<meta name="msapplication-TileColor" content="#20293a">
+<meta itemprop="name" content="白帽子讲web安全">
+<meta itemprop="description" content="前言 安全工程师的核心竞争力不在于拥有多少个0day，掌握多少种安全技术，而是在于他对安全理解的深度，以及由此引申的看待安全问题的角度和高度。
+站在白帽子的视角，除了剖析攻击原理，更加需要关注如何防范这些漏洞。
+第一章 我的安全世界观 数据从高等级的信任域流向低等级的信任域，是不需要经过安全检查的，反之则需要。
+安全问题的本质是信任的问题。
+安全三要素(CIA)：
+ 机密性(Confidentiality)：数据内容不能泄漏 完整性(Integrity)：数据内容完成，没有被篡改 ==&gt; 数字签名 可用性(Availability)：拒绝服务攻击的是可用性  安全评估：
+1. 资产等级划分 划分信任域和信任边界 互联网安全的核心问题，是数据安全的问题。 2. 威胁分析 威胁建模 书中提到的了TRIDE，不过现在ATT&amp;CK应该更加全面。 3. 风险分析 Risk = Probability * Damage Potential 4. 确定解决方案 有效解决问题 用户体验好 高性能 低耦合 易于拓展和升级 白帽子兵法：
+1. Secure By Default 原则： 使用白名单优于黑名单 最小权限原则 2. 纵深防御原则：在各个不同层次实施安全方案。 3. 数据与代码分离原则 4. 不可预测原则： 有效对抗基于篡改，伪造的攻击。 token防御CSRF。 第二章 浏览器安全 同源策略(Same origin Policy)：
+限制来自不同源的“document”或脚本，对当前“document”读取或设置某些属性。 影响“源”的因素：host、子域名、端口、协议。 页面存放文件的域并不重要，重要的是加载文件所在的域。 &lt;script&gt;、&lt;img&gt;、&lt;iframe&gt;等标签可以跨域加载资源 XMLHttpRequest受同源策略的约束，需要通过目标域返回的HTTP头来授权是否允许跨域访问。
+对浏览器而言，除了DOM、Cookie、XMLHttpRequest受到同源策略的限制，浏览器第三方插件也有自己的同源策略（Flash、Java Applet、Google Gears）
+浏览器沙箱：
+Sandbox的设计的目的是为了让不可信任的代码运行在一定环境中，限制不可信任的代码访问隔离区之外的资源。如果需要跨越Sandbox边界交换数据，只能通过封装的API完成。"><meta itemprop="datePublished" content="2021-10-25T10:26:13+08:00" />
+<meta itemprop="dateModified" content="2021-10-25T10:26:13+08:00" />
+<meta itemprop="wordCount" content="196">
+<meta itemprop="keywords" content="" /><meta property="og:title" content="白帽子讲web安全" />
+<meta property="og:description" content="前言 安全工程师的核心竞争力不在于拥有多少个0day，掌握多少种安全技术，而是在于他对安全理解的深度，以及由此引申的看待安全问题的角度和高度。
+站在白帽子的视角，除了剖析攻击原理，更加需要关注如何防范这些漏洞。
+第一章 我的安全世界观 数据从高等级的信任域流向低等级的信任域，是不需要经过安全检查的，反之则需要。
+安全问题的本质是信任的问题。
+安全三要素(CIA)：
+ 机密性(Confidentiality)：数据内容不能泄漏 完整性(Integrity)：数据内容完成，没有被篡改 ==&gt; 数字签名 可用性(Availability)：拒绝服务攻击的是可用性  安全评估：
+1. 资产等级划分 划分信任域和信任边界 互联网安全的核心问题，是数据安全的问题。 2. 威胁分析 威胁建模 书中提到的了TRIDE，不过现在ATT&amp;CK应该更加全面。 3. 风险分析 Risk = Probability * Damage Potential 4. 确定解决方案 有效解决问题 用户体验好 高性能 低耦合 易于拓展和升级 白帽子兵法：
+1. Secure By Default 原则： 使用白名单优于黑名单 最小权限原则 2. 纵深防御原则：在各个不同层次实施安全方案。 3. 数据与代码分离原则 4. 不可预测原则： 有效对抗基于篡改，伪造的攻击。 token防御CSRF。 第二章 浏览器安全 同源策略(Same origin Policy)：
+限制来自不同源的“document”或脚本，对当前“document”读取或设置某些属性。 影响“源”的因素：host、子域名、端口、协议。 页面存放文件的域并不重要，重要的是加载文件所在的域。 &lt;script&gt;、&lt;img&gt;、&lt;iframe&gt;等标签可以跨域加载资源 XMLHttpRequest受同源策略的约束，需要通过目标域返回的HTTP头来授权是否允许跨域访问。
+对浏览器而言，除了DOM、Cookie、XMLHttpRequest受到同源策略的限制，浏览器第三方插件也有自己的同源策略（Flash、Java Applet、Google Gears）
+浏览器沙箱：
+Sandbox的设计的目的是为了让不可信任的代码运行在一定环境中，限制不可信任的代码访问隔离区之外的资源。如果需要跨越Sandbox边界交换数据，只能通过封装的API完成。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://theoyu.top/posts/course/whitehat-and-security/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-10-25T10:26:13+08:00" />
+<meta property="article:modified_time" content="2021-10-25T10:26:13+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="白帽子讲web安全"/>
+<meta name="twitter:description" content="前言 安全工程师的核心竞争力不在于拥有多少个0day，掌握多少种安全技术，而是在于他对安全理解的深度，以及由此引申的看待安全问题的角度和高度。
+站在白帽子的视角，除了剖析攻击原理，更加需要关注如何防范这些漏洞。
+第一章 我的安全世界观 数据从高等级的信任域流向低等级的信任域，是不需要经过安全检查的，反之则需要。
+安全问题的本质是信任的问题。
+安全三要素(CIA)：
+ 机密性(Confidentiality)：数据内容不能泄漏 完整性(Integrity)：数据内容完成，没有被篡改 ==&gt; 数字签名 可用性(Availability)：拒绝服务攻击的是可用性  安全评估：
+1. 资产等级划分 划分信任域和信任边界 互联网安全的核心问题，是数据安全的问题。 2. 威胁分析 威胁建模 书中提到的了TRIDE，不过现在ATT&amp;CK应该更加全面。 3. 风险分析 Risk = Probability * Damage Potential 4. 确定解决方案 有效解决问题 用户体验好 高性能 低耦合 易于拓展和升级 白帽子兵法：
+1. Secure By Default 原则： 使用白名单优于黑名单 最小权限原则 2. 纵深防御原则：在各个不同层次实施安全方案。 3. 数据与代码分离原则 4. 不可预测原则： 有效对抗基于篡改，伪造的攻击。 token防御CSRF。 第二章 浏览器安全 同源策略(Same origin Policy)：
+限制来自不同源的“document”或脚本，对当前“document”读取或设置某些属性。 影响“源”的因素：host、子域名、端口、协议。 页面存放文件的域并不重要，重要的是加载文件所在的域。 &lt;script&gt;、&lt;img&gt;、&lt;iframe&gt;等标签可以跨域加载资源 XMLHttpRequest受同源策略的约束，需要通过目标域返回的HTTP头来授权是否允许跨域访问。
+对浏览器而言，除了DOM、Cookie、XMLHttpRequest受到同源策略的限制，浏览器第三方插件也有自己的同源策略（Flash、Java Applet、Google Gears）
+浏览器沙箱：
+Sandbox的设计的目的是为了让不可信任的代码运行在一定环境中，限制不可信任的代码访问隔离区之外的资源。如果需要跨越Sandbox边界交换数据，只能通过封装的API完成。"/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>白帽子讲web安全</title>
+	<link rel="stylesheet" href="https://theoyu.top/css/style.min.948bbb56de2e03535e20f1dcdeada9d463fac9cb3e67a99667928e9208ec6fa8.css" integrity="sha256-lIu7Vt4uA1NeIPHc3q2p1GP6ycs+Z6mWZ5KOkgjsb6g=" crossorigin="anonymous">
+	
+</head>
+
+<body id="page">
+	
+	<header id="site-header" class="animated slideInUp">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://theoyu.top/">Theoyu&#39;s Blog</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://theoyu.top/posts/">Posts</a>
+				<a href="https://theoyu.top/about-me/">About</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<button id="toc-btn" class="hdr-btn desktop-only-ib" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line></svg></button><span class="hdr-social hide-in-mobile"><a href="mailto:zeyu.ou@foxmail.com" target="_blank" rel="noopener me" title="Email"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></a><a href="https://instagram.com/" target="_blank" rel="noopener me" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line></svg></a><a href="https://github.com/yuuuuu422" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://theoyu.top/posts/">Posts</a></li>
+			<li><a href="https://theoyu.top/about-me/">About</a></li>
+		</ul>
+	</div>
+
+
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Oct 25, 2021</span></div>
+				<h1>白帽子讲web安全</h1>
+			</header>
+			<div class="content">
+				<h2 id="前言">前言<a href="#前言" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>安全工程师的核心竞争力不在于拥有多少个0day，掌握多少种安全技术，而是在于他对安全理解的深度，以及由此引申的看待安全问题的角度和高度。</p>
+<p>站在白帽子的视角，除了剖析攻击原理，更加需要关注如何防范这些漏洞。</p>
+<h2 id="第一章-我的安全世界观">第一章 我的安全世界观<a href="#第一章-我的安全世界观" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>数据从高等级的信任域流向低等级的信任域，是不需要经过安全检查的，反之则需要。</p>
+<p><strong>安全问题的本质是信任的问题</strong>。</p>
+<p>安全三要素(CIA)：</p>
+<ul>
+<li><strong>机密性(Confidentiality)</strong>：数据内容不能泄漏</li>
+<li><strong>完整性(Integrity)</strong>：数据内容完成，没有被篡改 ==&gt; 数字签名</li>
+<li><strong>可用性(Availability)</strong>：拒绝服务攻击的是可用性</li>
+</ul>
+<p>安全评估：</p>
+<pre><code>1. 资产等级划分
+	划分信任域和信任边界
+	互联网安全的核心问题，是数据安全的问题。
+2. 威胁分析
+	威胁建模
+	书中提到的了TRIDE，不过现在ATT&amp;CK应该更加全面。
+3. 风险分析
+	Risk = Probability * Damage Potential
+4. 确定解决方案
+	有效解决问题
+	用户体验好
+	高性能
+	低耦合
+	易于拓展和升级
+</code></pre><p>白帽子兵法：</p>
+<pre><code>1. Secure By Default 原则：
+	使用白名单优于黑名单
+	最小权限原则
+
+2. 纵深防御原则：在各个不同层次实施安全方案。
+
+3. 数据与代码分离原则
+
+4. 不可预测原则：
+	有效对抗基于篡改，伪造的攻击。
+	token防御CSRF。
+</code></pre><h2 id="第二章-浏览器安全">第二章 浏览器安全<a href="#第二章-浏览器安全" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p><strong>同源策略(Same origin Policy)</strong>：</p>
+<pre><code>限制来自不同源的“document”或脚本，对当前“document”读取或设置某些属性。
+
+影响“源”的因素：host、子域名、端口、协议。
+
+页面存放文件的域并不重要，重要的是加载文件所在的域。
+
+&lt;script&gt;、&lt;img&gt;、&lt;iframe&gt;等标签可以跨域加载资源
+</code></pre><p>XMLHttpRequest受同源策略的约束，需要通过目标域返回的HTTP头来授权是否允许跨域访问。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/10/20211024174040.png" alt="image-20211024174040729"></p>
+<p>对浏览器而言，除了DOM、Cookie、XMLHttpRequest受到同源策略的限制，浏览器第三方插件也有自己的同源策略（Flash、Java Applet、Google Gears）</p>
+<p><strong>浏览器沙箱</strong>：</p>
+<p>Sandbox的设计的目的是为了让<strong>不可信任的代码</strong>运行在一定环境中，限制不可信任的代码访问隔离区之外的资源。如果需要跨越Sandbox边界交换数据，只能通过封装的API完成。</p>
+<p><strong>CSP(Content Security Policy)</strong>：</p>
+<p>内容安全策略，是一个附加的安全层，有助于检测并缓解某些类型的攻击，包括跨站脚本（XSS）和数据注入攻击。</p>
+<p>通过服务器端返回一个HTTP头，描述其中描述页面应该遵守的安全策略。</p>
+<h2 id="第三章-跨站脚本攻击xss">第三章 跨站脚本攻击(XSS)<a href="#第三章-跨站脚本攻击xss" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<ul>
+<li>
+<p><strong>反射型XSS</strong>：</p>
+<p>需要诱导用户点击恶意链接才能成功。</p>
+</li>
+<li>
+<p><strong>存储型XSS</strong>：</p>
+<p>恶意数据存储到了服务端。</p>
+</li>
+<li>
+<p><strong>DOM Based XSS</strong></p>
+<p>效果上也是反射性XSS，形成原因有所不同，通过修改页面DOM节点形成XSS。</p>
+</li>
+</ul>
+<p><strong>XSS防御</strong> ==&gt; 认清XSS产生的本质原因</p>
+<pre><code>XSS的本质是一种“HTML注入”，用户的数据呗当成了HTMl代码一部分来执行。
+
+MVC架构的网站，XSS发生在View层，在拼接变量到HTML页面时产生，此时对用户提交数据进行检查的方案，并不是真正在真正发生攻击的地方防御。
+
+HtmlEncode()
+JavascriptEncode()
+富文本限制白名单
+......
+</code></pre><h2 id="第四章-跨站点请求伪造csrf">第四章 跨站点请求伪造(CSRF)<a href="#第四章-跨站点请求伪造csrf" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p><strong>CSRF：Cross Site Request Forgery</strong></p>
+<p>主要利用了用户Cookie进行伪造操作 ==&gt; 不同浏览器的Cookie策略不同。</p>
+<p>作为开发者应该在开发中主动规避而不是交给浏览器。</p>
+<p><strong>防御：</strong></p>
+<pre><code>1. 敏感操作加上验证码
+
+2. 敏感路由验证referer
+
+3. SameSite头
+	Set-Cookie: foo=1; SameSite=Strict
+	Set-Cookie: bar=2; SameSite=Lax
+	Set-Cookie: baz=3
+	详细参考 https://cnblogs.com/ziyunfei/p/5637945.html
+		
+4. Anti CSRF Token
+</code></pre><p><strong>CSRF攻击的本质</strong>：攻击者可以猜测重要参数的所有参数</p>
+<p>真随机 ==&gt; token</p>
+<p>每次刷新后，token放在Session和需要敏感操作的表单里，提交请求时，服务器验证表单中的token和用户session中token是否一致。</p>
+<p>利用xss获取token再进行csrf ==&gt; <strong>XSRF</strong></p>
+<h2 id="第五章-点击劫持clickjacking">第五章 点击劫持(ClickJacking)<a href="#第五章-点击劫持clickjacking" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>多用做🎣，🪧，欺诈</p>
+<p><strong>防御：</strong></p>
+<pre><code>1. frame busting
+	禁止iframe嵌套
+2. X-Frame-Options
+更多是在浏览器层面防御
+</code></pre><h2 id="第六章-html-5-安全">第六章 HTML 5 安全<a href="#第六章-html-5-安全" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h2 id="第七章-注入攻击">第七章 注入攻击<a href="#第七章-注入攻击" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p><strong>注入的本质</strong>：把用户输入的<strong>数据</strong>当作<strong>代码</strong>执行。</p>
+<p>数据库攻击：</p>
+<pre><code>- LOAD_FILE() INTO DUMPFILE 读写文件
+- Mysql UDF(User-Defined Functions) 执行命令
+- MS SQL Server ”xp_cmdshell“执行系统命令
+- 字符集导致的编码问题
+</code></pre><p>**防御：**预处理最佳</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211127201155.png" alt="1"></p>
+<p>post ：<code>name=' or 1=1#&amp;password=</code></p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211127201251.png" alt="image-20211123150224827"></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="err">不使用预处理</span><span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">username</span><span class="w"> </span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="mi">1</span><span class="o">=</span><span class="mi">1</span><span class="o">#</span><span class="s1">&#39; and password = &#39;&#39;
+</span><span class="s1">使用预处理：
+</span><span class="s1">select * from users where username = &#39;&#39;&#39;</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="mi">1</span><span class="o">=</span><span class="mi">1</span><span class="o">#</span><span class="s1">&#39; and password = &#39;&#39;
+</span></code></pre></div><h2 id="第八章-文件上传">第八章 文件上传<a href="#第八章-文件上传" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h2 id="第九章-认证与会话管理">第九章 认证与会话管理<a href="#第九章-认证与会话管理" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h2 id="第十章-访问控制">第十章 访问控制<a href="#第十章-访问控制" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+
+			</div>
+			<hr class="post-end">
+			<footer class="post-info">
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2021-10-25 10:26 &#43;0800</p>
+			</footer>
+		</article>
+		<aside id="toc" class="show-toc">
+			<div class="toc-title"></div>
+			<nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#第一章-我的安全世界观">第一章 我的安全世界观</a></li>
+    <li><a href="#第二章-浏览器安全">第二章 浏览器安全</a></li>
+    <li><a href="#第三章-跨站脚本攻击xss">第三章 跨站脚本攻击(XSS)</a></li>
+    <li><a href="#第四章-跨站点请求伪造csrf">第四章 跨站点请求伪造(CSRF)</a></li>
+    <li><a href="#第五章-点击劫持clickjacking">第五章 点击劫持(ClickJacking)</a></li>
+    <li><a href="#第六章-html-5-安全">第六章 HTML 5 安全</a></li>
+    <li><a href="#第七章-注入攻击">第七章 注入攻击</a></li>
+    <li><a href="#第八章-文件上传">第八章 文件上传</a></li>
+    <li><a href="#第九章-认证与会话管理">第九章 认证与会话管理</a></li>
+    <li><a href="#第十章-访问控制">第十章 访问控制</a></li>
+  </ul>
+</nav>
+		</aside>
+		<div class="post-nav thin">
+			<a class="next-post" href="https://theoyu.top/posts/cel-go/">
+				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>&nbsp;</span><br><span>Preliminary Study on CEL-Go</span>
+			</a>
+			<a class="prev-post" href="https://theoyu.top/posts/popmaster/">
+				<span class="post-nav-label">&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>popMaster</span>
+			</a>
+		</div>
+		<div id="comments" class="thin">
+</div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2021 <a href="https://theoyu.top/">Theoyu</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></p>
+		<p>
+			Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> &#183; Theme <a href="https://github.com/Track3/hermit" target="_blank" rel="noopener">Hermit</a> &#183; <a href="https://theoyu.top/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+		</p>
+	</footer>
+
+
+
+	<script src="https://theoyu.top/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
+	
+
+</body>
+
+</html>
