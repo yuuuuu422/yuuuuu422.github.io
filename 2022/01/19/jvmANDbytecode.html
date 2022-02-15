@@ -1,0 +1,2162 @@
+<!DOCTYPE html><html lang="en">
+  <head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>浅谈jvm和字节码 - Theoyu</title>
+
+<meta name="description" content="第一部分，我们简单谈一谈jvm解释执行的依据；第二部分关于字节码，也算是对《深入理解Java虚拟机》一书的实践；最后会简单介绍两种字节码操作框架，以实现字节码插桩。">
+<link rel="canonical" href="http://localhost:4000/2022/01/19/jvmANDbytecode.html"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+
+<meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
+
+<meta name="theme-color" content="#ffffff">
+
+<link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+<!-- end favicons snippet --><link rel="stylesheet" href="/assets/css/main.css"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.1/css/all.css" ><!-- start custom head snippets -->
+
+<!-- end custom head snippets -->
+<script>(function() {
+  window.isArray = function(val) {
+    return Object.prototype.toString.call(val) === '[object Array]';
+  };
+  window.isString = function(val) {
+    return typeof val === 'string';
+  };
+
+  window.hasEvent = function(event) {
+    return 'on'.concat(event) in window.document;
+  };
+
+  window.isOverallScroller = function(node) {
+    return node === document.documentElement || node === document.body || node === window;
+  };
+
+  window.isFormElement = function(node) {
+    var tagName = node.tagName;
+    return tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA';
+  };
+
+  window.pageLoad = (function () {
+    var loaded = false, cbs = [];
+    window.addEventListener('load', function () {
+      var i;
+      loaded = true;
+      if (cbs.length > 0) {
+        for (i = 0; i < cbs.length; i++) {
+          cbs[i]();
+        }
+      }
+    });
+    return {
+      then: function(cb) {
+        cb && (loaded ? cb() : (cbs.push(cb)));
+      }
+    };
+  })();
+})();
+(function() {
+  window.throttle = function(func, wait) {
+    var args, result, thisArg, timeoutId, lastCalled = 0;
+
+    function trailingCall() {
+      lastCalled = new Date;
+      timeoutId = null;
+      result = func.apply(thisArg, args);
+    }
+    return function() {
+      var now = new Date,
+        remaining = wait - (now - lastCalled);
+
+      args = arguments;
+      thisArg = this;
+
+      if (remaining <= 0) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+        lastCalled = now;
+        result = func.apply(thisArg, args);
+      } else if (!timeoutId) {
+        timeoutId = setTimeout(trailingCall, remaining);
+      }
+      return result;
+    };
+  };
+})();
+(function() {
+  var Set = (function() {
+    var add = function(item) {
+      var i, data = this._data;
+      for (i = 0; i < data.length; i++) {
+        if (data[i] === item) {
+          return;
+        }
+      }
+      this.size ++;
+      data.push(item);
+      return data;
+    };
+
+    var Set = function(data) {
+      this.size = 0;
+      this._data = [];
+      var i;
+      if (data.length > 0) {
+        for (i = 0; i < data.length; i++) {
+          add.call(this, data[i]);
+        }
+      }
+    };
+    Set.prototype.add = add;
+    Set.prototype.get = function(index) { return this._data[index]; };
+    Set.prototype.has = function(item) {
+      var i, data = this._data;
+      for (i = 0; i < data.length; i++) {
+        if (this.get(i) === item) {
+          return true;
+        }
+      }
+      return false;
+    };
+    Set.prototype.is = function(map) {
+      if (map._data.length !== this._data.length) { return false; }
+      var i, j, flag, tData = this._data, mData = map._data;
+      for (i = 0; i < tData.length; i++) {
+        for (flag = false, j = 0; j < mData.length; j++) {
+          if (tData[i] === mData[j]) {
+            flag = true;
+            break;
+          }
+        }
+        if (!flag) { return false; }
+      }
+      return true;
+    };
+    Set.prototype.values = function() {
+      return this._data;
+    };
+    return Set;
+  })();
+
+  window.Lazyload = (function(doc) {
+    var queue = {js: [], css: []}, sources = {js: {}, css: {}}, context = this;
+    var createNode = function(name, attrs) {
+      var node = doc.createElement(name), attr;
+      for (attr in attrs) {
+        if (attrs.hasOwnProperty(attr)) {
+          node.setAttribute(attr, attrs[attr]);
+        }
+      }
+      return node;
+    };
+    var end = function(type, url) {
+      var s, q, qi, cbs, i, j, cur, val, flag;
+      if (type === 'js' || type ==='css') {
+        s = sources[type], q = queue[type];
+        s[url] = true;
+        for (i = 0; i < q.length; i++) {
+          cur = q[i];
+          if (cur.urls.has(url)) {
+            qi = cur, val = qi.urls.values();
+            qi && (cbs = qi.callbacks);
+            for (flag = true, j = 0; j < val.length; j++) {
+              cur = val[j];
+              if (!s[cur]) {
+                flag = false;
+              }
+            }
+            if (flag && cbs && cbs.length > 0) {
+              for (j = 0; j < cbs.length; j++) {
+                cbs[j].call(context);
+              }
+              qi.load = true;
+            }
+          }
+        }
+      }
+    };
+    var load = function(type, urls, callback) {
+      var s, q, qi, node, i, cur,
+        _urls = typeof urls === 'string' ? new Set([urls]) : new Set(urls), val, url;
+      if (type === 'js' || type ==='css') {
+        s = sources[type], q = queue[type];
+        for (i = 0; i < q.length; i++) {
+          cur = q[i];
+          if (_urls.is(cur.urls)) {
+            qi = cur;
+            break;
+          }
+        }
+        val = _urls.values();
+        if (qi) {
+          callback && (qi.load || qi.callbacks.push(callback));
+          callback && (qi.load && callback());
+        } else {
+          q.push({
+            urls: _urls,
+            callbacks: callback ? [callback] : [],
+            load: false
+          });
+          for (i = 0; i < val.length; i++) {
+            node = null, url = val[i];
+            if (s[url] === undefined) {
+              (type === 'js' ) && (node = createNode('script', { src: url }));
+              (type === 'css') && (node = createNode('link', { rel: 'stylesheet', href: url }));
+              if (node) {
+                node.onload = (function(type, url) {
+                  return function() {
+                    end(type, url);
+                  };
+                })(type, url);
+                (doc.head || doc.body).appendChild(node);
+                s[url] = false;
+              }
+            }
+          }
+        }
+      }
+    };
+    return {
+      js: function(url, callback) {
+        load('js', url, callback);
+      },
+      css: function(url, callback) {
+        load('css', url, callback);
+      }
+    };
+  })(this.document);
+})();
+</script><script>
+  (function() {
+    var TEXT_VARIABLES = {
+      version: '2.2.6',
+      sources: {
+        font_awesome: 'https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.1/css/all.css',
+        jquery: 'https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js',
+        leancloud_js_sdk: '//cdn.jsdelivr.net/npm/leancloud-storage@3.13.2/dist/av-min.js',
+        chart: 'https://cdn.bootcss.com/Chart.js/2.7.2/Chart.bundle.min.js',
+        gitalk: {
+          js: 'https://cdn.bootcss.com/gitalk/1.2.2/gitalk.min.js',
+          css: 'https://cdn.bootcss.com/gitalk/1.2.2/gitalk.min.css'
+        },
+        valine: 'https://unpkg.com/valine/dist/Valine.min.js',
+        mathjax: 'https://cdn.bootcss.com/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML',
+        mermaid: 'https://cdn.bootcss.com/mermaid/8.0.0-rc.8/mermaid.min.js'
+      },
+      site: {
+        toc: {
+          selectors: 'h1,h2,h3,h4'
+        }
+      },
+      paths: {
+        search_js: '/assets/search.js'
+      }
+    };
+    window.TEXT_VARIABLES = TEXT_VARIABLES;
+  })();
+</script>
+</head>
+  <body>
+    <div class="root" data-is-touch="false">
+      <div class="layout--page js-page-root"><div class="page__main js-page-main page__viewport has-aside cell cell--auto">
+
+      <div class="page__main-inner"><div class="page__header d-print-none"><header class="header"><div class="main">
+      <div class="header__title">
+        <div class="header__brand"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="152px" height="150px" viewBox="0 0 152 150" enable-background="new 0 0 152 150" xml:space="preserve">  <image id="image0" width="152" height="150" x="0" y="0"
+    href="data:image/png;base64,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" />
+</svg>
+<a title="Be cool,but also be warm.
+" href="/">Theoyu</a></div><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></div><nav class="navigation">
+        <ul><li class="navigation__item"><a href="/archive.html">Archive</a></li><li class="navigation__item"><a href="/about.html">About</a></li><li><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></li></ul>
+      </nav></div>
+  </header>
+</div><div class="page__content"><div class ="main"><div class="grid grid--reverse">
+
+              <div class="col-aside d-print-none js-col-aside"><aside class="page__aside js-page-aside"><div class="toc-aside js-toc-root"></div>
+</aside></div>
+
+              <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
+
+<!-- end custom main top snippet -->
+<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>浅谈jvm和字节码</h1></header><span class="split-space">&nbsp;</span>
+          <a class="edit-on-github"
+            title="Edit on Github"
+            href="https://github.com/yuuuuu422/yuuuuu422.github.io/tree/main/_posts/2022-01-19-jvmANDbytecode.md">
+            <i class="far fa-edit"></i></a></div><meta itemprop="headline" content="浅谈jvm和字节码"><div class="article__info clearfix"><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>Jan 19, 2022</span>
+            </li></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-01-19T00:00:00+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
+
+<!-- end custom article top snippet -->
+<div class="article__content" itemprop="articleBody"><p>第一部分，我们简单谈一谈jvm解释执行的依据；第二部分关于字节码，也算是对《深入理解Java虚拟机》一书的实践；最后会简单介绍两种字节码操作框架，以实现字节码插桩。</p>
+
+<!--more-->
+
+<h2 id="jvm解释执行">jvm解释执行</h2>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220209190348.png" alt="image-20220209190348623" /></p>
+
+<p>在Java语言中，Javac编译器完成了程序代码经过词法分析、语法分析到抽象语法树，再遍历语法树生成线性的字节码指令流的过程。</p>
+
+<p>执行引擎在解析字节码文件的时候，并不只有解释执行一种情况，也可以通过编译执行( 即通过即时编译器产生本地代码执行 )，这种方式也称为 <a href="https://aboullaite.me/understanding-jit-compiler-just-in-time-compiler/">jit</a> 。不过无论哪种方式，输入的都是字节码二进制流，输出的都是执行结果，所以处理的过程其实都是等效的，区别只在于执行速度有所不同。</p>
+
+<h3 id="基于栈的字节码解释执行引擎">基于栈的字节码解释执行引擎</h3>
+
+<p>关于字节码的解释执行，其实下面的伪代码就可以说明：</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">do</span> <span class="p">{</span>
+    <span class="err">获取下一个指令</span>
+    <span class="err">解释指令</span>
+<span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="err">还有指令</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>谈到指令，就离不开指令集的架构，笔者二进制方面较弱，所以也只用通俗易懂(<del>抽象</del>)的语言来描述。</p>
+
+<p>我们分别用<strong>基于寄存器的方案</strong>和<strong>基于栈的方案</strong>，来表示<code class="language-plaintext highlighter-rouge">1+1</code>：</p>
+
+<p><strong>基于寄存器的方案</strong>：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mov eax,1
+add eax,1
+</code></pre></div></div>
+
+<p><strong>基于栈的方案</strong>：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>push_1
+push_1
+add 
+</code></pre></div></div>
+
+<p>如同《 深入理解Java虚拟机 》所说的：『 Java输出的字节码指令流，<strong>基本上</strong>是一种基于栈的指令集架构 』。为什么有<strong>基本上</strong>三个字呢？因为纯粹基于栈的指令集架构应当全部是零地址指令，也就是不存在显式参数的。如果你对PVM(Python Virtual Machine)有所了解，知道Python解释执行分为栈区(Stack)和存储区(Memo)两大块，JVM也不列外，其使用<strong>局部变量表</strong>辅助栈区执行。</p>
+
+<p><strong>局部变量表</strong>：栈帧内部的数据结构, 是个数组. 通过数组位置访问，换个说法也可以当作可以特殊的<strong>寄存器</strong>。</p>
+
+<p>那么JVM解释执行的方式，其实可以当作<strong>栈和寄存器混合执行</strong>来看待。</p>
+
+<p>我们把下列代码转化为JVM指令看看</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">d</span> <span class="o">=</span> <span class="n">b</span> <span class="o">-</span> <span class="n">a</span><span class="p">;</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">d</span> <span class="o">-</span> <span class="n">c</span><span class="p">;</span>
+<span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">d</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>其中类似<code class="language-plaintext highlighter-rouge">1+1</code>的指令，在前端就已经被javac优化，下列指令中，我们用分别把栈帧和局部变量表表示一下(前面为栈帧，左边为栈顶；后面为局部变量表)</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="mi">0</span> <span class="n">iconst_2</span> <span class="c1">// (2)</span>
+ <span class="mi">1</span> <span class="n">istore_1</span> <span class="c1">// ()      {1:2}</span>
+ <span class="mi">2</span> <span class="n">iconst_4</span> <span class="c1">// (4)     {1:2}</span>
+ <span class="mi">3</span> <span class="n">istore_2</span> <span class="c1">// ()      {1:2, 2:4}</span>
+ <span class="mi">4</span> <span class="n">iconst_3</span> <span class="c1">// (3)</span>
+ <span class="mi">5</span> <span class="n">istore_3</span> <span class="c1">// ()      {1:2, 2:4, 3:3}</span>
+ <span class="mi">6</span> <span class="n">iload_2</span>  <span class="c1">// (4)     {1:2, 2:4, 3:3}</span>
+ <span class="mi">7</span> <span class="n">iload_1</span>  <span class="c1">// (2,4)   {1:2, 2:4, 3:3}</span>
+ <span class="mi">8</span> <span class="n">isub</span>     <span class="c1">// (2)     {1:2, 2:4, 3:3}</span>
+ <span class="mi">9</span> <span class="n">istore</span> <span class="mi">4</span> <span class="c1">// ()      {1:2, 2:4, 3:3, 4:2}</span>
+<span class="mi">11</span> <span class="n">iload</span> <span class="mi">4</span>  <span class="c1">// (2)     {1:2, 2:4, 3:3, 4:2}</span>
+<span class="mi">13</span> <span class="n">iload_3</span>  <span class="c1">// (3,2)   {1:2, 2:4, 3:3, 4:2}</span>
+<span class="mi">14</span> <span class="n">isub</span>     <span class="c1">// (-1)    {1:2, 2:4, 3:3, 4:2}</span>
+<span class="mi">15</span> <span class="n">istore</span> <span class="mi">4</span> <span class="c1">// ()      {1:2, 2:4, 3:3, 4:-1}</span>
+<span class="mi">17</span> <span class="n">getstatic</span> <span class="err">#</span><span class="mi">2</span> <span class="o">&lt;</span><span class="n">java</span><span class="o">/</span><span class="n">lang</span><span class="o">/</span><span class="n">System</span><span class="p">.</span><span class="n">out</span> <span class="o">:</span> <span class="n">Ljava</span><span class="o">/</span><span class="n">io</span><span class="o">/</span><span class="n">PrintStream</span><span class="p">;</span><span class="o">&gt;</span>  <span class="c1">// (java/lang/System.out : Ljava/io/PrintStream;) {1:2, 2:4, 3:3, 4:-1}</span>
+<span class="mi">20</span> <span class="n">iload</span> <span class="mi">4</span>  <span class="c1">// (-1,java/lang/System.out : Ljava/io/PrintStream;)</span>
+<span class="mi">22</span> <span class="n">invokevirtual</span> <span class="err">#</span><span class="mi">3</span> <span class="o">&lt;</span><span class="n">java</span><span class="o">/</span><span class="n">io</span><span class="o">/</span><span class="n">PrintStream</span><span class="p">.</span><span class="n">println</span> <span class="o">:</span> <span class="p">(</span><span class="n">I</span><span class="p">)</span><span class="n">V</span><span class="o">&gt;</span> <span class="c1">// println(-1)</span>
+<span class="mi">25</span> <span class="k">return</span>
+</code></pre></div></div>
+
+<p>纯粹基于栈的方案，貌似没有，因为只有<code class="language-plaintext highlighter-rouge">pop</code>,<code class="language-plaintext highlighter-rouge">push</code>操作的话，在局部变量较多的情况下，需要频繁的搬运数据，防止之前的局部变量消失。</p>
+
+<p>我们所说的指令，也就是字节码指令，其从Class文件中解析出来，Class文件本身是静态的，解析Class文件不是什么高深的技术，在 <a href="https://docs.oracle.com/javase/specs/jvms/se8/html/">Java虚拟机规范</a> 下我们可以很好的理解， 下面我们通过几个字节码查看工具走近字节码。</p>
+
+<h2 id="走近字节码">走近字节码</h2>
+
+<p>Class文件是一组以字节为基础单位的二进制流，各个数据严格按照顺序紧凑排列在文件中，我们可以依靠一些工具反编译二进制流，得到详细的数据信息和指令。</p>
+
+<p>反汇编(disassembly)和反编译(decompile)是两个不等同的概念，在java中，反汇编是指是将.class文件转换成opcode，反编译是指将.class文件转换为.java文件，是更加高级的体现。IDEA自带的反编译就非常强大，基本上可以完全复原代码，不过本文是站在字节码角度的分析，所以还是更加侧重于前者。</p>
+
+<p><strong>javap</strong></p>
+
+<p>javap是jdk自带的反解析工具。它的作用就是根据class字节码文件，反解析出当前类对应的code区（汇编指令）、本地变量表、异常表和代码行偏移量映射表、常量池等等信息。</p>
+
+<pre><code class="language-txt">javap -help                          
+用法: javap &lt;options&gt; &lt;classes&gt;
+其中, 可能的选项包括:
+  -help  --help  -?        输出此用法消息
+  -version                 版本信息
+  -v  -verbose             输出附加信息
+  -l                       输出行号和本地变量表
+  -public                  仅显示公共类和成员
+  -protected               显示受保护的/公共类和成员
+  -package                 显示程序包/受保护的/公共类
+                           和成员 (默认)
+  -p  -private             显示所有类和成员
+  -c                       对代码进行反汇编
+  -s                       输出内部类型签名
+  -sysinfo                 显示正在处理的类的
+                           系统信息 (路径, 大小, 日期, MD5 散列)
+  -constants               显示最终常量
+  -classpath &lt;path&gt;        指定查找用户类文件的位置
+  -cp &lt;path&gt;               指定查找用户类文件的位置
+  -bootclasspath &lt;path&gt;    覆盖引导类文件的位置
+</code></pre>
+
+<p>后续我们对以下代码的Class文件进行反编译</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">demo</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test2</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span><span class="o">;</span>
+        <span class="nc">String</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"theoyu"</span><span class="o">;</span>
+        <span class="n">say</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">static</span> <span class="kt">void</span> <span class="nf">say</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">){</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">🌀</span>  <span class="n">classes</span>  <span class="n">javap</span>  <span class="o">-</span><span class="n">c</span> <span class="n">demo</span><span class="o">.</span><span class="na">Test2</span>
+<span class="nc">Compiled</span> <span class="n">from</span> <span class="s">"Test2.java"</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">demo</span><span class="o">.</span><span class="na">Test2</span> <span class="o">{</span>
+  <span class="kd">public</span> <span class="n">demo</span><span class="o">.</span><span class="na">Test2</span><span class="o">();</span>
+    <span class="nl">Code:</span>
+       <span class="mi">0</span><span class="o">:</span> <span class="n">aload_0</span>
+       <span class="mi">1</span><span class="o">:</span> <span class="n">invokespecial</span> <span class="err">#</span><span class="mi">1</span>                  <span class="c1">// Method java/lang/Object."&lt;init&gt;":()V</span>
+       <span class="mi">4</span><span class="o">:</span> <span class="k">return</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span><span class="o">[]);</span>
+    <span class="nl">Code:</span>
+       <span class="mi">0</span><span class="o">:</span> <span class="n">bipush</span>        <span class="mi">10</span>
+       <span class="mi">2</span><span class="o">:</span> <span class="n">istore_1</span>
+       <span class="mi">3</span><span class="o">:</span> <span class="n">ldc</span>           <span class="err">#</span><span class="mi">2</span>                  <span class="c1">// String theoyu</span>
+       <span class="mi">5</span><span class="o">:</span> <span class="n">astore_2</span>
+       <span class="mi">6</span><span class="o">:</span> <span class="n">aload_2</span>
+       <span class="mi">7</span><span class="o">:</span> <span class="n">invokestatic</span>  <span class="err">#</span><span class="mi">3</span>                  <span class="c1">// Method say:(Ljava/lang/String;)V</span>
+      <span class="mi">10</span><span class="o">:</span> <span class="k">return</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">say</span><span class="o">(</span><span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span><span class="o">);</span>
+    <span class="nl">Code:</span>
+       <span class="mi">0</span><span class="o">:</span> <span class="n">getstatic</span>     <span class="err">#</span><span class="mi">4</span>                  <span class="c1">// Field java/lang/System.out:Ljava/io/PrintStream;</span>
+       <span class="mi">3</span><span class="o">:</span> <span class="n">aload_0</span>
+       <span class="mi">4</span><span class="o">:</span> <span class="n">invokevirtual</span> <span class="err">#</span><span class="mi">5</span>                  <span class="c1">// Method java/io/PrintStream.println:(Ljava/lang/String;)V</span>
+       <span class="mi">7</span><span class="o">:</span> <span class="k">return</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>如果需要查看常量池，局部变量表等信息，可以用<code class="language-plaintext highlighter-rouge">javap - v</code>打印</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>javap  -v demo.Test2
+Constant pool:
+   #1 = Methodref          #7.#27         // java/lang/Object."&lt;init&gt;":()V
+   #2 = String             #28            // theoyu
+   #3 = Methodref          #6.#29         // demo/Test2.say:(Ljava/lang/String;)V
+...
+...
+ LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      11     0  args   [Ljava/lang/String;
+            3       8     1     a   I
+            6       5     2  name   Ljava/lang/String;
+...
+...
+</code></pre></div></div>
+
+<p>当然这些概念我们会在后续介绍。idea支持的jclasslib工具可以可视化查看字节码文件，并且支持直接跳转到《Java虚拟机规范》中查看陌生指令，以及直接修改操作码。</p>
+
+<p><strong>jclasslib</strong></p>
+
+<p>在idea插件中下载jclasslib后，就可以直接打开class文件查看</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220210155153.png" alt="image-20220210155153889" /></p>
+
+<p><strong>classpy &amp;&amp; ClassViewer</strong></p>
+
+<p><a href="https://github.com/zxh0/classpy">classpy </a>是《自己动手写Java虚拟机》一书作者写的查看class文件的gui工具，后续还拓展了lua、wasm等文件格式，不过其兼容性不是很好，可以用更加精简美观的<a href="https://github.com/ClassViewer/ClassViewer">ClassViewer</a>代替。</p>
+
+<p><strong>ClassViewer</strong>：</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220210161545.png" alt="image-20220210161545940" /></p>
+
+<p>字节码文件按照以下10个部分的固定顺序组成。</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220210170340.png" alt="image-20220210170340077" /></p>
+
+<p>根据《Java虚拟机规范》的规定，Class文件格式采用一种类似于C语言结构体的伪结构来存储数据，这种伪结构中只有两种数据类型:“无符号数”和“表”，无符号数属于基本数据结构，表由多个无符号数或者其他表作为数据项构成，为了区分，表的命名以<strong>_info</strong>结尾，所以上述10个部分又可以列作为：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ClassFile</span> <span class="p">{</span>
+    <span class="n">u4</span>             <span class="n">magic</span><span class="p">;</span>
+    <span class="n">u2</span>             <span class="n">minor_version</span><span class="p">;</span>
+    <span class="n">u2</span>             <span class="n">major_version</span><span class="p">;</span>
+    <span class="n">u2</span>             <span class="n">constant_pool_count</span><span class="p">;</span>
+    <span class="n">cp_info</span>        <span class="n">constant_pool</span><span class="p">[</span><span class="n">constant_pool_count</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+    <span class="n">u2</span>             <span class="n">access_flags</span><span class="p">;</span>
+    <span class="n">u2</span>             <span class="n">this_class</span><span class="p">;</span>
+    <span class="n">u2</span>             <span class="n">super_class</span><span class="p">;</span>
+    <span class="n">u2</span>             <span class="n">interfaces_count</span><span class="p">;</span>
+    <span class="n">u2</span>             <span class="n">interfaces</span><span class="p">[</span><span class="n">interfaces_count</span><span class="p">];</span>
+    <span class="n">u2</span>             <span class="n">fields_count</span><span class="p">;</span>
+    <span class="n">field_info</span>     <span class="n">fields</span><span class="p">[</span><span class="n">fields_count</span><span class="p">];</span>
+    <span class="n">u2</span>             <span class="n">methods_count</span><span class="p">;</span>
+    <span class="n">method_info</span>    <span class="n">methods</span><span class="p">[</span><span class="n">methods_count</span><span class="p">];</span>
+    <span class="n">u2</span>             <span class="n">attributes_count</span><span class="p">;</span>
+    <span class="n">attribute_info</span> <span class="n">attributes</span><span class="p">[</span><span class="n">attributes_count</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>接下来我们一一介绍这10个部分：</p>
+
+<h3 id="1-魔数magic-number">(1) 魔数(Magic Number)</h3>
+
+<p>魔数也就是一个标识头，占用四个字节，其值为<strong>『cafebaby』</strong>，说明这是一个字节码文件。</p>
+
+<p>常见的文件头还有zip文件头<strong>504B0304</strong>，JPEG文件头<strong>FFD8FF</strong>等。</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220210180039.png" alt="image-20220210180039782" /></p>
+
+<h3 id="2版本号version">(2)版本号(Version)</h3>
+
+<p>版本号为魔数之后的4个字节，前两个字节表示次版本号（Minor Version），后两个字节表示主版本号（Major Version），如上图中的<strong>『00 00 00 34』</strong> ,主版本号化为10进制为52，代表JDK1.8，以此类推51即代表JDK1.7。</p>
+
+<h3 id="3常量池constant-pool">(3)常量池(Constant Pool)</h3>
+
+<p>常量池是是Class文件里的资源仓库，首先是常量池容量计数器(constant_pool_count)，说白了就是用来记录常量池中常量的个数，用2个字节来记录。</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220212104824.png" alt="image-20220212104824796" /></p>
+
+<p>这里常量池容量计数器值为为41，但我们打印发现实际上常量个数只有40个：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Constant pool:
+   #1 = Methodref          #7.#27         // java/lang/Object."&lt;init&gt;":()V
+   #2 = String             #28            // theoyu
+   #3 = Methodref          #6.#29         // demo/Test2.say:(Ljava/lang/String;)V
+   #4 = Fieldref           #30.#31        // java/lang/System.out:Ljava/io/PrintStream;
+   #5 = Methodref          #32.#33        // java/io/PrintStream.println:(Ljava/lang/String;)V
+   #6 = Class              #34            // demo/Test2
+   #7 = Class              #35            // java/lang/Object
+   #8 = Utf8               &lt;init&gt;
+   #9 = Utf8               ()V
+  #10 = Utf8               Code
+  #11 = Utf8               LineNumberTable
+  #12 = Utf8               LocalVariableTable
+  #13 = Utf8               this
+  #14 = Utf8               Ldemo/Test2;
+  #15 = Utf8               main
+  #16 = Utf8               ([Ljava/lang/String;)V
+  #17 = Utf8               args
+  #18 = Utf8               [Ljava/lang/String;
+  #19 = Utf8               a
+  #20 = Utf8               I
+  #21 = Utf8               name
+  #22 = Utf8               Ljava/lang/String;
+  #23 = Utf8               say
+  #24 = Utf8               (Ljava/lang/String;)V
+  #25 = Utf8               SourceFile
+  #26 = Utf8               Test2.java
+  #27 = NameAndType        #8:#9          // "&lt;init&gt;":()V
+  #28 = Utf8               theoyu
+  #29 = NameAndType        #23:#24        // say:(Ljava/lang/String;)V
+  #30 = Class              #36            // java/lang/System
+  #31 = NameAndType        #37:#38        // out:Ljava/io/PrintStream;
+  #32 = Class              #39            // java/io/PrintStream
+  #33 = NameAndType        #40:#24        // println:(Ljava/lang/String;)V
+  #34 = Utf8               demo/Test2
+  #35 = Utf8               java/lang/Object
+  #36 = Utf8               java/lang/System
+  #37 = Utf8               out
+  #38 = Utf8               Ljava/io/PrintStream;
+  #39 = Utf8               java/io/PrintStream
+  #40 = Utf8               println
+</code></pre></div></div>
+
+<p>这是因为常量池中的常量计数是从1开始的，默认第0个是null。</p>
+
+<p>所以数据区是由 <strong>constant_pool_count-1</strong> 个cp_info表组成，在 jdk1.8版本的字节码中共有14种类型的cp_info( jdk16更新为17种 )，每种类型的结构都是固定的。</p>
+
+<p><img src="https://p0.meituan.net/travelcube/f5bdc7e8203ec666a531fcd19cdbcddc519208.png" alt="图6 各类型的cp_info" /></p>
+
+<p>我们以最为<strong>CONSTANT_utf8_info</strong>为例，其tag为01，对应utf8类型，接下来两个字节标识该字符串的长度Length，然后Length个字节为这个字符串具体的值。</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220212115637.png" alt="image-20220212115637072" /></p>
+
+<p>其他类型的cp_info不再赘述，整体结构大同小异，总的来说就是以下几个过程：</p>
+
+<ol>
+  <li>
+    <p>第一步：先找tag位</p>
+  </li>
+  <li>
+    <p>第二步：根据tag的值从常量项表中找到对应的常量项结构</p>
+  </li>
+  <li>
+    <p>第三步：根据常量项的结构，我们找出对应的字节</p>
+  </li>
+  <li>
+    <p>第四步：根据字节，转化为具体值</p>
+  </li>
+</ol>
+
+<h3 id="4访问标志access_flag">(4)访问标志(access_flag)</h3>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220212124300.png" alt="image-20220212124300303" /></p>
+
+<p>常量池结束之后的两个字节，描述该Class是类还是接口，以及是否被Public、Abstract、Final等修饰符修饰。</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220212124411.png" alt="image-20220212124411633" /></p>
+
+<p>如上图 <strong>00 21</strong>，其还可以表示一种组合，是<strong>0x0001+0x0020</strong> ，即<strong>ACC_PUBLIC和ACC_SUPER</strong>。</p>
+
+<h3 id="5-6-7类索引父类索引与接口索引集合">(5 6 7)类索引、父类索引与接口索引集合</h3>
+
+<p>在类的访问标志下方就是<strong>类索引</strong>，占2个字节，在字节码中找到是<strong>00 06</strong>，它的涵义是索引，所以我们就去常量池表中找索引为6的值，发现指向的就是<strong>demo/Test2</strong>的索引</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220212130645.png" alt="image-20220212130645934" /></p>
+
+<p>父类索引同理，父类索引后为两字节的接口计数器，描述了该类或父类实现的接口数量。紧接着的n个字节是所有接口名称的字符串常量的索引值。</p>
+
+<h3 id="8字段表fileds">(8)字段表(fileds)</h3>
+
+<p>字段表用于描述类和接口中声明的变量，包含类级别的变量以及实例变量，但是不包含方法内部声明的局部变量。同常量池，字段表也分为两部分，第一部分两个字节为fields_count，描述字段个数；第二部分是fields_count个字段的详细信息fields_info。</p>
+
+<p>上述的代码因为变量都是写在函数内，为局部变量，不存在字段，我们以下述代码为例：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">demo</span><span class="o">;</span>
+
+<span class="kd">public</span>  <span class="kd">class</span> <span class="nc">Test3</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">age</span> <span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220213161459.png" alt="image-20220213161459739" /></p>
+
+<p>最开始的两个字节为<strong>访问标志</strong>，这个我们已经比较熟悉了，往后分别是<strong>字段名称</strong>和<strong>字段描述符</strong>，对应的都是常量池的索引，可以查询其值。</p>
+
+<p>再往后的两个字节是属性表个数，如果一个字段被 <strong>final static</strong> 、<strong>volatile</strong> 等关键字修饰，比如 ` final static public int age = 100`，那么属性表中还会有一项称为 <strong>ConstantValue</strong> 的属性，其值指向常量 100 ，关于属性表后续还会介绍。</p>
+
+<h3 id="9方法表metheds">(9)方法表(metheds)</h3>
+
+<p>字段表结束后为方法表，方法表也是由两部分组成，前两个字节描述方法的个数；第二部分为每个方法的详细信息。方法的详细信息较为复杂，包括方法的访问标志、方法名、方法的描述符以及方法的属性，如下图所示：</p>
+
+<p><img src="https://p0.meituan.net/travelcube/d84d5397da84005d9e21d5289afa29e755614.png" alt="图12 方法表结构" /></p>
+
+<p>再拿这一段代码看看，在这个案例中一共有 <strong>构造方法、main方法、say</strong> 三个方法</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">demo</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test2</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span><span class="o">;</span>
+        <span class="nc">String</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"theoyu"</span><span class="o">;</span>
+        <span class="n">say</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">static</span> <span class="kt">void</span> <span class="nf">say</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">){</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220213164330.png" alt="image-20220213164330423" /></p>
+
+<p>方法的权限修饰符和之前的访问权限大同小异，方法名和方法的描述符都是常量池中的索引值，可以通过索引值在常量池中找到。所以我们把重点放在<strong>方法的Code属性表</strong>这一部分。</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220213164711.png" alt="image-20220213164711916" /></p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220213173739.png" alt="image-20220213173739500" /></p>
+
+<p><strong>attribute_name_index</strong>是一项指向<strong>CONSTANT_Utf8_info</strong>型常量的索引，此常量值固定为“Code”，<strong>attribute_length</strong> 代表属性值的长度。</p>
+
+<p><strong>max_stack</strong>代表操作数栈(<strong>Operand Stack</strong>)深度的最大值，虚拟机运行的时候需要根据这个值来分配栈帧(Stack Frame)中的操作栈深度。</p>
+
+<p><strong>max_locals</strong>代表了局部变量表所需的存储空间。在这里，<strong>max_locals</strong>的单位是变量槽(Slot)，变量槽是虚拟机为局部变量分配内存所使用的最小单位。在main函数中，一共有<strong>args、a、name</strong> 三个局部变量，所以大小为3。</p>
+
+<p><strong>code_length</strong> 和 <strong>code</strong> 用于存储Java源程序编译后生成的字节码指令。</p>
+
+<p><strong>attributes</strong>属性表中存储有<strong>LineNumberTable</strong>和<strong>LocalVariableTable</strong>两个重要属性：</p>
+
+<ul>
+  <li>“LineNumberTable”：行号表，将Code区的操作码和源代码中的行号对应，Debug时会起到作用（源代码走一行，需要走多少个JVM指令操作码）。</li>
+  <li>“LocalVariableTable”：局部变量表（也叫本地变量表），包含This和局部变量，之所以可以在每一个方法内部都可以调用This，是因为JVM将This作为每一个方法的第一个参数隐式进行传入。</li>
+</ul>
+
+<p>我们结合指令和局部变量表对下述代码的main函数分析，先提一下局部变量表的start_pc和length属性分别代表了这个局部变量的生命周期开始的字节码偏移量及其作用范围覆盖 的长度，两者结合起来就是这个局部变量在字节码之中的作用域范围。</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220213205102.png" alt="image-20220213205101911" /></p>
+
+<ul>
+  <li>0 <code class="language-plaintext highlighter-rouge">bipush 10</code>：把 10 放在栈顶</li>
+  <li>2 <code class="language-plaintext highlighter-rouge">istore_1</code>  ：把栈顶元素 10 存储到局部变量表序号 1，name_index 对应常量池索引19，其值为 a ，类型为 int ，对应代码 <code class="language-plaintext highlighter-rouge">int a = 10</code>，此指令结束代表局部变量 a 的生命周期开始，也就是对应 <strong>pc 3</strong>。</li>
+  <li>3 <code class="language-plaintext highlighter-rouge">ldc #2</code> ：    把常量池索引为2的值( 字符串『theoyu』 ) 放在栈顶</li>
+  <li>5 <code class="language-plaintext highlighter-rouge">astore_2</code> ： 把栈顶元素存储到局部变量表序号 2 ，name_index 对应常量池索引21，其值为 name ，类型为 String ，对应代码 <code class="language-plaintext highlighter-rouge">String name = "theoyu"</code>，此指令结束代表局部变量 name 的生命周期开始，也就是对应 <strong>pc 6</strong>。</li>
+  <li>6 <code class="language-plaintext highlighter-rouge">aload_2</code>：引用 局部变量表 2的值『theoyu』到栈顶。</li>
+  <li>7 <code class="language-plaintext highlighter-rouge">invokestatic #3</code> 调用 static method <code class="language-plaintext highlighter-rouge">demo/Test2.say</code>，传入栈顶参数『theoyu』</li>
+  <li>10 <code class="language-plaintext highlighter-rouge">return</code></li>
+</ul>
+
+<p>所以整个字节码解释执行可以用以下伪代码描述：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">do</span> <span class="p">{</span>
+  <span class="err">自动计算</span><span class="n">PC</span><span class="err">寄存器的值加</span><span class="mi">1</span><span class="p">;</span> 
+  <span class="err">根据</span><span class="n">PC</span><span class="err">寄存器指示的位置，从字节码流中取出操作码</span><span class="p">;</span> 
+  <span class="k">if</span> <span class="p">(</span><span class="err">字节码存在操作数</span><span class="p">)</span> <span class="err">从字节码流中取出操作数</span><span class="p">;</span> 
+  <span class="err">执行操作码所定义的操作</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="err">字节码流长度</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h3 id="10附加属性表attributes">(10)附加属性表(attributes)</h3>
+
+<p>字节码的最后一部分，该项存放了在该文件中类或接口所定义属性的基本信息。</p>
+
+<h2 id="字节码修改">字节码修改</h2>
+
+<p>在我们了解了字节码结构后，只用简单的文本编辑器，甚至你只需要一个vim，就可以随意修改字节码文件，但是这莫过于有些麻烦，而一些较为上层的框架就为我们提供了修改已有字节码、动态生成全新字节码的功能。</p>
+
+<h3 id="asm">ASM</h3>
+
+<p>ASM 库提供了两个用于生成和转换已编译类的 API，一个是Core API，以基于 <a href="https://zh.wikipedia.org/wiki/%E8%AE%BF%E9%97%AE%E8%80%85%E6%A8%A1%E5%BC%8F">访问者模式 </a>  来操作类，另一个是Tree API，以基于树节点来操作类。这一章我们讨论 Core API 。</p>
+
+<p>在Core API中有以下几个关键类：</p>
+
+<ul>
+  <li>
+    <p><strong>ClassReader：</strong>这个类会将 .class 文件读入到 ClassReader 中的字节数组中，它的 accept 方法接受一个 ClassVisitor 实现类，并按照顺序调用 ClassVisitor 中的方法</p>
+  </li>
+  <li>
+    <p><strong>ClassVisitor：</strong>主要负责访问类的成员信息。包括标记在类上的注解、类的构造方法、类的字段、类的方法、静态代码块等。</p>
+  </li>
+  <li>
+    <p><strong>ClassWriter：</strong>ClassWriter 是一个 ClassVisitor 的子类，是和 ClassReader 对应的类，ClassReader 是将 .class 文件读入到一个字节数组中，ClassWriter 是将修改后的类的字节码内容以字节数组的形式输出。</p>
+  </li>
+</ul>
+
+<p><img src="https://lsieun.github.io/assets/images/java/asm/asm-core-classes.png" alt="ASM里的核心类" /></p>
+
+<p>这里我们先以一个生成全新字节码文件为例子：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">asm.test1</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.objectweb.asm.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloWorld</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="kt">byte</span><span class="o">[]</span> <span class="n">bytes</span> <span class="o">=</span> <span class="n">generate</span><span class="o">();</span>
+        <span class="n">outputClazz</span><span class="o">(</span><span class="n">bytes</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">byte</span><span class="o">[]</span> <span class="nf">generate</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">ClassWriter</span> <span class="n">classWriter</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ClassWriter</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+        <span class="c1">// 定义对象头；版本号、修饰符、全类名、签名、父类、实现的接口</span>
+        <span class="n">classWriter</span><span class="o">.</span><span class="na">visit</span><span class="o">(</span><span class="nc">Opcodes</span><span class="o">.</span><span class="na">V1_8</span><span class="o">,</span> <span class="nc">Opcodes</span><span class="o">.</span><span class="na">ACC_PUBLIC</span><span class="o">,</span> <span class="s">"asm/test1/AsmHelloWorld"</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="s">"java/lang/Object"</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+        <span class="c1">// 添加方法；修饰符、方法名、描述符、签名、异常</span>
+        <span class="nc">MethodVisitor</span> <span class="n">methodVisitor</span> <span class="o">=</span> <span class="n">classWriter</span><span class="o">.</span><span class="na">visitMethod</span><span class="o">(</span><span class="nc">Opcodes</span><span class="o">.</span><span class="na">ACC_PUBLIC</span> <span class="o">+</span> <span class="nc">Opcodes</span><span class="o">.</span><span class="na">ACC_STATIC</span><span class="o">,</span> <span class="s">"main"</span><span class="o">,</span> <span class="s">"([Ljava/lang/String;)V"</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+        <span class="c1">// 执行指令；获取静态属性</span>
+        <span class="n">methodVisitor</span><span class="o">.</span><span class="na">visitFieldInsn</span><span class="o">(</span><span class="nc">Opcodes</span><span class="o">.</span><span class="na">GETSTATIC</span><span class="o">,</span> <span class="s">"java/lang/System"</span><span class="o">,</span> <span class="s">"out"</span><span class="o">,</span> <span class="s">"Ljava/io/PrintStream;"</span><span class="o">);</span>
+        <span class="c1">// 加载常量 load constant</span>
+        <span class="n">methodVisitor</span><span class="o">.</span><span class="na">visitLdcInsn</span><span class="o">(</span><span class="s">"Hello World ASM!"</span><span class="o">);</span>
+        <span class="c1">// 调用方法</span>
+        <span class="n">methodVisitor</span><span class="o">.</span><span class="na">visitMethodInsn</span><span class="o">(</span><span class="nc">Opcodes</span><span class="o">.</span><span class="na">INVOKEVIRTUAL</span><span class="o">,</span> <span class="s">"java/io/PrintStream"</span><span class="o">,</span> <span class="s">"println"</span><span class="o">,</span> <span class="s">"(Ljava/lang/String;)V"</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+        <span class="c1">// 返回</span>
+        <span class="n">methodVisitor</span><span class="o">.</span><span class="na">visitInsn</span><span class="o">(</span><span class="nc">Opcodes</span><span class="o">.</span><span class="na">RETURN</span><span class="o">);</span>
+        <span class="c1">// 设置操作数栈的深度和局部变量的大小</span>
+        <span class="n">methodVisitor</span><span class="o">.</span><span class="na">visitMaxs</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">1</span><span class="o">);</span>
+        <span class="c1">// 方法结束</span>
+        <span class="n">methodVisitor</span><span class="o">.</span><span class="na">visitEnd</span><span class="o">();</span>
+        <span class="c1">// 类完成</span>
+        <span class="n">classWriter</span><span class="o">.</span><span class="na">visitEnd</span><span class="o">();</span>
+        <span class="c1">// 生成字节数组</span>
+        <span class="k">return</span> <span class="n">classWriter</span><span class="o">.</span><span class="na">toByteArray</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">outputClazz</span><span class="o">(</span><span class="kt">byte</span><span class="o">[]</span> <span class="n">bytes</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="c1">// 输出类字节码</span>
+        <span class="nc">String</span> <span class="n">pathName</span> <span class="o">=</span> <span class="nc">HelloWorld</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getResource</span><span class="o">(</span><span class="s">""</span><span class="o">).</span><span class="na">getPath</span><span class="o">()</span> <span class="o">+</span> <span class="s">"AsmHelloWorld.class"</span><span class="o">;</span>
+        <span class="nc">FileOutputStream</span> <span class="n">out</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">File</span><span class="o">(</span><span class="n">pathName</span><span class="o">));</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"ASM类输出路径："</span> <span class="o">+</span> <span class="n">pathName</span><span class="o">);</span>
+        <span class="n">out</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">bytes</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">generate()</code>方法使用ASM框架生成字节数组，<code class="language-plaintext highlighter-rouge">outputClazz()</code>将字节数组输出为<code class="language-plaintext highlighter-rouge">AsmHelloWorld.class</code>，在out的同级目录下：</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220215212618.png" alt="image-20220215212618111" /></p>
+
+<p>刚刚生成了字节码文件只用到了<code class="language-plaintext highlighter-rouge">ClassWriter</code>这一个类，因为我们并没有涉及到修改已有字节码文件的步骤，下一步我们要求在输出<code class="language-plaintext highlighter-rouge">Hello World ASM!</code>后，再输出一行<code class="language-plaintext highlighter-rouge">Hello World ASM Again!</code>。</p>
+
+<p>回到最初介绍3个关键类的地方，<strong>ClassReader</strong> 接收一个 <strong>ClassVisitor</strong> 后，利用 <code class="language-plaintext highlighter-rouge">accept</code> 方法对 <code class="language-plaintext highlighter-rouge">.class</code> 类文件的内容从头到尾扫描一遍，每次扫描到类文件相应的内容时，都会调用<strong>ClassVisitor</strong>内部相应的方法。</p>
+
+<ul>
+  <li>扫描到<strong>类文件</strong>时，会回调<code class="language-plaintext highlighter-rouge">ClassVisitor</code>的<code class="language-plaintext highlighter-rouge">visit()</code>方法；</li>
+  <li>扫描到<strong>类注解</strong>时，会回调<code class="language-plaintext highlighter-rouge">ClassVisitor</code>的<code class="language-plaintext highlighter-rouge">visitAnnotation()</code>方法；</li>
+  <li>扫描到<strong>类成员</strong>时，会回调<code class="language-plaintext highlighter-rouge">ClassVisitor</code>的<code class="language-plaintext highlighter-rouge">visitField()</code>方法；</li>
+  <li>扫描到<strong>类方法</strong>时，会回调<code class="language-plaintext highlighter-rouge">ClassVisitor</code>的<code class="language-plaintext highlighter-rouge">visitMethod()</code>方法；</li>
+</ul>
+
+<p>……</p>
+
+<p>扫描到相应结构内容时，会回调相应方法，该方法会返回一个对应的字节码操作对象（比如，<code class="language-plaintext highlighter-rouge">visitMethod()</code>返回<code class="language-plaintext highlighter-rouge">MethodVisitor</code>实例），通过修改这个对象，就可以修改<code class="language-plaintext highlighter-rouge">class</code>文件相应结构部分内容，最后将这个<code class="language-plaintext highlighter-rouge">ClassVisitor</code>字节码内容覆盖原来<code class="language-plaintext highlighter-rouge">.class</code>文件就实现了类文件的代码切入。</p>
+
+<p>概念可能有些晦涩，我们带入到上面的例子中理解，在扫描class文件时，有不同方法，我们需要找到main方法进入，所以在重写的<code class="language-plaintext highlighter-rouge">visitMethod()</code>中对方法名进行判断，返回一个自定义的<code class="language-plaintext highlighter-rouge">MethodVisitor</code>，在这个内部对原有代码进行修改。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">asm.test1</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.objectweb.asm.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloWorldAgain</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span><span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="c1">// 1. 创建 ClassReader 读取 .class 文件</span>
+        <span class="nc">ClassReader</span> <span class="n">classReader</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ClassReader</span><span class="o">(</span><span class="s">"asm.test1.AsmHelloWorld"</span><span class="o">);</span>
+        <span class="c1">// 2. 创建 ClassWriter 对象，将操作之后的字节码的字节数组回写</span>
+        <span class="nc">ClassWriter</span> <span class="n">classWriter</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ClassWriter</span><span class="o">(</span><span class="nc">ClassWriter</span><span class="o">.</span><span class="na">COMPUTE_MAXS</span><span class="o">);</span>
+        <span class="c1">// 3. 创建自定义的 ClassVisitor 对象 classVisitor 需要委托 classWriter</span>
+        <span class="nc">ClassVisitor</span> <span class="n">classVisitor</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">MyVisitor</span><span class="o">(</span><span class="n">classWriter</span><span class="o">);</span>
+        <span class="c1">// 4. classReader 再委托给 classVisitor</span>
+        <span class="n">classReader</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="n">classVisitor</span><span class="o">,</span><span class="n">classReader</span><span class="o">.</span><span class="na">EXPAND_FRAMES</span><span class="o">);</span>
+
+        <span class="kt">byte</span><span class="o">[]</span> <span class="n">bytes</span> <span class="o">=</span> <span class="n">classWriter</span><span class="o">.</span><span class="na">toByteArray</span><span class="o">();</span>
+
+        <span class="n">outputClazz</span><span class="o">(</span><span class="n">bytes</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">outputClazz</span><span class="o">(</span><span class="kt">byte</span><span class="o">[]</span> <span class="n">bytes</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="c1">// 输出类字节码</span>
+        <span class="nc">String</span> <span class="n">pathName</span> <span class="o">=</span> <span class="nc">HelloWorld</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getResource</span><span class="o">(</span><span class="s">""</span><span class="o">).</span><span class="na">getPath</span><span class="o">()</span> <span class="o">+</span> <span class="s">"AsmHelloWorld.class"</span><span class="o">;</span>
+        <span class="nc">FileOutputStream</span> <span class="n">out</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">File</span><span class="o">(</span><span class="n">pathName</span><span class="o">));</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"ASM类输出路径："</span> <span class="o">+</span> <span class="n">pathName</span><span class="o">);</span>
+        <span class="n">out</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">bytes</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span>  <span class="nc">MyVisitor</span> <span class="kd">extends</span> <span class="nc">ClassVisitor</span><span class="o">{</span>
+
+        <span class="kd">public</span> <span class="nf">MyVisitor</span><span class="o">(</span><span class="nc">ClassVisitor</span> <span class="n">classVisitor</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kd">super</span><span class="o">(</span><span class="nc">Opcodes</span><span class="o">.</span><span class="na">ASM9</span><span class="o">,</span> <span class="n">classVisitor</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="nc">MethodVisitor</span> <span class="nf">visitMethod</span><span class="o">(</span><span class="kt">int</span> <span class="n">access</span><span class="o">,</span> <span class="nc">String</span> <span class="n">name</span><span class="o">,</span> <span class="nc">String</span> <span class="n">descriptor</span><span class="o">,</span> <span class="nc">String</span> <span class="n">signature</span><span class="o">,</span> <span class="nc">String</span><span class="o">[]</span> <span class="n">exceptions</span><span class="o">)</span> <span class="o">{</span>
+<span class="c1">//            System.out.println("=====================");</span>
+<span class="c1">//            System.out.println("acce== " + access);</span>
+<span class="c1">//            System.out.println("name== " + name);</span>
+<span class="c1">//            System.out.println("desc== " + descriptor);</span>
+<span class="c1">//            System.out.println("sign== " + signature);</span>
+<span class="c1">//            System.out.println("=====================");</span>
+            <span class="nc">MethodVisitor</span> <span class="n">mv</span> <span class="o">=</span> <span class="kd">super</span><span class="o">.</span><span class="na">visitMethod</span><span class="o">(</span><span class="n">access</span><span class="o">,</span> <span class="n">name</span><span class="o">,</span> <span class="n">descriptor</span><span class="o">,</span> <span class="n">signature</span><span class="o">,</span> <span class="n">exceptions</span><span class="o">);</span>
+            <span class="c1">// 进入main方法</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">name</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"main"</span><span class="o">)){</span>
+                <span class="n">mv</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">MyMethodVisitor</span><span class="o">(</span><span class="nc">Opcodes</span><span class="o">.</span><span class="na">ASM9</span><span class="o">,</span><span class="n">mv</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="n">mv</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">MyMethodVisitor</span> <span class="kd">extends</span>  <span class="nc">MethodVisitor</span><span class="o">{</span>
+
+        <span class="kd">public</span> <span class="nf">MyMethodVisitor</span><span class="o">(</span><span class="kt">int</span> <span class="n">api</span><span class="o">,</span> <span class="nc">MethodVisitor</span> <span class="n">methodVisitor</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kd">super</span><span class="o">(</span><span class="n">api</span><span class="o">,</span> <span class="n">methodVisitor</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">visitInsn</span><span class="o">(</span><span class="kt">int</span> <span class="n">opcode</span><span class="o">)</span> <span class="o">{</span>
+  					<span class="c1">// System.out.println(opcode);</span>
+            <span class="c1">// 找到 return 指令，在 return 执行前插入代码</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">opcode</span> <span class="o">==</span> <span class="nc">Opcodes</span><span class="o">.</span><span class="na">RETURN</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">hack</span><span class="o">(</span><span class="n">mv</span><span class="o">,</span> <span class="s">"Hello World ASM Again!"</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="kd">super</span><span class="o">.</span><span class="na">visitInsn</span><span class="o">(</span><span class="n">opcode</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">hack</span><span class="o">(</span><span class="nc">MethodVisitor</span> <span class="n">mv</span><span class="o">,</span> <span class="nc">String</span> <span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">mv</span><span class="o">.</span><span class="na">visitFieldInsn</span><span class="o">(</span>
+                    <span class="nc">Opcodes</span><span class="o">.</span><span class="na">GETSTATIC</span><span class="o">,</span>
+                    <span class="nc">Type</span><span class="o">.</span><span class="na">getInternalName</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">class</span><span class="o">),</span>
+                    <span class="s">"out"</span><span class="o">,</span>
+                    <span class="nc">Type</span><span class="o">.</span><span class="na">getDescriptor</span><span class="o">(</span><span class="nc">PrintStream</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+            <span class="o">);</span>
+            <span class="n">mv</span><span class="o">.</span><span class="na">visitLdcInsn</span><span class="o">(</span><span class="n">msg</span><span class="o">);</span>
+            <span class="n">mv</span><span class="o">.</span><span class="na">visitMethodInsn</span><span class="o">(</span>
+                    <span class="nc">Opcodes</span><span class="o">.</span><span class="na">INVOKEVIRTUAL</span><span class="o">,</span>
+                    <span class="nc">Type</span><span class="o">.</span><span class="na">getInternalName</span><span class="o">(</span><span class="nc">PrintStream</span><span class="o">.</span><span class="na">class</span><span class="o">),</span>
+                    <span class="s">"println"</span><span class="o">,</span>
+                    <span class="s">"(Ljava/lang/String;)V"</span><span class="o">,</span>
+                    <span class="kc">false</span>
+            <span class="o">);</span>
+        <span class="o">}</span>
+
+
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>运行后，成功插入代码：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//</span>
+<span class="c1">// Source code recreated from a .class file by IntelliJ IDEA</span>
+<span class="c1">// (powered by FernFlower decompiler)</span>
+<span class="c1">//</span>
+
+<span class="kn">package</span> <span class="nn">asm.test1</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">AsmHelloWorld</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">var0</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Hello World ASM!"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Hello World ASM Again!"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="javassist">Javassist</h3>
+
+<p><strong>ASM</strong> 更偏向于底层，需要了解 <strong>JVM</strong> 虚拟机中指定规范以及对局部变量以及操作数栈的知识，相对而言<strong>Javassist</strong>操作使用上更加容易控制，虽然对对比上会比 <strong>ASM</strong> 性能差一些。</p>
+
+<p>Javassist中最重要的是ClassPool、CtClass、CtMethod、CtField这四个类：</p>
+
+<ul>
+  <li><strong>CtClass（compile-time class）</strong>：编译时类信息，它是一个class文件在代码中的抽象表现形式，可以通过一个类的全限定名来获取一个CtClass对象，用来表示这个类文件。</li>
+  <li><strong>ClassPool</strong>：从开发视角来看，<strong>ClassPool</strong>是一张保存<strong>CtClass</strong>信息的<strong>HashTable</strong>，<strong>key</strong>为类名，<strong>value</strong>为类名对应的CtClass对象。当我们需要对某个类进行修改时，就是通过<code class="language-plaintext highlighter-rouge">pool.getCtClass("className")</code>方法从pool中获取到相应的CtClass。</li>
+  <li><strong>CtMethod、CtField</strong>：这两个比较好理解，对应的是类中的方法和属性。</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">javAssist.test2</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">javassist.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloWorld</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+
+        <span class="nc">ClassPool</span> <span class="n">pool</span> <span class="o">=</span> <span class="nc">ClassPool</span><span class="o">.</span><span class="na">getDefault</span><span class="o">();</span>
+        <span class="nc">CtClass</span> <span class="n">ctClass</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"asm.test1.AsmHelloWorld"</span><span class="o">);</span>
+        <span class="nc">CtMethod</span> <span class="n">ctMethod</span> <span class="o">=</span> <span class="n">ctClass</span><span class="o">.</span><span class="na">getDeclaredMethod</span><span class="o">(</span><span class="s">"main"</span><span class="o">);</span>
+        <span class="n">ctMethod</span><span class="o">.</span><span class="na">insertAfter</span><span class="o">(</span><span class="s">"{System.out.println(\"javassist HelloWorld\");}"</span><span class="o">);</span>
+        <span class="c1">// 输出类内容</span>
+        <span class="n">ctClass</span><span class="o">.</span><span class="na">writeFile</span><span class="o">();</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>成功插入：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//</span>
+<span class="c1">// Source code recreated from a .class file by IntelliJ IDEA</span>
+<span class="c1">// (powered by FernFlower decompiler)</span>
+<span class="c1">//</span>
+
+<span class="kn">package</span> <span class="nn">asm.test1</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">AsmHelloWorld</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">var0</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Hello World ASM!"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Hello World ASM Again!"</span><span class="o">);</span>
+        <span class="nc">Object</span> <span class="n">var2</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"javassist HelloWorld"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>简单的的确不是一星半点…</p>
+
+<p>笔者认为相比于ASM，Javassist配合Agent技术，在链路监控，修改字节码等等方面可能会简便一些，但是如果涉及到一定规模上的字节码扫描，静态分析，那毫无疑问ASM会高效很多。</p>
+
+<p>最后，本文也是抛砖引玉，站在很多前人的肩膀上的笔记，如果对ASM感兴趣的话，强推一波 <a href="https://lsieun.github.io/">lsieun</a> 师傅的 <a href="https://lsieun.github.io/java/asm/index.html">Java ASM 系列 </a>，我就没见过能有这么详细的教程，真的良心。</p>
+
+<h2 id="后记">后记</h2>
+
+<h3 id="m1编译openjdk">m1编译openjdk</h3>
+
+<p>写了这么多JVM，不自己编译一下也说不过去，目前大多数例子还是以Linux或者intelMac为主，也打算踩一下坑。</p>
+
+<h3 id="环境准备">环境准备</h3>
+
+<ul>
+  <li>OS：Mac m1</li>
+  <li>IDE：Clion</li>
+  <li>源码：OpenJDK8</li>
+</ul>
+
+<h4 id="准备编译工具">准备编译工具</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>🌀  c++  git clone https://github.com/AdoptOpenJDK/openjdk-jdk8u    
+Cloning into <span class="s1">'openjdk-jdk8u'</span>...
+remote: Enumerating objects: 504871, <span class="k">done</span><span class="nb">.</span>
+remote: Total 504871 <span class="o">(</span>delta 0<span class="o">)</span>, reused 0 <span class="o">(</span>delta 0<span class="o">)</span>, pack-reused 504871
+Receiving objects: 100% <span class="o">(</span>504871/504871<span class="o">)</span>, 1.00 GiB | 3.59 MiB/s, <span class="k">done</span><span class="nb">.</span>
+Resolving deltas: 100% <span class="o">(</span>416674/416674<span class="o">)</span>, <span class="k">done</span><span class="nb">.</span>
+Updating files: 100% <span class="o">(</span>47413/47413<span class="o">)</span>, <span class="k">done</span><span class="nb">.</span>
+🌀  c++  <span class="nb">ls
+</span>openjdk-jdk8u
+🌀  c++  <span class="nb">cd </span>openjdk-jdk8u/       
+🌀  openjdk-jdk8u <span class="o">[</span>master] <span class="nb">ls
+</span>ASSEMBLY_EXCEPTION THIRD_PARTY_README hotspot            make
+LICENSE            common             jaxp               nashorn
+Makefile           configure          jaxws              <span class="nb">test
+</span>README             corba              jdk
+README-builds.html get_source.sh      langtools
+
+// 加速编译
+brew <span class="nb">install </span>ccache  
+// 字体引擎，编译过程中会被依赖到
+brew <span class="nb">install </span>freetype 
+brew <span class="nb">install </span>autoconf
+</code></pre></div></div>
+
+<p>下载Xcode，新版本在APP Store下载即可，低版本需要前往<a href="https://developer.apple.com/download/all/?q=xcode">苹果开发者网站</a>。</p>
+
+<h4 id="配置boot_jdk">配置BOOT_JDK</h4>
+
+<p>我们编译jdk8，就需要准备一个低版本jdk7，其称为<strong>BOOT_JDK</strong>，这种用低版本编译高版本的方式也称为自举。</p>
+
+<h4 id="安装compiledb">安装Compiledb</h4>
+
+<p>需要python3+以及pip3+</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install compiledb
+</code></pre></div></div>
+
+<h4 id="配置环境变量">配置环境变量</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 设定语言选项，必须设置</span>
+<span class="nb">export </span><span class="nv">LANG</span><span class="o">=</span>C
+<span class="c"># Mac平台，C编译器不再是GCC，而是clang</span>
+<span class="nb">export </span><span class="nv">CC</span><span class="o">=</span>clang
+<span class="nb">export </span><span class="nv">CXX</span><span class="o">=</span>clang++
+<span class="nb">export </span><span class="nv">CXXFLAGS</span><span class="o">=</span><span class="nt">-stdlib</span><span class="o">=</span>libc++
+<span class="c"># 是否使用clang，如果使用的是GCC编译，该选项应该设置为false</span>
+<span class="nb">export </span><span class="nv">USE_CLANG</span><span class="o">=</span><span class="nb">true</span>
+<span class="c"># 跳过clang的一些严格的语法检查，不然会将N多的警告作为Error</span>
+<span class="nb">export </span><span class="nv">COMPILER_WARNINGS_FATAL</span><span class="o">=</span><span class="nb">false</span>
+<span class="c"># 链接时使用的参数</span>
+<span class="nb">export </span><span class="nv">LFLAGS</span><span class="o">=</span><span class="s1">'-Xlinker -lstdc++'</span>
+<span class="c"># 使用64位数据模型</span>
+<span class="nb">export </span><span class="nv">LP64</span><span class="o">=</span>1
+<span class="c"># 告诉编译平台是64位，不然会按照32位来编译</span>
+<span class="nb">export </span><span class="nv">ARCH_DATA_MODEL</span><span class="o">=</span>64
+<span class="c"># 允许自动下载依赖</span>
+<span class="nb">export </span><span class="nv">ALLOW_DOWNLOADS</span><span class="o">=</span><span class="nb">true</span>
+<span class="c"># 并行编译的线程数，编译时长，为了不影响其他工作，可以选择2</span>
+<span class="nb">export </span><span class="nv">HOTSPOT_BUILD_JOBS</span><span class="o">=</span>4
+<span class="nb">export </span><span class="nv">PARALLEL_COMPILE_JOBS</span><span class="o">=</span>2 <span class="c">#ALT_PARALLEL_COMPILE_JOBS=2</span>
+<span class="c"># 是否跳过与先前版本的比较</span>
+<span class="nb">export </span><span class="nv">SKIP_COMPARE_IMAGES</span><span class="o">=</span><span class="nb">true</span>
+<span class="c"># 是否使用预编译头文件，加快编译速度</span>
+<span class="nb">export </span><span class="nv">USE_PRECOMPILED_HEADER</span><span class="o">=</span><span class="nb">true</span>
+<span class="c"># 是否使用增量编译</span>
+<span class="nb">export </span><span class="nv">INCREMENTAL_BUILD</span><span class="o">=</span><span class="nb">true</span>
+<span class="c"># 编译内容</span>
+<span class="nb">export </span><span class="nv">BUILD_LANGTOOL</span><span class="o">=</span><span class="nb">true
+export </span><span class="nv">BUILD_JAXP</span><span class="o">=</span><span class="nb">true
+export </span><span class="nv">BUILD_JAXWS</span><span class="o">=</span><span class="nb">true
+export </span><span class="nv">BUILD_CORBA</span><span class="o">=</span><span class="nb">true
+export </span><span class="nv">BUILD_HOTSPOT</span><span class="o">=</span><span class="nb">true
+export </span><span class="nv">BUILD_JDK</span><span class="o">=</span><span class="nb">true</span>
+<span class="c"># 编译版本</span>
+<span class="nb">export </span><span class="nv">SKIP_DEBUG_BUILD</span><span class="o">=</span><span class="nb">true
+export </span><span class="nv">SKIP_FASTDEBUG_BULID</span><span class="o">=</span><span class="nb">false
+export </span><span class="nv">DEBUG_NAME</span><span class="o">=</span>debug
+<span class="c"># 避开javaws和浏览器Java插件之类部分的build</span>
+<span class="nb">export </span><span class="nv">BUILD_DEPLOY</span><span class="o">=</span><span class="nb">false
+export </span><span class="nv">BUILD_INSTALL</span><span class="o">=</span><span class="nb">false</span>
+
+<span class="c"># 最后需要干掉这两个环境变量（如果你配置过），不然会发生诡异的事件</span>
+<span class="nb">unset </span>JAVA_HOME
+<span class="nb">unset </span>CLASSPATH
+
+</code></pre></div></div>
+
+<p>注意把当前java版本切换为BOOT_JDK</p>
+
+<p>不切换也行，编译的时候需要加上参数</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>🌀  openjdk-jdk8u <span class="o">[</span>master] ⚡  java <span class="nt">-version</span>
+java version <span class="s2">"1.7.0_80"</span>
+Java<span class="o">(</span>TM<span class="o">)</span> SE Runtime Environment <span class="o">(</span>build 1.7.0_80-b15<span class="o">)</span>
+Java HotSpot<span class="o">(</span>TM<span class="o">)</span> 64-Bit Server VM <span class="o">(</span>build 24.80-b11, mixed mode<span class="o">)</span>
+</code></pre></div></div>
+
+<h4 id="执行配置文件校验命令">执行配置文件校验命令</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sh configure <span class="nt">--with-freetype-include</span><span class="o">=</span>/opt/homebrew/opt/freetype/include/freetype2 <span class="nt">--with-freetype-lib</span><span class="o">=</span>/opt/homebrew/opt/freetype/lib <span class="nt">--disable-zip-debug-info</span> <span class="nt">--disable-debug-symbols</span> <span class="nt">--with-debug-level</span><span class="o">=</span>slowdebug <span class="nt">--with-boot-jdk</span><span class="o">=</span>/Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home <span class="nt">--with-jvm-variants</span><span class="o">=</span>server
+</code></pre></div></div>
+
+<p>上面代码只需要修改一下<code class="language-plaintext highlighter-rouge">--with-freetype-include</code>、<code class="language-plaintext highlighter-rouge">--with-freetype-lib</code>、<code class="language-plaintext highlighter-rouge">--with-boot-jdk</code>的位置</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bash ./configure --with-debug-level=slowdebug --with-freetype-include=/usr/local/Cellar/freetype/2.10.4/include/freetype2 --with-freetype-lib=/usr/local/Cellar/freetype/2.10.4/lib/ --with-boot-jdk=/Library/Java/JavaVirtualMachines/jdk1.8.0_261.jdk/Contents/Home --enable-debug-symbols
+</code></pre></div></div>
+
+<p><strong>出现的几个问题：</strong></p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Xcode 4 is required to build JDK 8, the version found was 11.0.</code></p>
+
+    <p>修改	<code class="language-plaintext highlighter-rouge">common/autoconf/generated-configure.sh</code>，注释以下代码：</p>
+
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">XCODE_VERSION</span><span class="o">=</span><span class="sb">`</span><span class="nv">$XCODEBUILD</span> <span class="nt">-version</span> | <span class="nb">grep</span> <span class="s1">'^Xcode '</span> | <span class="nb">sed</span> <span class="s1">'s/Xcode //'</span><span class="sb">`</span>
+<span class="nv">XC_VERSION_PARTS</span><span class="o">=(</span> <span class="k">${</span><span class="nv">XCODE_VERSION</span><span class="p">//./ </span><span class="k">}</span> <span class="o">)</span>
+<span class="k">if </span><span class="nb">test</span> <span class="o">!</span> <span class="s2">"</span><span class="k">${</span><span class="nv">XC_VERSION_PARTS</span><span class="p">[0]</span><span class="k">}</span><span class="s2">"</span> <span class="o">=</span> <span class="s2">"4"</span><span class="p">;</span> <span class="k">then
+  </span>as_fn_error <span class="nv">$?</span> <span class="s2">"Xcode 4 is required to build JDK 8, the version found was </span><span class="nv">$XCODE_VERSION</span><span class="s2">. Use --with-xcode-path to specify the location of Xcode 4 or make Xcode 4 active by using xcode-select."</span> <span class="s2">"</span><span class="nv">$LINENO</span><span class="s2">"</span> 5
+<span class="k">fi</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>无法找到Xcode相关路径：</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>checking Determining Xcode SDK path... xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer directory '/Library/Developer/CommandLineTools' is a command line tools instance
+</code></pre></div>    </div>
+
+    <p>执行：</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>xcode-select <span class="nt">-s</span> /Applications/Xcode.app/Contents/Developer
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">configure: error: A gcc compiler is required. Try setting --with-tools-dir.</code></p>
+
+    <p>修改 <code class="language-plaintext highlighter-rouge">common/autoconf/generated-configure.sh</code>，注释以下代码，一共有两处</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ECHO</span> <span class="s2">"</span><span class="nv">$COMPILER_VERSION_OUTPUT</span><span class="s2">"</span> | <span class="nv">$GREP</span> <span class="s2">"Free Software Foundation"</span> <span class="o">&gt;</span> /dev/null
+ <span class="c">#   if test $? -ne 0; then</span>
+ <span class="c">#     { $as_echo "$as_me:${as_lineno-$LINENO}: The $COMPILER_NAME compiler (located as $COMPILER) does not seem to be the required $TOOLCHAIN_TYPE compiler." &gt;&amp;5</span>
+<span class="c">#$as_echo "$as_me: The $COMPILER_NAME compiler (located as $COMPILER) does not seem to be the required $TOOLCHAIN_TYPE compiler." &gt;&amp;6;}</span>
+ <span class="c">#     { $as_echo "$as_me:${as_lineno-$LINENO}: The result from running with --version was: \"$COMPILER_VERSION\"" &gt;&amp;5</span>
+<span class="c">#$as_echo "$as_me: The result from running with --version was: \"$COMPILER_VERSION\"" &gt;&amp;6;}</span>
+  <span class="c">#    as_fn_error $? "A $TOOLCHAIN_TYPE compiler is required. Try setting --with-tools-dir." "$LINENO" 5</span>
+  <span class="c">#  fi</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>如果出现以下界面，则说明成功</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220201122242.png" alt="image-20220201122242240" /></p>
+
+<p>成功了个🔨，明明是64位，但是这里<strong>OpenJDK target</strong>却是检测的32位，我们修改一下config命令：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sh configure <span class="nt">--with-freetype-include</span><span class="o">=</span>/opt/homebrew/opt/freetype/include/freetype2 <span class="nt">--with-freetype-lib</span><span class="o">=</span>/opt/homebrew/opt/freetype/lib <span class="nt">--disable-zip-debug-info</span> <span class="nt">--disable-debug-symbols</span> <span class="nt">--with-debug-level</span><span class="o">=</span>slowdebug <span class="nt">--with-boot-jdk</span><span class="o">=</span>/Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home <span class="nt">--with-jvm-variants</span><span class="o">=</span>server <span class="nt">--with-target-bits</span><span class="o">=</span>64
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">configure: error: It is not possible to use --with-target-bits=64 on a 32 bit system.</code></p>
+
+    <p>新的报错，看来还是openjdk对arm系统不太兼容，我们在<code class="language-plaintext highlighter-rouge">common/autoconf/generated-configure.sh</code>重新搜索一下报错语句，强制加上</p>
+
+    <p><code class="language-plaintext highlighter-rouge">OPENJDK_TARGET_CPU_BITS=64</code></p>
+  </li>
+</ul>
+
+<p>终于ok了</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220201123337.png" alt="image-20220201123337750" /></p>
+
+<h3 id="开始编译放弃了">开始编译(放弃了)</h3>
+
+<p>执行<code class="language-plaintext highlighter-rouge">compiledb make WARNINGS_ARE_ERRORS="" CONF=macosx-arm-normal-server-slowdebug all </code>开始编译</p>
+
+<p>注意：每次编译失败，都需要以下两个命令重新编译</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">compiledb make CONF=macosx-arm-normal-server-slowdebug clean</code></li>
+  <li><code class="language-plaintext highlighter-rouge">compiledb make WARNINGS_ARE_ERRORS="" CONF=macosx-arm-normal-server-slowdebug all</code></li>
+</ol>
+
+<p>可能出现的问题：</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ld: library not found for -lstdc++</code></p>
+
+    <p>下载<code class="language-plaintext highlighter-rouge">git clone https://github.com/quantum6/xcode-missing-libstdcpp</code>，进入工具执行<code class="language-plaintext highlighter-rouge">sh install.sh</code>，这是一个软连接命令，在macos高版本为了安全对软连接目录作了限制，我们可以对链接的文件目录做替换即可。</p>
+  </li>
+  <li>
+    <p>……</p>
+  </li>
+  <li>
+    <p>……</p>
+  </li>
+  <li>
+    <p>还有一大堆问题，m1，🐶都不用</p>
+  </li>
+</ul>
+
+<h2 id="参考">参考</h2>
+
+<ul>
+  <li><a href="https://book.douban.com/subject/34907497/">《 深入理解Java虚拟机 》</a></li>
+  <li><a href="https://book.douban.com/subject/26802084/">《 自己动手写Java虚拟机 》</a></li>
+  <li><a href="https://docs.oracle.com/javase/specs/jvms/se8/html/">Java虚拟机规范</a></li>
+  <li><a href="https://tech.meituan.com/2019/09/05/java-bytecode-enhancement.html">字节码增强技术探索</a></li>
+  <li><a href="https://fynch3r.github.io/ASM%E7%AC%94%E8%AE%B0/">fynch3r ASM笔记</a></li>
+</ul>
+
+</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-01-19T00:00:00+08:00"><!-- start custom article footer snippet -->
+
+<!-- end custom article footer snippet -->
+<div class="article__subscribe"><div class="subscribe"><i class="fas fa-rss"></i> <a type="application/rss+xml" href="/feed.xml">Subscribe</a></div>
+</div><div class="article__license"><div class="license">
+    <p>This work is licensed under a <a itemprop="license" rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution-NonCommercial 4.0 International</a> license.
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">
+        <img alt="Attribution-NonCommercial 4.0 International" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" />
+      </a>
+    </p>
+  </div></div></footer>
+<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/2022/01/04/concurrent-in-java.html">简单学习java并发</a></div></div></div>
+
+</div>
+
+<script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    $(function() {
+      var $this ,$scroll;
+      var $articleContent = $('.js-article-content');
+      var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+      var scroll = hasSidebar ? '.js-page-main' : 'html, body';
+      $scroll = $(scroll);
+
+      $articleContent.find('.highlight').each(function() {
+        $this = $(this);
+        $this.attr('data-lang', $this.find('code').attr('data-lang'));
+      });
+      $articleContent.find('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]').each(function() {
+        $this = $(this);
+        $this.append($('<a class="anchor d-print-none" aria-hidden="true"></a>').html('<i class="fas fa-anchor"></i>'));
+      });
+      $articleContent.on('click', '.anchor', function() {
+        $scroll.scrollToAnchor('#' + $(this).parent().attr('id'), 400);
+      });
+    });
+  });
+})();
+</script>
+</div><section class="page__comments d-print-none"></section></article><!-- start custom main bottom snippet -->
+
+<!-- end custom main bottom snippet -->
+</div>
+            </div></div></div><div class="page__footer d-print-none">
+<footer class="footer py-4 js-page-footer">
+  <div class="main"><div itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Theoyu"><meta itemprop="url" content="/"><meta itemprop="description" content="I am an amazing person."><div class="footer__author-links"><div class="author-links">
+  <ul class="menu menu--nowrap menu--inline"><li title="Send me an Email.">
+      <a class="button button--circle mail-button" itemprop="email" href="mailto:zeyu.ou@foxmail.com" target="_blank">
+        <i class="fas fa-envelope"></i>
+      </a><li title="Follow me on Github.">
+        <a class="button button--circle github-button" itemprop="sameAs" href="https://github.com/https://github.com/yuuuuu422" target="_blank">
+          <div class="icon"><svg fill="#000000" width="24px" height="24px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path class="svgpath" data-index="path_0" fill="#272636" d="M0 525.2c0 223.6 143.3 413.7 343 483.5 26.9 6.8 22.8-12.4 22.8-25.4l0-88.7c-155.3 18.2-161.5-84.6-172-101.7-21.1-36-70.8-45.2-56-62.3 35.4-18.2 71.4 4.6 113.1 66.3 30.2 44.7 89.1 37.2 119 29.7 6.5-26.9 20.5-50.9 39.7-69.6C248.8 728.2 181.7 630 181.7 513.2c0-56.6 18.7-108.7 55.3-150.7-23.3-69.3 2.2-128.5 5.6-137.3 66.5-6 135.5 47.6 140.9 51.8 37.8-10.2 80.9-15.6 129.1-15.6 48.5 0 91.8 5.6 129.8 15.9 12.9-9.8 77-55.8 138.8-50.2 3.3 8.8 28.2 66.7 6.3 135 37.1 42.1 56 94.6 56 151.4 0 117-67.5 215.3-228.8 243.7 26.9 26.6 43.6 63.4 43.6 104.2l0 128.8c0.9 10.3 0 20.5 17.2 20.5C878.1 942.4 1024 750.9 1024 525.3c0-282.9-229.3-512-512-512C229.1 13.2 0 242.3 0 525.2L0 525.2z" />
+</svg>
+</div>
+        </a>
+      </li></ul>
+</div>
+</div>
+    </div><div class="site-info mt-2">
+      <div>© Theoyu 2021,
+        Powered by <a title="Jekyll is a simple, blog-aware, static site generator." href="http://jekyllrb.com/">Jekyll</a> & <a
+        title="TeXt is a super customizable Jekyll theme." href="https://github.com/kitian616/jekyll-TeXt-theme">TeXt Theme</a>.
+      </div>
+    </div>
+  </div>
+</footer>
+</div></div>
+    </div><script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $body = $('body'), $window = $(window);
+    var $pageRoot = $('.js-page-root'), $pageMain = $('.js-page-main');
+    var activeCount = 0;
+    function modal(options) {
+      var $root = this, visible, onChange, hideWhenWindowScroll = false;
+      var scrollTop;
+      function setOptions(options) {
+        var _options = options || {};
+        visible = _options.initialVisible === undefined ? false : show;
+        onChange = _options.onChange;
+        hideWhenWindowScroll = _options.hideWhenWindowScroll;
+      }
+      function init() {
+        setState(visible);
+      }
+      function setState(isShow) {
+        if (isShow === visible) {
+          return;
+        }
+        visible = isShow;
+        if (visible) {
+          activeCount++;
+          scrollTop = $(window).scrollTop() || $pageMain.scrollTop();
+          $root.addClass('modal--show');
+          $pageMain.scrollTop(scrollTop);
+          activeCount === 1 && ($pageRoot.addClass('show-modal'), $body.addClass('of-hidden'));
+          hideWhenWindowScroll && window.hasEvent('touchstart') && $window.on('scroll', hide);
+          $window.on('keyup', handleKeyup);
+        } else {
+          activeCount > 0 && activeCount--;
+          $root.removeClass('modal--show');
+          $window.scrollTop(scrollTop);
+          activeCount === 0 && ($pageRoot.removeClass('show-modal'), $body.removeClass('of-hidden'));
+          hideWhenWindowScroll && window.hasEvent('touchstart') && $window.off('scroll', hide);
+          $window.off('keyup', handleKeyup);
+        }
+        onChange && onChange(visible);
+      }
+      function show() {
+        setState(true);
+      }
+      function hide() {
+        setState(false);
+      }
+      function handleKeyup(e) {
+        // Char Code: 27  ESC
+        if (e.which ===  27) {
+          hide();
+        }
+      }
+      setOptions(options);
+      init();
+      return {
+        show: show,
+        hide: hide,
+        $el: $root
+      };
+    }
+    $.fn.modal = modal;
+  });
+})();
+</script><div class="modal modal--overflow page__search-modal d-print-none js-page-search-modal"><script>
+(function () {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    // search panel
+    var search = (window.search || (window.search = {}));
+    var useDefaultSearchBox = window.useDefaultSearchBox === undefined ?
+      true : window.useDefaultSearchBox ;
+
+    var $searchModal = $('.js-page-search-modal');
+    var $searchToggle = $('.js-search-toggle');
+    var searchModal = $searchModal.modal({ onChange: handleModalChange, hideWhenWindowScroll: true });
+    var modalVisible = false;
+    search.searchModal = searchModal;
+
+    var $searchBox = null;
+    var $searchInput = null;
+    var $searchClear = null;
+
+    function getModalVisible() {
+      return modalVisible;
+    }
+    search.getModalVisible = getModalVisible;
+
+    function handleModalChange(visible) {
+      modalVisible = visible;
+      if (visible) {
+        search.onShow && search.onShow();
+        useDefaultSearchBox && $searchInput[0] && $searchInput[0].focus();
+      } else {
+        search.onShow && search.onHide();
+        useDefaultSearchBox && $searchInput[0] && $searchInput[0].blur();
+        setTimeout(function() {
+          useDefaultSearchBox && ($searchInput.val(''), $searchBox.removeClass('not-empty'));
+          search.clear && search.clear();
+          window.pageAsideAffix && window.pageAsideAffix.refresh();
+        }, 400);
+      }
+    }
+
+    $searchToggle.on('click', function() {
+      modalVisible ? searchModal.hide() : searchModal.show();
+    });
+    // Char Code: 83  S, 191 /
+    $(window).on('keyup', function(e) {
+      if (!modalVisible && !window.isFormElement(e.target || e.srcElement) && (e.which === 83 || e.which === 191)) {
+        modalVisible || searchModal.show();
+      }
+    });
+
+    if (useDefaultSearchBox) {
+      $searchBox = $('.js-search-box');
+      $searchInput = $searchBox.children('input');
+      $searchClear = $searchBox.children('.js-icon-clear');
+      search.getSearchInput = function() {
+        return $searchInput.get(0);
+      };
+      search.getVal = function() {
+        return $searchInput.val();
+      };
+      search.setVal = function(val) {
+        $searchInput.val(val);
+      };
+
+      $searchInput.on('focus', function() {
+        $(this).addClass('focus');
+      });
+      $searchInput.on('blur', function() {
+        $(this).removeClass('focus');
+      });
+      $searchInput.on('input', window.throttle(function() {
+        var val = $(this).val();
+        if (val === '' || typeof val !== 'string') {
+          search.clear && search.clear();
+        } else {
+          $searchBox.addClass('not-empty');
+          search.onInputNotEmpty && search.onInputNotEmpty(val);
+        }
+      }, 400));
+      $searchClear.on('click', function() {
+        $searchInput.val(''); $searchBox.removeClass('not-empty');
+        search.clear && search.clear();
+      });
+    }
+  });
+})();
+</script><div class="search search--dark">
+  <div class="main">
+    <div class="search__header">Search</div>
+    <div class="search-bar">
+      <div class="search-box js-search-box">
+        <div class="search-box__icon-search"><i class="fas fa-search"></i></div>
+        <input type="text" />
+        <div class="search-box__icon-clear js-icon-clear">
+          <a><i class="fas fa-times"></i></a>
+        </div>
+      </div>
+      <button class="button button--theme-dark button--pill search__cancel js-search-toggle">
+        Cancel</button>
+    </div>
+    <div class="search-result js-search-result"></div>
+  </div>
+</div>
+<script>var SOURCES = window.TEXT_VARIABLES.sources;
+var PAHTS = window.TEXT_VARIABLES.paths;
+window.Lazyload.js([SOURCES.jquery, PAHTS.search_js], function() {
+  var search = (window.search || (window.search = {}));
+  var searchData = window.TEXT_SEARCH_DATA || {};
+
+  function memorize(f) {
+    var cache = {};
+    return function () {
+      var key = Array.prototype.join.call(arguments, ',');
+      if (key in cache) return cache[key];
+      else return cache[key] = f.apply(this, arguments);
+    };
+  }
+
+  /// search
+  function searchByQuery(query) {
+    var i, j, key, keys, cur, _title, result = {};
+    keys = Object.keys(searchData);
+    for (i = 0; i < keys.length; i++) {
+      key = keys[i];
+      for (j = 0; j < searchData[key].length; j++) {
+        cur = searchData[key][j], _title = cur.title;
+        if ((result[key] === undefined || result[key] && result[key].length < 4 )
+          && _title.toLowerCase().indexOf(query.toLowerCase()) >= 0) {
+          if (result[key] === undefined) {
+            result[key] = [];
+          }
+          result[key].push(cur);
+        }
+      }
+    }
+    return result;
+  }
+
+  var renderHeader = memorize(function(header) {
+    return $('<p class="search-result__header">' + header + '</p>');
+  });
+
+  var renderItem = function(index, title, url) {
+    return $('<li class="search-result__item" data-index="' + index + '"><a class="button" href="' + url + '">' + title + '</a></li>');
+  };
+
+  function render(data) {
+    if (!data) { return null; }
+    var $root = $('<ul></ul>'), i, j, key, keys, cur, itemIndex = 0;
+    keys = Object.keys(data);
+    for (i = 0; i < keys.length; i++) {
+      key = keys[i];
+      $root.append(renderHeader(key));
+      for (j = 0; j < data[key].length; j++) {
+        cur = data[key][j];
+        $root.append(renderItem(itemIndex++, cur.title, cur.url));
+      }
+    }
+    return $root;
+  }
+
+  // search box
+  var $result = $('.js-search-result'), $resultItems;
+  var lastActiveIndex, activeIndex;
+
+  function clear() {
+    $result.html(null);
+    $resultItems = $('.search-result__item'); activeIndex = 0;
+  }
+  function onInputNotEmpty(val) {
+    $result.html(render(searchByQuery(val)));
+    $resultItems = $('.search-result__item'); activeIndex = 0;
+    $resultItems.eq(0).addClass('active');
+  }
+
+  search.clear = clear;
+  search.onInputNotEmpty = onInputNotEmpty;
+
+  function updateResultItems() {
+    lastActiveIndex >= 0 && $resultItems.eq(lastActiveIndex).removeClass('active');
+    activeIndex >= 0 && $resultItems.eq(activeIndex).addClass('active');
+  }
+
+  function moveActiveIndex(direction) {
+    var itemsCount = $resultItems ? $resultItems.length : 0;
+    if (itemsCount > 1) {
+      lastActiveIndex = activeIndex;
+      if (direction === 'up') {
+        activeIndex = (activeIndex - 1 + itemsCount) % itemsCount;
+      } else if (direction === 'down') {
+        activeIndex = (activeIndex + 1 + itemsCount) % itemsCount;
+      }
+      updateResultItems();
+    }
+  }
+
+  // Char Code: 13  Enter, 37  ⬅, 38  ⬆, 39  ➡, 40  ⬇
+  $(window).on('keyup', function(e) {
+    var modalVisible = search.getModalVisible && search.getModalVisible();
+    if (modalVisible) {
+      if (e.which === 38) {
+        modalVisible && moveActiveIndex('up');
+      } else if (e.which === 40) {
+        modalVisible && moveActiveIndex('down');
+      } else if (e.which === 13) {
+        modalVisible && $resultItems && activeIndex >= 0 && $resultItems.eq(activeIndex).children('a')[0].click();
+      }
+    }
+  });
+
+  $result.on('mouseover', '.search-result__item > a', function() {
+    var itemIndex = $(this).parent().data('index');
+    itemIndex >= 0 && (lastActiveIndex = activeIndex, activeIndex = itemIndex, updateResultItems());
+  });
+});
+</script>
+</div></div>
+
+
+<script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function scrollToAnchor(anchor, duration, callback) {
+      var $root = this;
+      $root.animate({ scrollTop: $(anchor).position().top }, duration, function() {
+        window.history.replaceState(null, '', window.location.href.split('#')[0] + anchor);
+        callback && callback();
+      });
+    }
+    $.fn.scrollToAnchor = scrollToAnchor;
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function affix(options) {
+      var $root = this, $window = $(window), $scrollTarget, $scroll,
+        offsetBottom = 0, scrollTarget = window, scroll = window.document, disabled = false, isOverallScroller = true,
+        rootTop, rootLeft, rootHeight, scrollBottom, rootBottomTop,
+        hasInit = false, curState;
+
+      function setOptions(options) {
+        var _options = options || {};
+        _options.offsetBottom && (offsetBottom = _options.offsetBottom);
+        _options.scrollTarget && (scrollTarget = _options.scrollTarget);
+        _options.scroll && (scroll = _options.scroll);
+        _options.disabled !== undefined && (disabled = _options.disabled);
+        $scrollTarget = $(scrollTarget);
+        isOverallScroller = window.isOverallScroller($scrollTarget[0]);
+        $scroll = $(scroll);
+      }
+      function preCalc() {
+        top();
+        rootHeight = $root.outerHeight();
+        rootTop = $root.offset().top + (isOverallScroller ? 0 :  $scrollTarget.scrollTop());
+        rootLeft = $root.offset().left;
+      }
+      function calc(needPreCalc) {
+        needPreCalc && preCalc();
+        scrollBottom = $scroll.outerHeight() - offsetBottom - rootHeight;
+        rootBottomTop = scrollBottom - rootTop;
+      }
+      function top() {
+        if (curState !== 'top') {
+          $root.removeClass('fixed').css({
+            left: 0,
+            top: 0
+          });
+          curState = 'top';
+        }
+      }
+      function fixed() {
+        if (curState !== 'fixed') {
+          $root.addClass('fixed').css({
+            left: rootLeft + 'px',
+            top: 0
+          });
+          curState = 'fixed';
+        }
+      }
+      function bottom() {
+        if (curState !== 'bottom') {
+          $root.removeClass('fixed').css({
+            left: 0,
+            top: rootBottomTop + 'px'
+          });
+          curState = 'bottom';
+        }
+      }
+      function setState() {
+        var scrollTop = $scrollTarget.scrollTop();
+        if (scrollTop >= rootTop && scrollTop <= scrollBottom) {
+          fixed();
+        } else if (scrollTop < rootTop) {
+          top();
+        } else {
+          bottom();
+        }
+      }
+      function init() {
+        if(!hasInit) {
+          var interval, timeout;
+          calc(true); setState();
+          // run calc every 100 millisecond
+          interval = setInterval(function() {
+            calc();
+          }, 100);
+          timeout = setTimeout(function() {
+            clearInterval(interval);
+          }, 45000);
+          window.pageLoad.then(function() {
+            setTimeout(function() {
+              clearInterval(interval);
+              clearTimeout(timeout);
+            }, 3000);
+          });
+          $scrollTarget.on('scroll', function() {
+            disabled || setState();
+          });
+          $window.on('resize', function() {
+            disabled || (calc(true), setState());
+          });
+          hasInit = true;
+        }
+      }
+
+      setOptions(options);
+      if (!disabled) {
+        init();
+      }
+      $window.on('resize', window.throttle(function() {
+        init();
+      }, 200));
+      return {
+        setOptions: setOptions,
+        refresh: function() {
+          calc(true, { animation: false }); setState();
+        }
+      };
+    }
+    $.fn.affix = affix;
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function toc(options) {
+      var $root = this, $window = $(window), $scrollTarget, $scroller, $tocUl = $('<ul class="toc toc--ellipsis"></ul>'), $tocLi, $headings, $activeLast, $activeCur,
+        selectors = 'h1,h2,h3', container = 'body', scrollTarget = window, scroller = 'html, body', disabled = false,
+        headingsPos, scrolling = false, hasRendered = false, hasInit = false;
+
+      function setOptions(options) {
+        var _options = options || {};
+        _options.selectors && (selectors = _options.selectors);
+        _options.container && (container = _options.container);
+        _options.scrollTarget && (scrollTarget = _options.scrollTarget);
+        _options.scroller && (scroller = _options.scroller);
+        _options.disabled !== undefined && (disabled = _options.disabled);
+        $headings = $(container).find(selectors).filter('[id]');
+        $scrollTarget = $(scrollTarget);
+        $scroller = $(scroller);
+      }
+      function calc() {
+        headingsPos = [];
+        $headings.each(function() {
+          headingsPos.push(Math.floor($(this).position().top));
+        });
+      }
+      function setState(element, disabled) {
+        var scrollTop = $scrollTarget.scrollTop(), i;
+        if (disabled || !headingsPos || headingsPos.length < 1) { return; }
+        if (element) {
+          $activeCur = element;
+        } else {
+          for (i = 0; i < headingsPos.length; i++) {
+            if (scrollTop >= headingsPos[i]) {
+              $activeCur = $tocLi.eq(i);
+            } else {
+              $activeCur || ($activeCur = $tocLi.eq(i));
+              break;
+            }
+          }
+        }
+        $activeLast && $activeLast.removeClass('active');
+        ($activeLast = $activeCur).addClass('active');
+      }
+      function render() {
+        if(!hasRendered) {
+          $root.append($tocUl);
+          $headings.each(function() {
+            var $this = $(this);
+            $tocUl.append($('<li></li>').addClass('toc-' + $this.prop('tagName').toLowerCase())
+              .append($('<a></a>').text($this.text()).attr('href', '#' + $this.prop('id'))));
+          });
+          $tocLi = $tocUl.children('li');
+          $tocUl.on('click', 'a', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+            scrolling = true;
+            setState($this.parent());
+            $scroller.scrollToAnchor($this.attr('href'), 400, function() {
+              scrolling = false;
+            });
+          });
+        }
+        hasRendered = true;
+      }
+      function init() {
+        var interval, timeout;
+        if(!hasInit) {
+          render(); calc(); setState(null, scrolling);
+          // run calc every 100 millisecond
+          interval = setInterval(function() {
+            calc();
+          }, 100);
+          timeout = setTimeout(function() {
+            clearInterval(interval);
+          }, 45000);
+          window.pageLoad.then(function() {
+            setTimeout(function() {
+              clearInterval(interval);
+              clearTimeout(timeout);
+            }, 3000);
+          });
+          $scrollTarget.on('scroll', function() {
+            disabled || setState(null, scrolling);
+          });
+          $window.on('resize', window.throttle(function() {
+            if (!disabled) {
+              render(); calc(); setState(null, scrolling);
+            }
+          }, 100));
+        }
+        hasInit = true;
+      }
+
+      setOptions(options);
+      if (!disabled) {
+        init();
+      }
+      $window.on('resize', window.throttle(function() {
+        init();
+      }, 200));
+      return {
+        setOptions: setOptions
+      };
+    }
+    $.fn.toc = toc;
+  });
+})();
+/*(function () {
+
+})();*/
+</script><script>
+  /* toc must before affix, since affix need to konw toc' height. */(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  var TOC_SELECTOR = window.TEXT_VARIABLES.site.toc.selectors;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $window = $(window);
+    var $articleContent = $('.js-article-content');
+    var $tocRoot = $('.js-toc-root'), $col2 = $('.js-col-aside');
+    var toc;
+    var tocDisabled = false;
+    var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+    var hasToc = $articleContent.find(TOC_SELECTOR).length > 0;
+
+    function disabled() {
+      return $col2.css('display') === 'none' || !hasToc;
+    }
+
+    tocDisabled = disabled();
+
+    toc = $tocRoot.toc({
+      selectors: TOC_SELECTOR,
+      container: $articleContent,
+      scrollTarget: hasSidebar ? '.js-page-main' : null,
+      scroller: hasSidebar ? '.js-page-main' : null,
+      disabled: tocDisabled
+    });
+
+    $window.on('resize', window.throttle(function() {
+      tocDisabled = disabled();
+      toc && toc.setOptions({
+        disabled: tocDisabled
+      });
+    }, 100));
+
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $window = $(window), $pageFooter = $('.js-page-footer');
+    var $pageAside = $('.js-page-aside');
+    var affix;
+    var tocDisabled = false;
+    var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+
+    affix = $pageAside.affix({
+      offsetBottom: $pageFooter.outerHeight(),
+      scrollTarget: hasSidebar ? '.js-page-main' : null,
+      scroller: hasSidebar ? '.js-page-main' : null,
+      scroll: hasSidebar ? $('.js-page-main').children() : null,
+      disabled: tocDisabled
+    });
+
+    $window.on('resize', window.throttle(function() {
+      affix && affix.setOptions({
+        disabled: tocDisabled
+      });
+    }, 100));
+
+    window.pageAsideAffix = affix;
+  });
+})();
+</script>
+    </div>
+    <script>(function () {
+  var $root = document.getElementsByClassName('root')[0];
+  if (window.hasEvent('touchstart')) {
+    $root.dataset.isTouch = true;
+    document.addEventListener('touchstart', function(){}, false);
+  }
+})();
+</script>
+  </body>
+</html>
+
