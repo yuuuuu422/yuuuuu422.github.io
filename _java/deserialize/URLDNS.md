@@ -49,6 +49,16 @@ public class Demo1 {
 
 ## 漏洞分析
 
+```
+Gadget Chain:(JDK8)
+  HashMap.readObject()
+    JDK8->HashMap.putVal();JDK7->HashMap.putForCreate()
+      HashMap.hash()
+        URL.hashCode()
+          URLStreamHandler.hashCode()
+            URLStreamHandler.getHostAddress()   
+```
+
 关于hash表的基础也就不在这过多介绍了，简单来说hash表就是根据**键**（Key）而直接访问在内存储存位置的数据结构，而由于key的数据类型不同，我们会有不同的**散列函数**`hashcode()`处理key来获得一个index值,当index最后落在同一个位置时，就会引起hash冲突，不过这不在我们的讨论范围内。
 
 那么看看针对URL类型的key，java是怎么处理`hashcode()`

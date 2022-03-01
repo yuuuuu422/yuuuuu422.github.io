@@ -21,7 +21,7 @@ date: 2022-01-15T23:37:11+08:00
 | invariant     | 不变量                         |                   |
 | semantics     | 语义学                         |                   |
 | rotate        | 旋转                           |                   |
-|               |                                |                   |
+| threshold     | 阀值、临界点                   |                   |
 
 
 

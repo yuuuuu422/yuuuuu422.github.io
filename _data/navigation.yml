@@ -48,19 +48,21 @@ header:
       fr-LU   : *FR
       # @end locale config
     url: /about.html
-  # - titles:
-  #     # @start locale config
-  #     en      : &EN       Java
-  #     en-GB   : *EN
-  #     en-US   : *EN
-  #     en-CA   : *EN
-  #     en-AU   : *EN
-  #     zh-Hans : &ZH_HANS  编程
-  #     zh      : *ZH_HANS
-  #     zh-CN   : *ZH_HANS
-  #     zh-SG   : *ZH_HANS
-  #     # @end locale config
-  #   url: /java/fundation/Classloader
+
+
+  - titles:
+      # @start locale config
+      en      : &EN       Java
+      en-GB   : *EN
+      en-US   : *EN
+      en-CA   : *EN
+      en-AU   : *EN
+      zh-Hans : &ZH_HANS  编程
+      zh      : *ZH_HANS
+      zh-CN   : *ZH_HANS
+      zh-SG   : *ZH_HANS
+      # @end locale config
+    url: /java
     
 java:
   - title:      Foudation
@@ -73,11 +75,26 @@ java:
         url:    /java/fundation/Reflection
       - title:  Rmi
         url:    /java/fundation/Rmi      
+      - title:  Agent
+        url:    /java/fundation/Agent
   - title:      deserialize
     children:
-      - title: preknowledge
-        url:   /java/deserialize/preknowledge
       - title: URLDNS
         url:   /java/deserialize/URLDNS
       - title: CommonsCollections
         url:   /java/deserialize/CommonsCollections
+      - title: 7u21
+        url:   /java/deserialize/7u21
+      - title: 8u20
+        url:   /java/deserialize/8u20
+      - title: Shiro
+        url:   /java/deserialize/Shiro
+      - title: Fastjson
+        url:   /java/deserialize/Fastjson
+  - title:      VUL-Reproduce
+    children:
+      - title: Rmi-JNDI-Attack
+        url:   /java/VUL-Reproduce/Rmi_Jndi_Attack
+
+  - title:      Memory Shell
+  

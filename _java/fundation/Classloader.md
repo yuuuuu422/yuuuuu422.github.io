@@ -1,6 +1,5 @@
 ---
 title: Classcloader
-permalink: /java/fundation/Classloader
 ---
 
 ## 类从编译到执行的过程
@@ -291,10 +290,6 @@ public class TestUrlClassLoader {
     }
 }
 ```
-
-## 总结
-
-ClassLoader在java安全中还是占了很大的比重，在后面的反射，agent，内存马等技术中都需要用到它，目前来看java还只是露出冰山一角，更多的未知在等着我们。
 
 
 

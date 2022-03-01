@@ -1,13 +1,6 @@
 ---
 title: Rmi
-permalink: /java/fundation/Rmi
 ---
-
-## 前言
-
-从这里开始将进入反序列化篇，预计可能得有10多篇总结吧，也是站在前人的肩膀上。
-
-而RMI作为反序列化的跳板，(RMI的传输是基于序列化机制)工作原理当然是需要掌握的，这一章只是单纯对其实现上做一个简单介绍，后续会和反序列化攻击结合起来。
 
 ## 概述
 
@@ -50,9 +43,9 @@ public  interface Hello extends Remote {
 }
 ```
 
-有定义在“remote interface”，即继承了Remote的接口中的方法，才可以被远程调用。
+只有继承了**Remote**的接口中的方法，才可以被远程调用。
 
-由于远程调用的本质依旧是 " 网络通信 " . 而网络通信是经常出现异常的 . 因此 , 继承 `Remote` 接口的接口的所有方法必须要抛出 `RemoteException` 异常 . 事实上 , `RemoteException` 也是继承于 `IOException` 。
+由于远程调用的本质依旧是 " 网络通信 " . 而网络通信是经常出现异常的 . 因此 , 继承 **Remote** 接口的接口的所有方法必须要抛出 `RemoteException` 异常 . 事实上 , `RemoteException` 也是继承于 `IOException` 。
 
 ### 接口实现
 

@@ -1,6 +1,5 @@
 ---
 title: Reflection
-permalink: /java/fundation/Reflection
 ---
 
 ## 前言

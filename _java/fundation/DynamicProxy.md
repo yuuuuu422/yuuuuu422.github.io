@@ -1,6 +1,5 @@
 ---
 title: DynamicProxy
-permalink: /java/fundation/DynamicProxy
 ---
 
 ## 前沿
