@@ -7,9 +7,9 @@ permalink: /java/deserialize/CommonsCollections
 
 ![image-20220222213434139](../../assets/images/image-20220222213434139.png)
 
+>在程序分析中，一般把漏洞切入点称为『 source 』，不过本文用『 kick - off 』代替，后面的分析会更换称谓。
 
-
-再回头看看java反序列化三要素
+看看java反序列化三要素
 
 1. 『kick-off』 gadget ==> 寻找重写readobject的类
 2. chain gadget        ==> 将『kick-off』 gadget 和 『sink』gadget连接起来

