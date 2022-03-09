@@ -73,10 +73,14 @@ java:
         url:    /java/fundation/DynamicProxy
       - title:  Reflection
         url:    /java/fundation/Reflection
+      - title:  CommandExec
+        url:    /java/fundation/CommandExec
       - title:  Rmi
         url:    /java/fundation/Rmi      
       - title:  Agent
         url:    /java/fundation/Agent
+      - title: CTFInJava
+        url:   /java/fundation/CTFInJava
   - title:      deserialize
     children:
       - title: URLDNS
@@ -95,6 +99,11 @@ java:
     children:
       - title: Rmi-JNDI-Attack
         url:   /java/VUL-Reproduce/Rmi_Jndi_Attack
+      - title: Spring
+        url:   /java/VUL-Reproduce/Spring
+      - title: Dubbo
+
+      
 
   - title:      Memory Shell
   
