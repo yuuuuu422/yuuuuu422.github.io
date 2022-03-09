@@ -118,11 +118,11 @@ sharing:
 ## => Comments
 ##############################
 comments:
-  provider: "disqus"
+  provider: custom
 
   ## Disqus
   disqus:
-    shortname: "theoyu"
+    shortname: theoyu
 
   ## Gitalk
   # please refer to https://github.com/gitalk/gitalk for more info.
