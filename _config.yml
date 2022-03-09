@@ -16,6 +16,7 @@
 
 ## => Site Settings
 ##############################
+JEKYLL_ENV: production jekyll build
 text_skin: ocean # "default" (default), "dark", "forest", "ocean", "chocolate", "orange"
 highlight_theme: default # "default" (default), "tomorrow", "tomorrow-night", "tomorrow-night-eighties", "tomorrow-night-blue", "tomorrow-night-bright"
 url     : https://theoyu.top

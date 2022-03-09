@@ -51,5 +51,12 @@
       {%- assign _license_data = _data_license[_license] -%}
     {%- endif -%}
     <div class="article__license">{%- include article/footer/license.html license=_license_data -%}</div>
-  {%- endif -%}
+    <script src="https://utteranc.es/client.js"
+    repo="https://github.com/yuuuuu422/yuuuuu422.github.io"
+    issue-term="pathname"
+    theme="github-light"
+    crossorigin="anonymous"
+    async>
+</script>
+    {%- endif -%}
 </footer>
