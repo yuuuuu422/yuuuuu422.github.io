@@ -1,5 +1,6 @@
 ---
 title: Agent
+key: Agent
 ---
 
 ## 介绍

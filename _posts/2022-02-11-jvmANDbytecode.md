@@ -1,5 +1,6 @@
 ---
 title: 浅谈jvm和字节码
+key:  浅谈jvm和字节码
 tags: bytecode
 ---
 

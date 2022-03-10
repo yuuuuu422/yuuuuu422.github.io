@@ -1,5 +1,6 @@
 ---
 title: "Laravel Debug mode RCE"
+key:  "Laravel Debug mode RCE"
 date: 2021-06-01T22:24:32+08:00
 toc: On
 tags: VUL-Reproduce

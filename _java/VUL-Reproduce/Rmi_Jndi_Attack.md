@@ -1,5 +1,6 @@
 ---
 title: Rmi-JNDI-Attack
+key: Rmi-JNDI-Attack
 ---
 
 ## Rmi源码

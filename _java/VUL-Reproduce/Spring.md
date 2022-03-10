@@ -1,5 +1,6 @@
 ---
 title: Spring
+key: Spring
 ---
 
 ## SpEL

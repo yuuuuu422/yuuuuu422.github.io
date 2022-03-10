@@ -1,5 +1,6 @@
 ---
 title: "CS61B学习指南"
+key:  "CS61B学习指南"
 date: 2022-01-13T23:37:11+08:00
 toc: On
 draft: On

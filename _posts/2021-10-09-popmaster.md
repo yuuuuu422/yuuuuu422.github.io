@@ -1,11 +1,10 @@
 ---
 title : popMaster
-date: 2021-10-09T23:30:20+08:00
+key:  popMaster
+tags: ctf
 ---
 
 强网杯popmaster这题一直耿耿于怀，用正则毕竟不是作者的本意。刚好在看静态分析这块，纯理论实在太难顶，就再重新揣摩揣摩。
-
-<!--more-->
 
 [php-parser](https://github.com/nikic/PHP-Parser)是一项用PHP编写的PHP解释器，可以把php代码转化为AST，以利于我们静态分析，在回到这道题之前，先简单了解一下php-parser的用法。
 
@@ -189,7 +188,7 @@ class PrintNodeVisitor extends  NodeVisitorAbstract{
 }
 ```
 
-这里我们需要直接返回一个`print($a)` 的结点，也就是
+这里我们需要直接返回一个`print($a)` 的结点，也就是
 
 ```php
 var_dump($node->exprs[0]->name); //"name"
@@ -512,4 +511,3 @@ class Father{
 总的来说还是感谢师傅分享了这样一篇文章，收获良多，也希望自己今后多总结思考，毕竟ctf的乐趣不也在于此吗？
 
 ***参考**：[pop_master的花式解题思路](https://www.freebuf.com/articles/web/279680.html)
-

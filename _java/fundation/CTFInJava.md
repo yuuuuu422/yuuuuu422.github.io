@@ -1,5 +1,6 @@
 ---
 title: java中的CTF
+key: java中的CTF
 ---
 
 ## 前言

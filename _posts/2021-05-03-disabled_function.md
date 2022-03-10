@@ -1,5 +1,6 @@
 ---
 title: "利用LD_PRELOAD绕过disable_function"
+key:  "利用LD_PRELOAD绕过disable_function"
 date: 2021-05-03T10:24:32+08:00
 tags: ctf
 ---

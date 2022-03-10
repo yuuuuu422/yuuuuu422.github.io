@@ -1,5 +1,6 @@
 ---
 title: Rmi
+key: Rmi
 ---
 
 ## 概述

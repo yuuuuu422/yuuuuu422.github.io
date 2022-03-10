@@ -1,4 +1,5 @@
 ---
 title: Shiro
+key: Shiro
 ---
 

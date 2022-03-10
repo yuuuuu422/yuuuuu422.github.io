@@ -1,5 +1,6 @@
 ---
 title: Fastjson 
+key: Fastjson
 ---
 
 ![image-20220228174758885](../../assets/images/image-20220228174758885.png)

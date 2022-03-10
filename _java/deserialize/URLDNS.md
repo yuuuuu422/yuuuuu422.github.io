@@ -1,6 +1,6 @@
 ---
 title: URLDNS
-permalink: /java/deserialize/URLDNS
+key: URLDNS
 ---
 
 ## 前言

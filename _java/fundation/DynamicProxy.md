@@ -1,5 +1,6 @@
 ---
 title: DynamicProxy
+key: DynamicProxy
 ---
 
 ## 前沿

@@ -1,5 +1,6 @@
 ---
 title: Welcome
+key: Welcome
 ---
 
 你好👋，欢迎来到 Theoyu 记录 Java 安全相关学习的小屋。

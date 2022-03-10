@@ -1,5 +1,6 @@
 ---
 title: 记一次Agent之旅
+key:  记一次Agent之旅
 tag: bytecode
 ---
 

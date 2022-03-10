@@ -1,5 +1,6 @@
 ---
 title: 简单学习java并发
+key:  简单学习java并发
 date: 2022-01-04T21:30:20+08:00
 Toc: On
 ---

@@ -1,6 +1,6 @@
 ---
 title: CommonsCollections
-permalink: /java/deserialize/CommonsCollections
+key: CommonsCollections
 ---
 
 ## 写在前面
