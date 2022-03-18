@@ -1,5 +1,0 @@
----
-title: Shiro
-key: Shiro
----
-

