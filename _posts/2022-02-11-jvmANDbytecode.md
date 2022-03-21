@@ -1,5 +1,5 @@
 ---
-title: 浅谈jvm和字节码
+title: 学习jvm和字节码
 key:  20220211
 tags: bytecode
 ---
