@@ -60,8 +60,8 @@ key: page-about
 ┌──┤ MORE ├─────────▰▰▰
 │
 ├─▣ 🪐 Cybersecurity Enthusiast
-├─▣ 📌 Golang and php 
-├─▣ 🌊 Learning ☕️ security and IAST
+├─▣ 📌 Java && Go 
+├─▣ 🌊 Learning semi-auto Code-Audit 🥲 
 ├─▣ 🌀 Reinventing wheels at free time
 │
 └───────────────────────────────▰▰▰
