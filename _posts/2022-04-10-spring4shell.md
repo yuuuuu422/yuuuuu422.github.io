@@ -402,11 +402,11 @@ http://localhost:8080/login5?username=theoyu&class.module.classLoader.resources.
 
 Spring官方做了两点限制，一是把黑名单改为了白名单：要求`pd.getName`必须是以『Name』结尾，而是返回的类型不能为`classLoader`类型。
 
-![image-20220421191637423](../../../../Library/Application Support/typora-user-images/image-20220421191637423.png)
+![image-20220421191637423](https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421234356.png)
 
 Tomcat则直接把获取resources的方法给改成了`return null`。
 
-![image-20220421190048440](../../../../Library/Application Support/typora-user-images/image-20220421190048440.png)
+![image-20220421190048440](https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421234400.png)
 
 如果还想进一步绕过的话，可以通过 ... 如果我知道的话 ...
 
