@@ -29,7 +29,7 @@ Servlet、Filter 、Listener ：
 
 > Tomcat中Web应用中获取的request.getServletContext是ApplicationContextFacade对象。该对象对ApplicationContext进行了封装，而ApplicationContext实例中又包含了StandardContext实例，所以当request存在的时候我们可以通过反射来获取StandardContext对象
 
-#### 没有request对象的时候
+### 没有request对象的时候
 
 1、不存在request的时候从currentThread中的ContextClassLoader中获取（适用Tomcat 8，9）
 
@@ -41,18 +41,18 @@ Servlet、Filter 、Listener ：
 
 ## 内存马的分类
 
-更具内存马的实现技术来分类将内存马分为三类：
+根据内存马的实现技术来分类将内存马分为三类：
 
-1、基于动态添加Servlet组件的内存马
+### 基于动态添加Servlet组件的内存马
 
-servlet
+#### servlet
 
 >- 1、首先通过反射，从request中获取Tomcat中控制Web应用的Context（StandardContext对象），上文中有提到获取StandardContext获取的方式，这里因为是jsp来实现的，所以可以直接拿到request，所以就利用上文提到的第一种方法，通过反射即可获取到Tomcat下的StrandardContext对象，下面也是同理。
 >- 2、注册一个Servlet对象并重写其Service方法，在其中实现命令执行并通过response返回
 >- 3、创建Wrapper对象并利用各个船舰的Servlet来初始化
 >- 4、为Wrapper添加路由映射
 
-filter
+#### filter
 
 >- 1、首先通过反射，从request中获取Tomcat中控制Web应用的Context（StandardContext对象）
 >- 2、利用获取的上下文StandardContext对象获取filterconfigs对象
@@ -60,16 +60,14 @@ filter
 >- 4、创建FilterDef对象并利用刚刚创建的Filter对象来初始化，并新建一个FilterMap对象，为创建的FilterDef对象添加URL映射
 >- 5、利用创建FilterConfig对象并使用刚刚创建的FilterDef对象初始化，最后将其加入FilterConfigs里面，等待filterChain.dofilter调用
 
-##### Listener
+#### Listener
 
 1. 首先通过反射，从request中获取Tomcat中控制Web应用的Context（StandardContext对象）
 2. 创建一个ServletRequestListener对象并重写其requestDestroyed方法，在其中实现命令执行并通过response回显.
 3. 将创建的ServletRequestListener对象通过StandardContext添加到事件监听中去
 
-
-
-2、基于动态添加框架组件的内存马
+### 基于动态添加框架组件的内存马
 
 这里说到的框架有很多，spring、springboot、weblogic等
 
-3、基于Javaagent和Javassist技术的内存马
+### 基于Javaagent和Javassist技术的内存马
