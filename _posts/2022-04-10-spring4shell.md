@@ -130,7 +130,7 @@ JavaBean的核心处理抽象类，包含set、get等处理逻辑实现以及 **
 2. `AbstractNestablePropertyAccessor`中可递归处理请求，和内省机制结合可越过前面不存在set方法的属性。
 3. `BeanWrapperImpl.setValue()`可通过反射对一个存在set方法的属性设置其值。
 
-其实现在，我们的意图已经很明显了，从class属性一路延伸，找到一个可以利用的属性。
+其实现在，我们的意图已经很明显了，即使class属性不存在`WriteMethod`，我们也可以通过内省和递归调用的机制，从class属性一路延伸，通过`class.xxx.xxx.xxx`，找到一个可以利用的属性。
 
 ## CVE-2010-1622是如何做的？
 
@@ -285,7 +285,7 @@ class.classLoader.resources.context.parent.pipeline.first.suffix=.jsp
 
 ## 为何需要JDK9？
 
-至此，其实答案也算比较明了了，CVE-2010-1622后Spring采用了黑名单限制了`class.classLoader`，而JDK9引入了[ Module](https://blog.csdn.net/charles_neil/article/details/114460702) 机制，可以通过`class.module.classLoader`绕过黑名单。
+至此，其实答案也算比较明了了，CVE-2010-1622后Spring采用了黑名单限制了`class.classLoader`，而JDK9引入了[ Module](https://blog.csdn.net/charles_neil/article/details/114460702) 机制，可以通过`class.module.classLoader`绕过黑名单，CVE-2022-22965 本质上就是 CVE-2010-1622上 的一个绕过。
 
 ## Array.set 的一个误区
 
@@ -345,7 +345,7 @@ public class User {
 
 实际上除了Array类型，Map、Set类型也同样可以直接赋值：
 
-![image-20220421182917229](../../../../Library/Application Support/typora-user-images/image-20220421182917229.png)
+![image-20220421182917229](https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220422190501.png)
 
  我认为这应该只是对特定类型的一种补充，但有不少文章都把这个特性纳入到了最后的属性注入上去，这是我不太能理解的点，因为目前来看我们利用的属性还没有需要用到这个特性的。
 
