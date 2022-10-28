@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-10-28T11:45:07+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Theoyu</title><subtitle>Be cool,but also be warm.
-</subtitle><author><name>Theoyu</name><email>zeyu.ou@foxmail.com</email></author><entry><title type="html">告别北京</title><link href="http://localhost:4000/2022/essay/leaveBJ" rel="alternate" type="text/html" title="告别北京" /><published>2022-07-29T00:00:00+08:00</published><updated>2022-07-29T00:00:00+08:00</updated><id>http://localhost:4000/2022/essay/leaveBJ</id><content type="html" xml:base="http://localhost:4000/2022/essay/leaveBJ"><![CDATA[<!--more-->
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://theoyu.top/feed.xml" rel="self" type="application/atom+xml" /><link href="https://theoyu.top/" rel="alternate" type="text/html" /><updated>2022-10-28T20:03:12+08:00</updated><id>https://theoyu.top/feed.xml</id><title type="html">Theoyu</title><subtitle>Be cool,but also be warm.
+</subtitle><author><name>Theoyu</name><email>zeyu.ou@foxmail.com</email></author><entry><title type="html">告别北京</title><link href="https://theoyu.top/2022/essay/leaveBJ" rel="alternate" type="text/html" title="告别北京" /><published>2022-07-29T00:00:00+08:00</published><updated>2022-07-29T00:00:00+08:00</updated><id>https://theoyu.top/2022/essay/leaveBJ</id><content type="html" xml:base="https://theoyu.top/2022/essay/leaveBJ"><![CDATA[<!--more-->
 
 <p>大一的时候，我最喜欢听的歌就是那吾克热的『 飘向北方 』。记得有一次被教官点上去表演才艺，我一时头热，就选择清唱了这首，那场面，你可以想想多尴尬。不过意外的是效果好像还行，至少我室友是这么说的。</p>
 
@@ -25,7 +25,7 @@
 
 <p>未来是怎么样？谁知道呢，做好当下吧。</p>
 
-<p><strong>So , Where is the next station?</strong></p>]]></content><author><name>Theoyu</name></author><category term="essay" /><category term="essay" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Confluence 漏洞分析</title><link href="http://localhost:4000/2022/codeaudit/Confluence%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90" rel="alternate" type="text/html" title="Confluence 漏洞分析" /><published>2022-06-08T00:00:00+08:00</published><updated>2022-06-08T00:00:00+08:00</updated><id>http://localhost:4000/2022/codeaudit/Confluence%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90</id><content type="html" xml:base="http://localhost:4000/2022/codeaudit/Confluence%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><![CDATA[<p>FROM CVE-2021-26084 TO  CVE-2022-26134 ,Bypass Sandbox And Inject Memory Shell</p>
+<p><strong>So , Where is the next station?</strong></p>]]></content><author><name>Theoyu</name></author><category term="essay" /><category term="essay" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Confluence 漏洞分析</title><link href="https://theoyu.top/2022/codeaudit/Confluence%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90" rel="alternate" type="text/html" title="Confluence 漏洞分析" /><published>2022-06-08T00:00:00+08:00</published><updated>2022-06-08T00:00:00+08:00</updated><id>https://theoyu.top/2022/codeaudit/Confluence%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90</id><content type="html" xml:base="https://theoyu.top/2022/codeaudit/Confluence%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><![CDATA[<p>FROM CVE-2021-26084 TO  CVE-2022-26134 ,Bypass Sandbox And Inject Memory Shell</p>
 
 <!--more-->
 
@@ -433,11 +433,11 @@ o.newInstance();
         <span class="n">o</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
 </code></pre></div></div>
 
-<p>只是单纯的回显shell，就不演示了，可以自己考虑做哥斯拉的内存shell</p>]]></content><author><name>Theoyu</name></author><category term="codeAudit" /><category term="VUL-Reproduce" /><category term="JAVA" /><summary type="html"><![CDATA[FROM CVE-2021-26084 TO CVE-2022-26134 ,Bypass Sandbox And Inject Memory Shell]]></summary></entry><entry><title type="html">SmartBi V10.5代码审计</title><link href="http://localhost:4000/2022/codeaudit/SmartBi-V10.5%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1" rel="alternate" type="text/html" title="SmartBi V10.5代码审计" /><published>2022-06-06T00:00:00+08:00</published><updated>2022-06-06T00:00:00+08:00</updated><id>http://localhost:4000/2022/codeaudit/SmartBi%20V10.5%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1</id><content type="html" xml:base="http://localhost:4000/2022/codeaudit/SmartBi-V10.5%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1"><![CDATA[<p>通往 Shell 灵魂的通道是 Pre-Auth RCE —— 张爱玲</p>
+<p>只是单纯的回显shell，就不演示了，可以自己考虑做哥斯拉的内存shell</p>]]></content><author><name>Theoyu</name></author><category term="codeAudit" /><category term="VUL-Reproduce" /><category term="JAVA" /><summary type="html"><![CDATA[FROM CVE-2021-26084 TO CVE-2022-26134 ,Bypass Sandbox And Inject Memory Shell]]></summary></entry><entry><title type="html">SmartBi V10.5代码审计</title><link href="https://theoyu.top/2022/codeaudit/SmartBi-V10.5%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1" rel="alternate" type="text/html" title="SmartBi V10.5代码审计" /><published>2022-06-06T00:00:00+08:00</published><updated>2022-06-06T00:00:00+08:00</updated><id>https://theoyu.top/2022/codeaudit/SmartBi%20V10.5%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1</id><content type="html" xml:base="https://theoyu.top/2022/codeaudit/SmartBi-V10.5%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1"><![CDATA[<p>通往 Shell 灵魂的通道是 Pre-Auth RCE —— 张爱玲</p>
 
 <!--more-->
 
-<p>这种东西怎么能放出来🐶</p>]]></content><author><name>Theoyu</name></author><category term="codeAudit" /><category term="VUL-Reproduce" /><summary type="html"><![CDATA[通往 Shell 灵魂的通道是 Pre-Auth RCE —— 张爱玲]]></summary></entry><entry><title type="html">『区块链技术与应用』学习笔记</title><link href="http://localhost:4000/2022/cource/BitCoin" rel="alternate" type="text/html" title="『区块链技术与应用』学习笔记" /><published>2022-05-13T00:00:00+08:00</published><updated>2022-05-13T00:00:00+08:00</updated><id>http://localhost:4000/2022/cource/BitCoin</id><content type="html" xml:base="http://localhost:4000/2022/cource/BitCoin"><![CDATA[<!--more-->
+<p>这种东西怎么能放出来🐶</p>]]></content><author><name>Theoyu</name></author><category term="codeAudit" /><category term="VUL-Reproduce" /><summary type="html"><![CDATA[通往 Shell 灵魂的通道是 Pre-Auth RCE —— 张爱玲]]></summary></entry><entry><title type="html">『区块链技术与应用』学习笔记</title><link href="https://theoyu.top/2022/cource/BitCoin" rel="alternate" type="text/html" title="『区块链技术与应用』学习笔记" /><published>2022-05-13T00:00:00+08:00</published><updated>2022-05-13T00:00:00+08:00</updated><id>https://theoyu.top/2022/cource/BitCoin</id><content type="html" xml:base="https://theoyu.top/2022/cource/BitCoin"><![CDATA[<!--more-->
 
 <h1 id="比特币">比特币</h1>
 
@@ -978,7 +978,7 @@ o.newInstance();
       <p>维基百科：<a href="https://zh.wikipedia.org/wiki/%E5%88%86%E5%8F%89#%E8%BD%AF%E5%88%86%E5%8F%89">软分叉</a> <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
   </ol>
-</div>]]></content><author><name>Theoyu</name></author><category term="cource" /><category term="cource" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">浅谈Java预编译</title><link href="http://localhost:4000/2022/Java-Prepstatementared" rel="alternate" type="text/html" title="浅谈Java预编译" /><published>2022-04-27T00:00:00+08:00</published><updated>2022-04-27T00:00:00+08:00</updated><id>http://localhost:4000/2022/Java-Prepstatementared</id><content type="html" xml:base="http://localhost:4000/2022/Java-Prepstatementared"><![CDATA[<p>之前面试问到了预编译相关的问题，感觉回答的不是很好，通过几个例子深入学习一下。</p>
+</div>]]></content><author><name>Theoyu</name></author><category term="cource" /><category term="cource" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">浅谈Java预编译</title><link href="https://theoyu.top/2022/Java-Prepstatementared" rel="alternate" type="text/html" title="浅谈Java预编译" /><published>2022-04-27T00:00:00+08:00</published><updated>2022-04-27T00:00:00+08:00</updated><id>https://theoyu.top/2022/Java-Prepstatementared</id><content type="html" xml:base="https://theoyu.top/2022/Java-Prepstatementared"><![CDATA[<p>之前面试问到了预编译相关的问题，感觉回答的不是很好，通过几个例子深入学习一下。</p>
 
 <!--more-->
 
@@ -1148,7 +1148,7 @@ o.newInstance();
 
 <p>直接增删改查的表名列名不行，同理像类似order by的地方，需要用到列名来排序的地方同样不行。</p>
 
-<p>针对上述几种情况，比较好的方式还是使用白名单，毕竟表名和列名大多时候是我们提前确定的值。</p>]]></content><author><name>Theoyu</name></author><category term="JAVA" /><summary type="html"><![CDATA[之前面试问到了预编译相关的问题，感觉回答的不是很好，通过几个例子深入学习一下。]]></summary></entry><entry><title type="html">『Linux高性能服务器编程』读书笔记</title><link href="http://localhost:4000/2022/cource/LinuxServerProgram" rel="alternate" type="text/html" title="『Linux高性能服务器编程』读书笔记" /><published>2022-04-26T00:00:00+08:00</published><updated>2022-04-26T00:00:00+08:00</updated><id>http://localhost:4000/2022/cource/LinuxServerProgram</id><content type="html" xml:base="http://localhost:4000/2022/cource/LinuxServerProgram"><![CDATA[<!--more-->
+<p>针对上述几种情况，比较好的方式还是使用白名单，毕竟表名和列名大多时候是我们提前确定的值。</p>]]></content><author><name>Theoyu</name></author><category term="JAVA" /><summary type="html"><![CDATA[之前面试问到了预编译相关的问题，感觉回答的不是很好，通过几个例子深入学习一下。]]></summary></entry><entry><title type="html">『Linux高性能服务器编程』读书笔记</title><link href="https://theoyu.top/2022/cource/LinuxServerProgram" rel="alternate" type="text/html" title="『Linux高性能服务器编程』读书笔记" /><published>2022-04-26T00:00:00+08:00</published><updated>2022-04-26T00:00:00+08:00</updated><id>https://theoyu.top/2022/cource/LinuxServerProgram</id><content type="html" xml:base="https://theoyu.top/2022/cource/LinuxServerProgram"><![CDATA[<!--more-->
 
 <p>大二买了这本书一直没看，最近有Linux这门课还是简单记录了一下（纯纯API翻译小能手）。感觉虽然涉及的知识比较全，但是一些我觉得比较重要的点却是一笔带过了，不过好在在APUE和UNP中都找到了答案。</p>
 
@@ -2056,7 +2056,7 @@ o.newInstance();
 
 <p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002642.png" alt="image-20220506142214571" /></p>
 
-<p>Reactor 模式和Proactor 模式的主要区别在于：对于工作线程而言，Reactor 发来的是已就绪的读写事件，而Proactor 发来的是已经完成的读写事件（异步I/O的处理在内核中完成，同步I/O在主线程自己实现）</p>]]></content><author><name>Theoyu</name></author><category term="cource" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">CVE-2022-22965 SpringFramework 漏洞分析</title><link href="http://localhost:4000/2022/spring4shell" rel="alternate" type="text/html" title="CVE-2022-22965 SpringFramework 漏洞分析" /><published>2022-04-10T00:00:00+08:00</published><updated>2022-04-10T00:00:00+08:00</updated><id>http://localhost:4000/2022/spring4shell</id><content type="html" xml:base="http://localhost:4000/2022/spring4shell"><![CDATA[<!--more-->
+<p>Reactor 模式和Proactor 模式的主要区别在于：对于工作线程而言，Reactor 发来的是已就绪的读写事件，而Proactor 发来的是已经完成的读写事件（异步I/O的处理在内核中完成，同步I/O在主线程自己实现）</p>]]></content><author><name>Theoyu</name></author><category term="cource" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">CVE-2022-22965 SpringFramework 漏洞分析</title><link href="https://theoyu.top/2022/spring4shell" rel="alternate" type="text/html" title="CVE-2022-22965 SpringFramework 漏洞分析" /><published>2022-04-10T00:00:00+08:00</published><updated>2022-04-10T00:00:00+08:00</updated><id>https://theoyu.top/2022/spring4shell</id><content type="html" xml:base="https://theoyu.top/2022/spring4shell"><![CDATA[<!--more-->
 
 <h2 id="前言">前言</h2>
 
@@ -2483,7 +2483,7 @@ class.module.classLoader.DefaultAssertionStatus=x
     <p><a href="http://rui0.cn/archives/1158">SpringMVC框架任意代码执行漏洞(CVE-2010-1622)分析</a></p>
   </li>
   <li><a href="https://blog.csdn.net/charles_neil/article/details/114460702">JDK9 - Module</a></li>
-</ul>]]></content><author><name>Theoyu</name></author><category term="VUL-Reproduce" /><category term="JAVA" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">学校里的花开了</title><link href="http://localhost:4000/2022/essay/TheFlower" rel="alternate" type="text/html" title="学校里的花开了" /><published>2022-04-09T00:00:00+08:00</published><updated>2022-04-09T00:00:00+08:00</updated><id>http://localhost:4000/2022/essay/TheFlower</id><content type="html" xml:base="http://localhost:4000/2022/essay/TheFlower"><![CDATA[<!--more-->
+</ul>]]></content><author><name>Theoyu</name></author><category term="VUL-Reproduce" /><category term="JAVA" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">学校里的花开了</title><link href="https://theoyu.top/2022/essay/TheFlower" rel="alternate" type="text/html" title="学校里的花开了" /><published>2022-04-09T00:00:00+08:00</published><updated>2022-04-09T00:00:00+08:00</updated><id>https://theoyu.top/2022/essay/TheFlower</id><content type="html" xml:base="https://theoyu.top/2022/essay/TheFlower"><![CDATA[<!--more-->
 
 <div><iframe class="extensions extensions--audio" width="330" height="86" src="//music.163.com/outchain/player?type=2&amp;id=41632486&amp;auto=1&amp;height=66" frameborder="no" border="0" marginwidth="0" marginheight="0">
 </iframe>
@@ -2535,7 +2535,7 @@ class.module.classLoader.DefaultAssertionStatus=x
 
 <blockquote>
   <p>再过一个春天，就是该分别的时候了</p>
-</blockquote>]]></content><author><name>Theoyu</name></author><category term="essay" /><category term="essay" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">study springMVC 基础配置</title><link href="http://localhost:4000/2022/springMVC01" rel="alternate" type="text/html" title="study springMVC 基础配置" /><published>2022-04-06T00:00:00+08:00</published><updated>2022-04-06T00:00:00+08:00</updated><id>http://localhost:4000/2022/springMVC01</id><content type="html" xml:base="http://localhost:4000/2022/springMVC01"><![CDATA[<p>接触java以来web相关的东西都是springboot开箱即用，基本上没有配置过springMVC，打算还是从0到1接触接触。</p>
+</blockquote>]]></content><author><name>Theoyu</name></author><category term="essay" /><category term="essay" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">study springMVC 基础配置</title><link href="https://theoyu.top/2022/springMVC01" rel="alternate" type="text/html" title="study springMVC 基础配置" /><published>2022-04-06T00:00:00+08:00</published><updated>2022-04-06T00:00:00+08:00</updated><id>https://theoyu.top/2022/springMVC01</id><content type="html" xml:base="https://theoyu.top/2022/springMVC01"><![CDATA[<p>接触java以来web相关的东西都是springboot开箱即用，基本上没有配置过springMVC，打算还是从0到1接触接触。</p>
 
 <!--more-->
 
@@ -3095,7 +3095,7 @@ This is Login Page , Hello ${user.username}
 <ul>
   <li><a href="https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/mvc.html">Web MVC framework</a></li>
   <li><a href="http://c.biancheng.net/spring_mvc/process.html">Spring MVC执行流程 </a></li>
-</ul>]]></content><author><name>Theoyu</name></author><category term="JAVA" /><summary type="html"><![CDATA[接触java以来web相关的东西都是springboot开箱即用，基本上没有配置过springMVC，打算还是从0到1接触接触。]]></summary></entry><entry><title type="html">记一次和室友曲折的靶场实战</title><link href="http://localhost:4000/2022/ack123" rel="alternate" type="text/html" title="记一次和室友曲折的靶场实战" /><published>2022-03-28T00:00:00+08:00</published><updated>2022-03-28T00:00:00+08:00</updated><id>http://localhost:4000/2022/ack123</id><content type="html" xml:base="http://localhost:4000/2022/ack123"><![CDATA[<!--more-->
+</ul>]]></content><author><name>Theoyu</name></author><category term="JAVA" /><summary type="html"><![CDATA[接触java以来web相关的东西都是springboot开箱即用，基本上没有配置过springMVC，打算还是从0到1接触接触。]]></summary></entry><entry><title type="html">记一次和室友曲折的靶场实战</title><link href="https://theoyu.top/2022/ack123" rel="alternate" type="text/html" title="记一次和室友曲折的靶场实战" /><published>2022-03-28T00:00:00+08:00</published><updated>2022-03-28T00:00:00+08:00</updated><id>https://theoyu.top/2022/ack123</id><content type="html" xml:base="https://theoyu.top/2022/ack123"><![CDATA[<!--more-->
 
 <h2 id="0x00-前言">0x00 前言</h2>
 
