@@ -1,0 +1,2195 @@
+<!DOCTYPE html><html lang="en">
+  <head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>『Linux高性能服务器编程』读书笔记 - Theoyu</title>
+
+<meta name="description" content="">
+<link rel="canonical" href="http://localhost:4000/2022/cource/LinuxServerProgram"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+
+<meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
+
+<meta name="theme-color" content="#ffffff">
+
+<link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+<!-- end favicons snippet --><link rel="stylesheet" href="/assets/css/main.css"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.1/css/all.css" ><!-- start custom head snippets -->
+
+<!-- end custom head snippets -->
+<script>(function() {
+  window.isArray = function(val) {
+    return Object.prototype.toString.call(val) === '[object Array]';
+  };
+  window.isString = function(val) {
+    return typeof val === 'string';
+  };
+
+  window.hasEvent = function(event) {
+    return 'on'.concat(event) in window.document;
+  };
+
+  window.isOverallScroller = function(node) {
+    return node === document.documentElement || node === document.body || node === window;
+  };
+
+  window.isFormElement = function(node) {
+    var tagName = node.tagName;
+    return tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA';
+  };
+
+  window.pageLoad = (function () {
+    var loaded = false, cbs = [];
+    window.addEventListener('load', function () {
+      var i;
+      loaded = true;
+      if (cbs.length > 0) {
+        for (i = 0; i < cbs.length; i++) {
+          cbs[i]();
+        }
+      }
+    });
+    return {
+      then: function(cb) {
+        cb && (loaded ? cb() : (cbs.push(cb)));
+      }
+    };
+  })();
+})();
+(function() {
+  window.throttle = function(func, wait) {
+    var args, result, thisArg, timeoutId, lastCalled = 0;
+
+    function trailingCall() {
+      lastCalled = new Date;
+      timeoutId = null;
+      result = func.apply(thisArg, args);
+    }
+    return function() {
+      var now = new Date,
+        remaining = wait - (now - lastCalled);
+
+      args = arguments;
+      thisArg = this;
+
+      if (remaining <= 0) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+        lastCalled = now;
+        result = func.apply(thisArg, args);
+      } else if (!timeoutId) {
+        timeoutId = setTimeout(trailingCall, remaining);
+      }
+      return result;
+    };
+  };
+})();
+(function() {
+  var Set = (function() {
+    var add = function(item) {
+      var i, data = this._data;
+      for (i = 0; i < data.length; i++) {
+        if (data[i] === item) {
+          return;
+        }
+      }
+      this.size ++;
+      data.push(item);
+      return data;
+    };
+
+    var Set = function(data) {
+      this.size = 0;
+      this._data = [];
+      var i;
+      if (data.length > 0) {
+        for (i = 0; i < data.length; i++) {
+          add.call(this, data[i]);
+        }
+      }
+    };
+    Set.prototype.add = add;
+    Set.prototype.get = function(index) { return this._data[index]; };
+    Set.prototype.has = function(item) {
+      var i, data = this._data;
+      for (i = 0; i < data.length; i++) {
+        if (this.get(i) === item) {
+          return true;
+        }
+      }
+      return false;
+    };
+    Set.prototype.is = function(map) {
+      if (map._data.length !== this._data.length) { return false; }
+      var i, j, flag, tData = this._data, mData = map._data;
+      for (i = 0; i < tData.length; i++) {
+        for (flag = false, j = 0; j < mData.length; j++) {
+          if (tData[i] === mData[j]) {
+            flag = true;
+            break;
+          }
+        }
+        if (!flag) { return false; }
+      }
+      return true;
+    };
+    Set.prototype.values = function() {
+      return this._data;
+    };
+    return Set;
+  })();
+
+  window.Lazyload = (function(doc) {
+    var queue = {js: [], css: []}, sources = {js: {}, css: {}}, context = this;
+    var createNode = function(name, attrs) {
+      var node = doc.createElement(name), attr;
+      for (attr in attrs) {
+        if (attrs.hasOwnProperty(attr)) {
+          node.setAttribute(attr, attrs[attr]);
+        }
+      }
+      return node;
+    };
+    var end = function(type, url) {
+      var s, q, qi, cbs, i, j, cur, val, flag;
+      if (type === 'js' || type ==='css') {
+        s = sources[type], q = queue[type];
+        s[url] = true;
+        for (i = 0; i < q.length; i++) {
+          cur = q[i];
+          if (cur.urls.has(url)) {
+            qi = cur, val = qi.urls.values();
+            qi && (cbs = qi.callbacks);
+            for (flag = true, j = 0; j < val.length; j++) {
+              cur = val[j];
+              if (!s[cur]) {
+                flag = false;
+              }
+            }
+            if (flag && cbs && cbs.length > 0) {
+              for (j = 0; j < cbs.length; j++) {
+                cbs[j].call(context);
+              }
+              qi.load = true;
+            }
+          }
+        }
+      }
+    };
+    var load = function(type, urls, callback) {
+      var s, q, qi, node, i, cur,
+        _urls = typeof urls === 'string' ? new Set([urls]) : new Set(urls), val, url;
+      if (type === 'js' || type ==='css') {
+        s = sources[type], q = queue[type];
+        for (i = 0; i < q.length; i++) {
+          cur = q[i];
+          if (_urls.is(cur.urls)) {
+            qi = cur;
+            break;
+          }
+        }
+        val = _urls.values();
+        if (qi) {
+          callback && (qi.load || qi.callbacks.push(callback));
+          callback && (qi.load && callback());
+        } else {
+          q.push({
+            urls: _urls,
+            callbacks: callback ? [callback] : [],
+            load: false
+          });
+          for (i = 0; i < val.length; i++) {
+            node = null, url = val[i];
+            if (s[url] === undefined) {
+              (type === 'js' ) && (node = createNode('script', { src: url }));
+              (type === 'css') && (node = createNode('link', { rel: 'stylesheet', href: url }));
+              if (node) {
+                node.onload = (function(type, url) {
+                  return function() {
+                    end(type, url);
+                  };
+                })(type, url);
+                (doc.head || doc.body).appendChild(node);
+                s[url] = false;
+              }
+            }
+          }
+        }
+      }
+    };
+    return {
+      js: function(url, callback) {
+        load('js', url, callback);
+      },
+      css: function(url, callback) {
+        load('css', url, callback);
+      }
+    };
+  })(this.document);
+})();
+</script><script>
+  (function() {
+    var TEXT_VARIABLES = {
+      version: '2.2.6',
+      sources: {
+        font_awesome: 'https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.1/css/all.css',
+        jquery: 'https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js',
+        leancloud_js_sdk: '//cdn.jsdelivr.net/npm/leancloud-storage@3.13.2/dist/av-min.js',
+        chart: 'https://cdn.bootcss.com/Chart.js/2.7.2/Chart.bundle.min.js',
+        gitalk: {
+          js: 'https://cdn.bootcss.com/gitalk/1.2.2/gitalk.min.js',
+          css: 'https://cdn.bootcss.com/gitalk/1.2.2/gitalk.min.css'
+        },
+        valine: 'https://unpkg.com/valine/dist/Valine.min.js',
+        mathjax: 'https://cdn.bootcss.com/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML',
+        mermaid: 'https://cdn.bootcss.com/mermaid/8.0.0-rc.8/mermaid.min.js'
+      },
+      site: {
+        toc: {
+          selectors: 'h1,h2,h3,h4'
+        }
+      },
+      paths: {
+        search_js: '/assets/search.js'
+      }
+    };
+    window.TEXT_VARIABLES = TEXT_VARIABLES;
+  })();
+</script>
+</head>
+  <body>
+    <div class="root" data-is-touch="false">
+      <div class="layout--page js-page-root"><div class="page__main js-page-main page__viewport has-aside cell cell--auto">
+
+      <div class="page__main-inner"><div class="page__header d-print-none"><header class="header"><div class="main">
+      <div class="header__title">
+        <div class="header__brand"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="152px" height="150px" viewBox="0 0 152 150" enable-background="new 0 0 152 150" xml:space="preserve">  <image id="image0" width="152" height="150" x="0" y="0"
+    href="data:image/png;base64,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" />
+</svg>
+<a title="Be cool,but also be warm.
+" href="/">Theoyu</a></div><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></div><nav class="navigation">
+        <ul><li class="navigation__item"><a href="/archive.html">Archive</a></li><li class="navigation__item"><a href="/about.html">About</a></li><li class="navigation__item"><a href="/cs">CS</a></li><li><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></li></ul>
+      </nav></div>
+  </header>
+</div><div class="page__content"><div class ="main"><div class="grid grid--reverse">
+
+              <div class="col-aside d-print-none js-col-aside"><aside class="page__aside js-page-aside"><div class="toc-aside js-toc-root"></div>
+</aside></div>
+
+              <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
+
+<!-- end custom main top snippet -->
+<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>『Linux高性能服务器编程』读书笔记</h1></header></div><meta itemprop="headline" content="『Linux高性能服务器编程』读书笔记"><div class="article__info clearfix"><ul class="right-col menu"><li><i class="fas fa-user"></i> <span>Theoyu</span></li><li><i class="far fa-calendar-alt"></i> <span>Apr 26, 2022</span>
+            </li><li><i class="far fa-eye"></i> <span class="js-pageview" data-page-key="Linux高性能服务器编程读书笔记">0</span> views</li></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-04-26T00:00:00+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
+
+<!-- end custom article top snippet -->
+<div class="article__content" itemprop="articleBody"><!--more-->
+
+<p>大二买了这本书一直没看，最近有Linux这门课还是简单记录了一下（纯纯API翻译小能手）。感觉虽然涉及的知识比较全，但是一些我觉得比较重要的点却是一笔带过了，不过好在在APUE和UNP中都找到了答案。</p>
+
+<h2 id="基础api">基础API</h2>
+
+<h3 id="socket基础api">socket基础API</h3>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//1. 主机序和网络字节序转换</span>
+<span class="cp">#include</span> <span class="cpf">&lt;netinet/in.h&gt;</span><span class="cp">
+</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">int</span> <span class="nf">htonl</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">int</span> <span class="n">hostlong</span><span class="p">);</span> <span class="c1">// host to network long</span>
+<span class="kt">unsigned</span> <span class="kt">short</span> <span class="kt">int</span> <span class="nf">htons</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">short</span> <span class="kt">int</span> <span class="n">hostlong</span><span class="p">);</span> <span class="c1">// host to network short</span>
+
+<span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">int</span> <span class="nf">ntonhl</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">int</span> <span class="n">netlong</span><span class="p">);</span><span class="c1">//network to host long </span>
+<span class="kt">unsigned</span> <span class="kt">short</span> <span class="kt">int</span> <span class="nf">ntohs</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">short</span> <span class="kt">int</span> <span class="n">netlong</span><span class="p">);</span><span class="c1">//network to host short </span>
+  
+<span class="c1">//2. socket地址</span>
+<span class="c1">//2.1 通用socket结构 sockaddr</span>
+<span class="k">struct</span> <span class="nc">sockaddr</span>
+  <span class="p">{</span>
+    <span class="n">sa_family_t</span> <span class="n">sa_family</span><span class="p">;</span>	<span class="cm">/* 地址族，AF_XXX  */</span>
+    <span class="kt">char</span> <span class="n">sa_data</span><span class="p">[</span><span class="mi">14</span><span class="p">];</span>		<span class="cm">/* Address data.包含目的地址和端口信息  */</span>
+  <span class="p">};</span>
+<span class="cm">/*
+  sa_family: 2字节地址族：
+    AF_UNIX :UNIX本地地址族
+    AF_INET :TCP/IPv4地址族
+    AF_INET6:TCP/IPv6地址族
+*/</span>
+
+<span class="c1">//2.2 专用socket结构 sockaddr_in，与前者相比把port和addr分开存储到了两个变量中</span>
+<span class="k">struct</span> <span class="nc">sockaddr_in</span>
+  <span class="p">{</span>
+    <span class="n">sa_family_t</span> <span class="n">sin_family</span><span class="p">;</span>     <span class="cm">/* 地址族，AF_XXX  */</span>
+    <span class="n">in_port_t</span> <span class="n">sin_port</span><span class="p">;</span>			<span class="cm">/* 端口号，要用网络字节序*/</span>
+    <span class="k">struct</span> <span class="nc">in_addr</span> <span class="n">sin_addr</span><span class="p">;</span>	<span class="cm">/* IPv4地址结构体，见↓ */</span>
+  <span class="p">};</span>
+<span class="c1">//存储IPv4的数据结构</span>
+<span class="k">struct</span> <span class="nc">in_addr</span>
+  <span class="p">{</span>
+    <span class="kt">uint32_t</span> <span class="n">s_addr</span><span class="p">;</span> <span class="cm">/* IPv4地址，要用网络字节序表示*/</span>
+  <span class="p">};</span>
+
+
+<span class="c1">//3. IP地址转换函数</span>
+<span class="cp">#include</span> <span class="cpf">&lt;arpa/inet.h&gt;</span><span class="cp">
+</span><span class="c1">// 将点分十进制字符串的IPv4地址, 转换为网络字节序整数表示的IPv4地址. 失败返回INADDR_NONE</span>
+<span class="n">in_addr_t</span> <span class="nf">inet_addr</span><span class="p">(</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">strptr</span><span class="p">);</span>
+<span class="cm">/*例如：*/</span> <span class="n">sockaddr_in</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span><span class="o">=</span><span class="n">inet_addr</span><span class="p">(</span><span class="s">"127.0.0.1"</span><span class="p">);</span>
+ 
+<span class="c1">// 功能相同不过转换结果存在 inp指向的结构体中. 成功返回1 反之返回0</span>
+<span class="kt">int</span> <span class="nf">inet_aton</span><span class="p">(</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">cp</span><span class="p">,</span> <span class="k">struct</span> <span class="nc">in_addr</span><span class="o">*</span> <span class="n">inp</span><span class="p">);</span>
+
+<span class="c1">//将IPv4地址转化为点分十进制IP地址字符串，和上述两个函数功能相反</span>
+<span class="c1">//该函数使用一个内部静态存储转化结果，函数返回值指向该静态内存，所以此函数是不可重入的！</span>
+<span class="kt">char</span><span class="o">*</span> <span class="nf">inet_ntoa</span><span class="p">(</span><span class="k">struct</span> <span class="nc">in_addr</span> <span class="n">in</span><span class="p">);</span> 
+
+<span class="c1">//以下函数也能完成前面3个函数同样的功能，并且同时适用于IPv4和IPv6</span>
+<span class="c1">//将点分十进制或者十六进制IP地址转化为网络字节序表示的地址</span>
+<span class="kt">int</span> <span class="nf">inet_pton</span><span class="p">(</span><span class="kt">int</span> <span class="n">af</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">src</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="n">dst</span><span class="p">);</span>
+<span class="cm">/*
+  af:地址族 AF_INET or AF_INET6
+  src:IP地址
+  dst:转化的地址
+  成功返回1，失败返回0并设置errno
+*/</span>
+<span class="c1">//和上述功能相反</span>
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="nf">inet_ntop</span><span class="p">(</span><span class="kt">int</span> <span class="n">af</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span><span class="o">*</span>  <span class="n">src</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">dst</span><span class="p">,</span> <span class="n">socklen_t</span> <span class="n">cnt</span><span class="p">);</span>
+<span class="cm">/*
+  前三者和inet_pton一样，src和dst交换了顺序
+  cnt指定目标存储单元大小，可用INET_ADDRSTRLEN, INET6_ADDRSTRLEN表示
+*/</span>
+
+<span class="c1">//4. 创建socket</span>
+<span class="kt">int</span> <span class="nf">socket</span><span class="p">(</span><span class="kt">int</span> <span class="n">domain</span><span class="p">,</span> <span class="kt">int</span> <span class="n">type</span><span class="p">,</span> <span class="kt">int</span> <span class="n">protocol</span><span class="p">);</span>
+<span class="cm">/*
+  domain:底层协议族
+    PF_UNIX :UNIX本地协议族
+    PF_INET :TCP/IPv4协议族
+    PF_INET6:TCP/IPv6协议族
+    (地址族和协议族事实上是一一对应的，在前UNIX时代有所区分，在Linux上已完全兼容，不过为了规范区分一下也行)
+  type:通讯类型(服务类型)
+    SOCK_STREAM(流服务，TCP协议)
+    SOCK_DGRAM(数据报服务，UDP类型)
+  protocol:通常为0
+  socket调用成功时返回一个socket文件描述符，失败返回-1并设置errno
+*/</span>
+
+<span class="c1">//5. 命名socket</span>
+<span class="c1">//作用于服务端，将一个socket和socket地址进行绑定称为给socket命名</span>
+<span class="kt">int</span> <span class="nf">bind</span><span class="p">(</span><span class="kt">int</span> <span class="n">socket</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="nc">sockaddr</span><span class="o">*</span> <span class="n">my_addr</span><span class="p">,</span> <span class="n">socklen_t</span> <span class="n">addrlen</span><span class="p">);</span>
+<span class="cm">/*
+  socket:创建socket返回的文件描述符
+  my_addr:my_addr所指的socket地址
+  addrlen:socket结构长度
+  成功返回0，失败返回-1
+*/</span>
+
+<span class="c1">//6. 监听socket</span>
+<span class="c1">//作用于服务端，监听socket所绑定的套接字</span>
+<span class="kt">int</span> <span class="nf">listen</span><span class="p">(</span><span class="kt">int</span> <span class="n">socket</span><span class="p">,</span> <span class="kt">int</span> <span class="n">backlog</span><span class="p">);</span>
+<span class="cm">/*
+  socket:创建socket返回的文件描述符
+  backlog表示队列最大的长度
+  如果长度超过backlog，客户端会受到ECONNREFUSED错误信息
+*/</span><span class="n">ok</span><span class="sc">'l'</span><span class="n">l</span>
+
+<span class="c1">//7. 接受连接</span>
+<span class="c1">//作用于服务端，响应连接请求，建立与Client连接</span>
+<span class="kt">int</span> <span class="nf">accept</span><span class="p">(</span><span class="kt">int</span> <span class="n">sockfd</span><span class="p">,</span> <span class="k">struct</span> <span class="nc">sockaddr</span><span class="o">*</span> <span class="n">addr</span><span class="p">,</span> <span class="n">socklen_t</span><span class="o">*</span> <span class="n">addrlen</span><span class="p">)</span>
+<span class="cm">/*
+  sockdf:创建socket返回的文件描述符
+  addr:获取被接收的远程socket地址
+  addrlen：addr长度
+  成功返回用于和Client数据传输的文件描述符
+*/</span>
+
+<span class="c1">//8. 发起连接</span>
+<span class="c1">//作用于Client程序，连接到某个服务端</span>
+<span class="kt">int</span> <span class="n">connect</span><span class="p">(</span><span class="kt">int</span> <span class="n">sockfd</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="nc">sockaddr</span> <span class="o">*</span> <span class="n">serv_addr</span><span class="p">,</span> <span class="n">socklen_t</span> <span class="n">addrlen</span><span class="p">);</span>
+<span class="cm">/*
+  sockdf:创建socket返回的文件描述符
+  serv_addr:被连接服务器信息
+  addrlen:serv_addr长度
+  成功返回0 失败返回-1
+*/</span>
+
+<span class="c1">//9. 关闭socket</span>
+<span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="kt">int</span> <span class="nf">close</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">);</span>
+<span class="c1">//并非立即关闭, 将socket的引用计数-1, 当fd的引用计数为0, 才是真正的关闭。(多进程fork调用会是父进程socket引用+1)</span>
+
+<span class="c1">// 立即关闭</span>
+<span class="cp">#include</span> <span class="cpf">&lt;sys/socket.h&gt;</span><span class="cp">
+</span><span class="kt">int</span> <span class="n">shutdown</span><span class="p">(</span><span class="kt">int</span> <span class="n">sockfd</span><span class="p">,</span> <span class="kt">int</span> <span class="n">howto</span><span class="p">)</span>
+<span class="cm">/*
+第二个参数为可选值 
+  SHUT_RD 关闭读, socket的接收缓冲区的数据全部丢弃
+  SHUT_WR 关闭写 socket的发送缓冲区全部在关闭前发送出去
+  SHUT_RDWR 同时关闭读和写
+  成功返回0 失败为-1 设置errno
+*/</span>
+</code></pre></div></div>
+
+<h3 id="数据读写">数据读写</h3>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//1. TCP数据读写</span>
+<span class="cp">#include</span><span class="cpf">&lt;sys/socket.h&gt;</span><span class="cp">
+</span><span class="kt">ssize_t</span> <span class="nf">recv</span><span class="p">(</span><span class="kt">int</span> <span class="n">sockfd</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">len</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">);</span>
+<span class="cm">/*
+  buf:指向接受信息的缓冲区指针
+  len:buf缓冲区大小
+  flags:一般设置为0，特殊情况查表
+  返回成功接受的字节，0表示已关闭，失败返回-1
+*/</span>
+<span class="kt">ssize_t</span> <span class="nf">send</span><span class="p">(</span><span class="kt">int</span> <span class="n">sockfd</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">len</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">);</span>
+<span class="cm">/*
+  buf:指向需要发送信息的缓冲区指针
+  len:buf缓冲区大小
+  flags:一般设置为0，特殊情况查表
+  返回成功发送的字节数，失败返回-1
+*/</span>
+
+<span class="c1">//2. UDP数据读写  </span>
+<span class="cp">#include</span> <span class="cpf">&lt;sys/socket.h&gt;</span><span class="cp">
+</span><span class="c1">// 由于UDP不保存状态, 每次发送数据都需要 加入目标地址.</span>
+<span class="c1">// 如果实现有建立连接，把最后两项设为null，等同于TCP数据读写</span>
+<span class="kt">ssize_t</span> <span class="nf">recvfrom</span><span class="p">(</span><span class="kt">int</span> <span class="n">sockfd</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">len</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">,</span> <span class="k">struct</span> <span class="nc">sockaddr</span><span class="o">*</span> <span class="n">src_addr</span><span class="p">,</span> <span class="n">socklen_t</span><span class="o">*</span> <span class="n">addrlen</span><span class="p">);</span>
+<span class="kt">ssize_t</span> <span class="nf">sendto</span><span class="p">(</span><span class="kt">int</span> <span class="n">sockfd</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span><span class="o">*</span> <span class="n">buf</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">len</span><span class="p">,</span> <span class="n">ing</span> <span class="n">flags</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="nc">sockaddr</span><span class="o">*</span> <span class="n">dest_addr</span><span class="p">,</span> <span class="n">socklen_t</span> <span class="n">addrlen</span><span class="p">);</span>
+
+<span class="c1">//3. 通用数据读写</span>
+<span class="cp">#inclued &lt;sys/socket.h&gt;
+</span><span class="kt">ssize_t</span> <span class="nf">recvmsg</span><span class="p">(</span><span class="kt">int</span> <span class="n">sockfd</span><span class="p">,</span> <span class="k">struct</span> <span class="nc">msghdr</span><span class="o">*</span> <span class="n">msg</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">);</span>
+<span class="kt">ssize_t</span> <span class="nf">sendmsg</span><span class="p">(</span><span class="kt">int</span> <span class="n">sockfd</span><span class="p">,</span> <span class="k">struct</span> <span class="nc">msghdr</span><span class="o">*</span> <span class="n">msg</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">);</span>
+<span class="c1">//msg参数是msghdr结构体类型的指针，msghdr结构体类型定义如下：</span>
+<span class="k">struct</span> <span class="nc">msghdr</span>
+<span class="p">{</span>
+  <span class="c1">//指向socket地址结构变量, 对于TCP连接需要设置为NULL</span>
+  <span class="kt">void</span><span class="o">*</span> <span class="n">msg_name</span><span class="p">;</span>                                            
+  <span class="n">socklen_t</span> <span class="n">msg_namelen</span><span class="p">;</span>
+	
+<span class="cm">/*
+  分散的内存块
+  对于 recvmsg来说数据被读取后将存放在这里的块内存中, 内存的位置和长度由msg_iov指向的数组指定, 称为分散读(scatter read)
+  对于sendmsg而言, msg_iovlen块的分散内存中的数据将一并发送称为集中写(gather write);
+*/</span>
+  <span class="k">struct</span> <span class="nc">iovec</span><span class="o">*</span> <span class="n">msg_iov</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">msg_iovlen</span><span class="p">;</span> <span class="cm">/* 分散内存块的数量*/</span>
+  <span class="kt">void</span><span class="o">*</span> <span class="n">msg_control</span><span class="p">;</span> <span class="cm">/* 指向辅助数据的起始位置*/</span>
+  <span class="n">socklen_t</span> <span class="n">msg_controllen</span><span class="p">;</span> <span class="cm">/* 辅助数据的大小*/</span>
+  <span class="kt">int</span> <span class="n">msg_flags</span><span class="p">;</span> <span class="cm">/* 复制函数的flags参数, 并在调用过程中更新*/</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nc">iovec</span>
+<span class="p">{</span>
+  <span class="kt">void</span><span class="o">*</span> <span class="n">iov_base</span> <span class="cm">/* 内存起始地址*/</span>
+  <span class="kt">size_t</span> <span class="n">iov_len</span> <span class="cm">/* 这块内存长度*/</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="其他api">其他API</h3>
+
+<h3 id="网络信息api">网络信息API</h3>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//1. 获取主机信息</span>
+<span class="cp">#include</span> <span class="cpf">&lt;netdb.h&gt;</span><span class="cp">
+</span><span class="c1">//1.1 通过主机名获取主机信息</span>
+<span class="k">struct</span> <span class="nc">hostent</span><span class="o">*</span> <span class="nf">gethostbyname</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">name</span><span class="p">);</span>
+
+<span class="c1">//1.2 通过ip获取主机完整信息 </span>
+<span class="k">struct</span> <span class="nc">hostent</span><span class="o">*</span> <span class="nf">gethostbyaddr</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span><span class="o">*</span> <span class="n">addr</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">len</span><span class="p">,</span> <span class="kt">int</span> <span class="n">type</span><span class="p">);</span>
+<span class="c1">// type为IP地址类型 AF_INET和AF_INET6</span>
+
+<span class="k">struct</span> <span class="nc">hostent</span>
+<span class="p">{</span>
+  <span class="kt">char</span> <span class="o">*</span><span class="n">h_name</span><span class="p">;</span>			<span class="c1">//主机名</span>
+  <span class="kt">char</span> <span class="o">**</span><span class="n">h_aliases</span><span class="p">;</span>		<span class="c1">//主机别名 可能有多个</span>
+  <span class="kt">int</span> <span class="n">h_addrtype</span><span class="p">;</span>		<span class="c1">//地址组</span>
+  <span class="kt">int</span> <span class="n">h_length</span><span class="p">;</span>			<span class="c1">//地址长度</span>
+  <span class="kt">char</span> <span class="o">**</span><span class="n">h_addr_list</span><span class="p">;</span>		<span class="c1">//按网络字节序列出的主机IP地址列表</span>
+<span class="p">}</span>
+
+<span class="c1">//2. 获取服务信息</span>
+<span class="cp">#include</span> <span class="cpf">&lt;netdb.h&gt;</span><span class="cp">
+</span><span class="c1">//2.1 根据名称获取某个服务的完整信息</span>
+<span class="k">struct</span> <span class="nc">servent</span> <span class="nf">getservbyname</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">name</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">proto</span><span class="p">);</span>
+<span class="c1">//2.2 根据端口号获取服务信息</span>
+<span class="k">struct</span> <span class="nc">servent</span> <span class="nf">getservbyport</span><span class="p">(</span><span class="kt">int</span> <span class="n">port</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">proto</span><span class="p">);</span>
+
+<span class="k">struct</span> <span class="nc">servent</span>
+<span class="p">{</span>
+	<span class="kt">char</span><span class="o">*</span> <span class="n">s_name</span><span class="p">;</span> <span class="cm">/* 服务名称*/</span>
+	<span class="kt">char</span> <span class="o">**</span> <span class="n">s_aliases</span><span class="p">;</span> <span class="cm">/* 服务的别名列表*/</span>
+	<span class="kt">int</span> <span class="n">s_port</span><span class="p">;</span> <span class="cm">/* 端口号*/</span>
+	<span class="kt">char</span><span class="o">*</span> <span class="n">s_proto</span><span class="p">;</span> <span class="cm">/* 服务类型, 通常为TCP或UDP*/</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="高级io函数">高级I/O函数</h2>
+
+<p>不像基础I/O函数那么常用，但在特定的条件下却表现出优秀的性能。</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//创建管道，实现进程间通讯</span>
+<span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="c1">//从fd[1]写入的数据可以从fd[0]读出</span>
+<span class="kt">int</span> <span class="nf">pipe</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+
+<span class="c1">//双向管道</span>
+<span class="cp">#include</span> <span class="cpf">&lt;sys/socket.h&gt;</span><span class="cp">
+</span><span class="kt">int</span> <span class="nf">socketpair</span><span class="p">(</span><span class="kt">int</span> <span class="n">domain</span><span class="p">,</span> <span class="kt">int</span> <span class="n">type</span><span class="p">,</span> <span class="kt">int</span> <span class="n">protocol</span><span class="p">,</span> <span class="kt">int</span> <span class="n">fd</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+
+<span class="c1">//输入重定向</span>
+<span class="c1">//复制一个现有的文件描述符，返回的文件描述符总是取系统当前可用的最小整数值</span>
+<span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="kt">int</span> <span class="nf">dup</span><span class="p">(</span><span class="kt">int</span> <span class="n">oldfd</span><span class="p">);</span>
+
+<span class="c1">//分散读和集中写</span>
+<span class="kt">ssize_t</span> <span class="nf">readv</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="nc">iovec</span><span class="o">*</span> <span class="n">vector</span><span class="p">,</span> <span class="kt">int</span> <span class="n">count</span><span class="p">);</span>
+<span class="kt">ssize_t</span> <span class="nf">writev</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="nc">iovec</span><span class="o">*</span> <span class="n">vector</span><span class="p">,</span> <span class="kt">int</span> <span class="n">count</span><span class="p">);</span>
+
+<span class="k">struct</span> <span class="nc">iovec</span> <span class="p">{</span>
+	<span class="kt">void</span><span class="o">*</span> <span class="n">iov_base</span> <span class="cm">/* 内存起始地址*/</span>
+	<span class="kt">size_t</span> <span class="n">iov_len</span> <span class="cm">/* 这块内存长度*/</span>
+<span class="p">}</span>
+
+<span class="c1">//传输文件</span>
+<span class="cp">#include</span> <span class="cpf">&lt;sys/sendfile.h&gt;</span><span class="cp">
+</span><span class="c1">// offset为指定输入流从哪里开始读, 如果为NULL 则从开头读取</span>
+<span class="kt">ssize_t</span> <span class="nf">sendfile</span><span class="p">(</span><span class="kt">int</span> <span class="n">out_fd</span><span class="p">,</span> <span class="kt">int</span> <span class="n">in_fd</span><span class="p">,</span> <span class="kt">off_t</span><span class="o">*</span> <span class="n">offset</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">count</span><span class="p">);</span>
+<span class="c1">//可以使用writev发送文件，但是sendfile没有分配用户空间的缓存，也没有执行读取文件的操作，效率会高一些。</span>
+
+<span class="c1">//两个文件描述符之间移动数据,零拷贝</span>
+<span class="cp">#include</span> <span class="cpf">&lt;fcntl.h&gt;</span><span class="cp">
+</span><span class="kt">ssize_t</span> <span class="nf">splice</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd_in</span><span class="p">,</span> <span class="n">loff_t</span><span class="o">*</span> <span class="n">off_in</span><span class="p">,</span> <span class="kt">int</span> <span class="n">fd_out</span><span class="p">,</span> <span class="n">loff_t</span><span class="o">*</span> <span class="n">off_out</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">len</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">);</span>
+<span class="c1">//举个例子 echo服务器</span>
+<span class="kt">int</span> <span class="n">connfd</span> <span class="o">=</span> <span class="n">accept</span><span class="p">......;</span>
+<span class="kt">int</span> <span class="n">pipefd</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+<span class="c1">//把connfd上流入的客户端数据定向到管道</span>
+<span class="n">splice</span><span class="p">(</span> <span class="n">connfd</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">pipefd</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">32768</span><span class="p">,</span> <span class="n">SPLICE_F_MORE</span> <span class="o">|</span> <span class="n">SPLICE_F_MOVE</span> <span class="p">);</span>
+<span class="c1">//把管道的输出数据定向到connfd客户连接文件描述符</span>
+<span class="n">splice</span><span class="p">(</span> <span class="n">pipefd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">connfd</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">32768</span><span class="p">,</span> <span class="n">SPLICE_F_MORE</span> <span class="o">|</span> <span class="n">SPLICE_F_MOVE</span> <span class="p">);</span>
+
+<span class="c1">//tee也可以用作数据复制，不过只能用于管道文件描述符</span>
+<span class="kt">ssize_t</span> <span class="nf">tee</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd_in</span><span class="p">,</span> <span class="n">loff_t</span><span class="o">*</span> <span class="n">off_in</span><span class="p">,</span> <span class="kt">int</span> <span class="n">fd_out</span><span class="p">,</span> <span class="n">loff_t</span><span class="o">*</span> <span class="n">off_out</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">len</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h2 id="io复用">I/O复用</h2>
+
+<p>I/O复用使得程序能同时监听多个文件描述符，通常网络程序在下列情况需要使用I/O复用技术。</p>
+
+<ul>
+  <li>客户端程序需要同时处理多个socket 非阻塞connect技术</li>
+  <li>客户端程序同时处理用户输入和网络连接 聊天室程序</li>
+  <li>TCP服务器要同时处理监听socket和连接socket</li>
+  <li>同时处理TCP和UDP请求 - 回射服务器</li>
+  <li>同时监听多个端口, 或者处理多种服务 - xinetd服务器</li>
+</ul>
+
+<p>Linux下实现I/O复用的系统屌用主要有<code class="language-plaintext highlighter-rouge">select</code>, <code class="language-plaintext highlighter-rouge">poll</code>, <code class="language-plaintext highlighter-rouge">epoll</code>。</p>
+
+<p>其实在使用golang的过程中，很多函数都封装了I/O复用，只是我们没有深入到里面去理解。</p>
+
+<h3 id="select">select</h3>
+
+<p>select系统调用可监听算选的文件描述符，并根据文件描述符返回的  <strong>可读、可写、异常</strong> 等事件做出不同的回应。</p>
+
+<p>一个例子，socket接受普通数据和外带数据都处于就绪态，但是前者是可读模式，后者是异常模式：</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">...</span>
+	<span class="kt">int</span> <span class="n">connfd</span> <span class="o">=</span> <span class="n">accept</span><span class="p">(...);</span>
+    <span class="n">fd_set</span> <span class="n">read_fds</span><span class="p">;</span>
+    <span class="n">fd_set</span> <span class="n">exception_fds</span><span class="p">;</span>
+
+    <span class="n">FD_ZERO</span><span class="p">(</span> <span class="o">&amp;</span><span class="n">read_fds</span> <span class="p">);</span>
+    <span class="n">FD_ZERO</span><span class="p">(</span> <span class="o">&amp;</span><span class="n">exception_fds</span> <span class="p">);</span>
+    <span class="k">while</span><span class="p">(</span> <span class="mi">1</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">memset</span><span class="p">(</span> <span class="n">buf</span><span class="p">,</span> <span class="sc">'\0'</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span> <span class="n">buf</span> <span class="p">)</span> <span class="p">);</span>
+        <span class="c1">//每次select前为什么都要重新设置文件描述符</span>
+        <span class="n">FD_SET</span><span class="p">(</span> <span class="n">connfd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">read_fds</span> <span class="p">);</span>
+        <span class="n">FD_SET</span><span class="p">(</span> <span class="n">connfd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">exception_fds</span> <span class="p">);</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span> <span class="n">connfd</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">read_fds</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">exception_fds</span><span class="p">,</span> <span class="nb">NULL</span> <span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span> <span class="s">"select one</span><span class="se">\n</span><span class="s">"</span> <span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="n">ret</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">printf</span><span class="p">(</span> <span class="s">"selection failure</span><span class="se">\n</span><span class="s">"</span> <span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+		<span class="c1">//可读模式</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="n">FD_ISSET</span><span class="p">(</span> <span class="n">connfd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">read_fds</span> <span class="p">)</span> <span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">recv</span><span class="p">(</span> <span class="n">connfd</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span> <span class="n">buf</span> <span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+            <span class="k">if</span><span class="p">(</span> <span class="n">ret</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="n">printf</span><span class="p">(</span> <span class="s">"get %d bytes of normal data: %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span> <span class="p">);</span>
+        <span class="p">}</span>
+        <span class="c1">//异常模式</span>
+        <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">FD_ISSET</span><span class="p">(</span> <span class="n">connfd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">exception_fds</span> <span class="p">)</span> <span class="p">)</span>
+        <span class="p">{</span>
+            <span class="c1">//使用外带数据的读取函数</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">recv</span><span class="p">(</span> <span class="n">connfd</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span> <span class="n">buf</span> <span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">MSG_OOB</span> <span class="p">);</span>
+            <span class="k">if</span><span class="p">(</span> <span class="n">ret</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="n">printf</span><span class="p">(</span> <span class="s">"get %d bytes of oob data: %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span> <span class="p">);</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p>针对上述例子分析：</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//select调用原型</span>
+<span class="cp">#include</span> <span class="cpf">&lt;sys/select.h&gt;</span><span class="cp">
+</span><span class="kt">int</span> <span class="nf">select</span> <span class="p">(</span><span class="kt">int</span> <span class="n">nfds</span><span class="p">,</span> <span class="n">fd_set</span><span class="o">*</span> <span class="n">readfds</span><span class="p">,</span> <span class="n">fd_set</span><span class="o">*</span> <span class="n">writefds</span><span class="p">,</span> <span class="n">fd_set</span><span class="o">*</span> <span class="n">exceptfds</span><span class="p">,</span> <span class="k">struct</span> <span class="nc">timeval</span><span class="o">*</span> <span class="n">timeout</span><span class="p">);</span>
+<span class="cm">/*
+  nfds:被监听的文件描述符总数，通常是select监听的文件描述符最大值+1
+  后三者分别对应可读、可写、异常文件描述符合集，内核通过修改它们来通知哪些文件描述符已就绪。
+  timeval：select超时时间 如果传递0 则为非阻塞, 设置为NULL则为阻塞
+*/</span>
+
+<span class="c1">//fd_set结构体仅仅包含一个整形数组，该数组每个元素的每一位标记一个文件描述符</span>
+<span class="cp">#include</span> <span class="cpf">&lt;sys/select.h&gt;</span><span class="cp">
+</span><span class="n">FD_ZERO</span><span class="p">(</span><span class="n">fd_set</span> <span class="o">*</span><span class="n">fdset</span><span class="p">);</span>        <span class="c1">//清除fdset的所有位</span>
+<span class="n">FD_SET</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span><span class="n">fd_set</span> <span class="o">*</span><span class="n">fdset</span><span class="p">);</span>  <span class="c1">//设置fdset的fd位</span>
+<span class="n">FD_CLR</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span><span class="n">fd_set</span> <span class="o">*</span><span class="n">fdset</span><span class="p">);</span>  <span class="c1">//清除fdset的fd位</span>
+<span class="kt">int</span> <span class="nf">FD_ISSET</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span><span class="n">fd_set</span> <span class="o">*</span><span class="n">fdset</span><span class="p">));</span><span class="err">、</span><span class="c1">//检查fdset的fd位是否被设置</span>
+
+</code></pre></div></div>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">FD_ZERO</span><span class="p">(</span><span class="o">&amp;</span><span class="n">readset</span><span class="p">);</span>
+<span class="n">FD_ZERO</span><span class="p">(</span><span class="o">&amp;</span><span class="n">writeset</span><span class="p">);</span>
+<span class="n">FD_SET</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">readset</span><span class="p">);</span>
+<span class="n">FD_SET</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">readset</span><span class="p">);</span>
+<span class="n">FD_SET</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">writeset</span><span class="p">);</span>
+<span class="n">FD_SET</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">writeset</span><span class="p">);</span>
+<span class="n">select</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">readset</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">writeset</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>对应fd_set图：</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002527.png" alt="image-20220423131007025" /></p>
+
+<p>上面的例子刚开始我有两个疑问：</p>
+
+<ol>
+  <li>为什么select前都要重新设置文件描述符</li>
+  <li>为什么select前设置了FD_SET，之后又用FD_ISSET判断</li>
+</ol>
+
+<p>原因其实就是事件发生后，会重新设置fd_set，没有事件发生的fd位会被清空。</p>
+
+<p>有哪一些事件可以归于可读、可写、异常：</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002533.png" alt="image-20220423132105311" /></p>
+
+<h3 id="poll">poll</h3>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;poll.h&gt;</span><span class="cp">
+</span><span class="kt">int</span> <span class="nf">poll</span><span class="p">(</span><span class="k">struct</span> <span class="nc">pollfd</span><span class="o">*</span> <span class="n">fds</span><span class="p">,</span> <span class="n">nfds_t</span> <span class="n">nfds</span><span class="p">,</span> <span class="kt">int</span> <span class="n">timeout</span><span class="p">);</span>
+<span class="cm">/*
+  fds: pollfd 结构体类型数组,指定文件描述符上发生的可读可写和异常事件
+  nfds：被监听集合fds大小
+  timeout 单位为毫秒 -1 为阻塞, 0 为立即返回
+*/</span>
+<span class="k">struct</span> <span class="nc">pollfd</span>
+<span class="p">{</span>
+	<span class="kt">int</span> <span class="n">fd</span><span class="p">;</span>
+	<span class="kt">short</span> <span class="n">events</span><span class="p">;</span>  <span class="c1">//注册的事件, 告知poll监听fd上的哪些事件</span>
+	<span class="kt">short</span> <span class="n">revents</span><span class="p">;</span> <span class="c1">// 实际发生的事件</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>poll支持的事件类型：</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002555.png" alt="image-20220423152027889" /></p>
+
+<p>结合书上例子用poll写了一个聊天室，感觉用起来的确比select方便一些</p>
+
+<h3 id="epoll">epoll</h3>
+
+<p>epoll底层使用了红黑树，性能方面最好，相对而言也是用的最多的</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//1. 创建epoll实例，在内核中注册一个数据</span>
+<span class="c1">//失败返回-1，成功返回epoll实例描述符</span>
+<span class="kt">int</span> <span class="nf">epoll_create</span><span class="p">(</span><span class="kt">int</span> <span class="n">size</span><span class="p">);</span> <span class="c1">//自从Linux 2.6.8 size参数没有意义，但不能设置为0</span>
+
+<span class="c1">//2. 操作epoll实例，对内核时间表进行增添、删除、修改操作</span>
+<span class="kt">int</span> <span class="nf">epoll_ctl</span><span class="p">(</span><span class="kt">int</span> <span class="n">epfd</span><span class="p">,</span><span class="kt">int</span> <span class="n">op</span><span class="p">,</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span><span class="k">struct</span> <span class="nc">epoll_event</span> <span class="o">*</span><span class="n">event</span><span class="p">);</span>
+<span class="cm">/*
+  epfd：epoll实例描述符
+  fd: 要检测的文件描述符
+  op：需要进行的操作：
+  	EPOLL_CTL_ADD：添加
+  	EPOLL_CTL_DEL：删除
+  	EPOLL_CTL_MOD：修改
+  event：检测文件描述符的具体事件
+*/</span>
+<span class="k">struct</span> <span class="nc">epoll_events</span>
+<span class="p">{</span>
+    <span class="n">_uint32_t</span> <span class="n">events</span><span class="p">;</span> <span class="c1">//epoll事件类型，和poll基本上类似，需要在poll的对应宏基础上加上‘E’，两个额外的事件类型EPOLLET和EPOLLONESHOT</span>
+    <span class="n">epoll_data_t</span> <span class="n">data</span><span class="p">;</span><span class="c1">//union类型，其中的fd需要设置</span>
+<span class="p">}</span>
+
+<span class="c1">//3. 检测epoll实例</span>
+<span class="c1">//成功已就绪的文件描述符个数，失败返回-1</span>
+<span class="kt">int</span> <span class="nf">epoll_wait</span><span class="p">(</span><span class="kt">int</span> <span class="n">epfd</span><span class="p">,</span> <span class="k">struct</span> <span class="nc">epoll_event</span> <span class="o">*</span><span class="n">events</span><span class="p">,</span><span class="kt">int</span> <span class="n">maxevents</span><span class="p">,</span> <span class="kt">int</span> <span class="n">timeout</span><span class="p">);</span>
+<span class="cm">/*
+  epfd:epoll实例的文件描述符
+  events：传出参数，根据epfd从内核事件表中把所有已就绪的事件复制到events结构体数组中
+  maxevents：events结构体数组大小
+  timeout：-1堵塞，大于等于0表示堵塞时间
+*/</span>
+</code></pre></div></div>
+
+<p>epoll和poll最大  差异在于：</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 索引poll返回的就绪文件描述符</span>
+<span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">poll</span><span class="p">(</span><span class="n">fds</span><span class="p">,</span> <span class="n">MAX_EVENT_NUMBER</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+<span class="c1">// 遍历</span>
+<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">MAX_EVENT_NUMBER</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">fds</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">revents</span> <span class="o">&amp;</span> <span class="n">POLLIN</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kt">int</span> <span class="n">sockfd</span> <span class="o">=</span> <span class="n">fds</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">fd</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 索引epoll返回的就绪文件描述符</span>
+<span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">epoll_wait</span><span class="p">(</span><span class="n">epoll_fd</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">MAX_EVENT_NUMBER</span><span class="p">,</span>  <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">ret</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+	<span class="kt">int</span> <span class="n">sockfd</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">data</span><span class="p">.</span><span class="n">fd</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>epoll分LT（Level Trigger）和ET（Edge Trigger）两种模式，LT是默认模式，通知一个事件，程序可能不会马上处理完毕，那么下次还会通告此事件；ET是高效模式，只通知一次，所以必须做完。</p>
+
+<p>对比LT和ET，对于BUFFER_SIZE只有10的情况：</p>
+
+<p>LT：</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002600.png" alt="image-20220425224459784" /></p>
+
+<p>除去换行符出发了4次事件</p>
+
+<p>ET：</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002607.png" alt="image-20220425224728772" /></p>
+
+<p>只触发了一次</p>
+
+<h3 id="三组io复用的比较">三组I/O复用的比较</h3>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002603.png" alt="image-20220425225318528" /></p>
+
+<h2 id="信号">信号</h2>
+
+<blockquote>
+  <p>信号是由用户、系统或者进程发送给用户进程的信息，以通知目标进程某个状态的改变或者系统异常</p>
+</blockquote>
+
+<p>Linu信号可由如下信号条件产生：</p>
+
+<ul>
+  <li>前台进程 <code class="language-plaintext highlighter-rouge">Ctrl+C</code>发送中断进程</li>
+  <li>系统异常。比如浮点异常或者非法内存段异常。</li>
+  <li>系统状态变化。比如alarm定时器引起SIGALRM信号。</li>
+  <li>运行kill命令或调用kill函数</li>
+</ul>
+
+<p>发送信号：</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="kt">int</span> <span class="nf">kill</span><span class="p">(</span><span class="n">pid_t</span> <span class="n">pid</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sig</span><span class="p">);</span>
+<span class="cm">/*
+  pid &gt; 0 发送给PID为pid标识的进程
+  0 发送给本进程组的其他进程
+  -1 发送给进程以外的所有进程, 但发送者需要有对目标进程发送信号的权限
+  &lt; -1 发送给组ID为 -pid 的进程组中的所有成员
+
+   出错信息 EINVAL 无效信号, EPERM 该进程没有权限给任何一个目标进程 ESRCH 目标进程(组) 不存在
+   sig具体在bits/signum.h中
+*/</span>
+</code></pre></div></div>
+
+<p>alarm定时器：使用<code class="language-plaintext highlighter-rouge">alarm</code>函数可设置可以定时器，在未来某个时间定时器会超时，产生<code class="language-plaintext highlighter-rouge">SIGALRM</code>信号，如果忽略或者不捕捉信号，默认动作是终止调用该<code class="language-plaintext highlighter-rouge">alarm</code>函数的进程。</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="nf">alarm</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">seconds</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>信号处理方式：</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 忽略目标信号</span>
+<span class="cp">#define SIG_DFL ((_sighandler_t) 0)
+</span><span class="c1">// 使用信号的默认处理方式</span>
+<span class="cp">#define SIG_IGN ((_sighandler_t) 1)
+</span>
+<span class="c1">//为单独的信号设置处理函数</span>
+<span class="cp">#include</span> <span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="c1">// _handler 指定sig的处理函数</span>
+<span class="n">_sighandler_t</span> <span class="nf">signal</span><span class="p">(</span><span class="kt">int</span> <span class="n">sig</span><span class="p">,</span> <span class="n">__sighandler_t</span> <span class="n">_handler</span><span class="p">)</span>
+
+<span class="kt">int</span> <span class="n">sigaction</span><span class="p">(</span><span class="kt">int</span> <span class="n">sig</span><span class="p">,</span> <span class="k">struct</span> <span class="nc">sigaction</span><span class="o">*</span> <span class="n">act</span><span class="p">,</span> <span class="k">struct</span> <span class="nc">sigaction</span><span class="o">*</span> <span class="n">oact</span><span class="p">);</span>
+<span class="c1">//一个例子</span>
+<span class="kt">void</span> <span class="nf">addsig</span><span class="p">(</span> <span class="kt">int</span> <span class="n">sig</span> <span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">struct</span> <span class="nc">sigaction</span> <span class="n">sa</span><span class="p">;</span>
+    <span class="n">memset</span><span class="p">(</span> <span class="o">&amp;</span><span class="n">sa</span><span class="p">,</span> <span class="sc">'\0'</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span> <span class="n">sa</span> <span class="p">)</span> <span class="p">);</span>
+    <span class="n">sa</span><span class="p">.</span><span class="n">sa_handler</span> <span class="o">=</span> <span class="n">sig_handler</span><span class="p">;</span>
+    <span class="n">sa</span><span class="p">.</span><span class="n">sa_flags</span> <span class="o">|=</span> <span class="n">SA_RESTART</span><span class="p">;</span>
+    <span class="n">sigfillset</span><span class="p">(</span> <span class="o">&amp;</span><span class="n">sa</span><span class="p">.</span><span class="n">sa_mask</span> <span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span> <span class="n">sigaction</span><span class="p">(</span> <span class="n">sig</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sa</span><span class="p">,</span> <span class="nb">NULL</span> <span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>## 定时器</p>
+
+<h3 id="基于升序链表的计时器">基于升序链表的计时器</h3>
+
+<p>详情见<a href="https://github.com/raichen/LinuxServerCodes/blob/master/11/11-2lst_timer.h">书籍源码</a>，升序链表可按照活动时间排序，核心是一个心搏函数，每隔一段时间检测到期的任务。</p>
+
+<h3 id="时间轮-and-时间堆">时间轮 And 时间堆</h3>
+
+<p>🐦🐦🐦</p>
+
+<h2 id="多进程编程">多进程编程</h2>
+
+<p>基础api..：</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fork</span><span class="p">;</span>
+<span class="n">exec</span><span class="p">;</span>
+<span class="n">exit</span><span class="p">;</span>
+<span class="n">wait</span><span class="p">;</span>
+<span class="n">waitpid</span><span class="p">;</span>
+<span class="n">chdir</span><span class="p">;</span><span class="c1">//修改当前工作目录</span>
+</code></pre></div></div>
+
+<h3 id="进程间通信inter-process-communicationipc">进程间通信（Inter-Process Communication，IPC）</h3>
+
+<h4 id="管道-pipe">管道 Pipe</h4>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002612.png" alt="image-20220430153557938" /></p>
+
+<p>管道本身是单向的，可以用两个管道实现双向传输，也可以使用<code class="language-plaintext highlighter-rouge">socketpair</code>来创建双向管道。</p>
+
+<h4 id="信号量-semophore">信号量 semophore</h4>
+
+<p>主要用作进程同步，以确保某一时刻只有一个进程可以拥有资源的独占式访问。</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//1. 创建信号量</span>
+<span class="c1">//创建一个全局唯一的信号量集, 或者获取一个已经存在的信号量集</span>
+<span class="kt">int</span> <span class="nf">semget</span><span class="p">(</span><span class="n">key_t</span> <span class="n">key</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num_sems</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sem_flags</span><span class="p">);</span>
+<span class="cm">/*
+  key:所创建信号集的键值，需要时唯一的非整数
+  num_sens:创建的信号集中的信号量个数，一般为1，若是获取一个已经存在的集合，则为0
+  sem_flags:0666|IPC_CREAT、 IPC_EXCL
+*/</span>
+
+<span class="c1">//2. 信号量初始化</span>
+<span class="kt">int</span> <span class="nf">semctl</span><span class="p">(</span><span class="kt">int</span> <span class="n">sem_id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sem_num</span><span class="p">,</span> <span class="kt">int</span> <span class="n">command</span><span class="p">,</span> <span class="p">...);</span>
+<span class="cm">/*
+  sem_id:semget所返回的信号量标识符
+  sem_num:被操作信号量在信号集中的编号
+  command:如下图
+  ...:command所需的参数，联合数据类型
+*/</span>
+<span class="k">union</span> <span class="n">semun</span>
+<span class="p">{</span>
+	<span class="kt">int</span>              <span class="n">val</span><span class="p">;</span>    <span class="cm">/* Value for SETVAL */</span>
+	<span class="k">struct</span> <span class="nc">semid_ds</span> <span class="o">*</span><span class="n">buf</span><span class="p">;</span>    <span class="cm">/* Buffer for IPC_STAT, IPC_SET */</span>
+	<span class="kt">unsigned</span> <span class="kt">short</span>  <span class="o">*</span><span class="n">array</span><span class="p">;</span>  <span class="cm">/* Array for GETALL, SETALL */</span>
+	<span class="k">struct</span> <span class="nc">seminfo</span>  <span class="o">*</span><span class="n">__buf</span><span class="p">;</span>  <span class="cm">/* Buffer for IPC_INFO
+								(Linux-specific) */</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002616.png" alt="image-20220430182402389" /></p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//3. 操作信号量(PV)</span>
+<span class="kt">void</span> <span class="nf">pv</span><span class="p">(</span><span class="kt">int</span> <span class="n">sem_id</span><span class="p">,</span><span class="kt">int</span> <span class="n">op</span><span class="p">){</span>
+    <span class="k">struct</span> <span class="nc">sembuf</span> <span class="n">sem_b</span><span class="p">;</span>
+    <span class="n">sem_b</span><span class="p">.</span><span class="n">sem_num</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="c1">//信号量编号</span>
+    <span class="n">sem_b</span><span class="p">.</span><span class="n">sem_op</span><span class="o">=</span><span class="n">op</span><span class="p">;</span> <span class="c1">//-1为P操作，1为V操作</span>
+    <span class="n">sem_b</span><span class="p">.</span><span class="n">sem_flg</span><span class="o">=</span><span class="n">SEM_UNDO</span><span class="p">;</span>
+    <span class="c1">// IPC_NOWAIT 无论信号量操作是否成功, 都立即返回</span>
+	<span class="c1">// SEM_UNDO当进程退出的时候, 取消正在进行的semop操作 PV操作系统更新进程的semadj变量</span>
+    <span class="n">semop</span><span class="p">(</span><span class="n">sem_id</span><span class="p">,</span><span class="o">&amp;</span><span class="n">sem_b</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="n">m</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="消息队列-message-queue">消息队列 message queue</h4>
+
+<p>主要用作进程间传递消息。</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//1. 创建消息队列</span>
+<span class="kt">int</span> <span class="nf">msgget</span><span class="p">(</span><span class="n">key_t</span> <span class="n">key</span><span class="p">,</span> <span class="kt">int</span> <span class="n">msgflg</span><span class="p">);</span><span class="c1">//和semget类似，成功返回标识符</span>
+
+<span class="c1">//2. 发送消息</span>
+<span class="c1">//成功返回0，失败返回-1</span>
+<span class="kt">int</span> <span class="nf">msgsnd</span><span class="p">(</span><span class="kt">int</span> <span class="n">msqid</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">msg_ptr</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">msg_sz</span><span class="p">,</span> <span class="kt">int</span> <span class="n">msgflg</span><span class="p">);</span>
+<span class="cm">/*
+  msqid:消息队列标识符
+  msg_ptr:将发往消息队列的消息结构体指针，结构为：
+  struct msg_st{
+    long  msg_type;     //消息类型，用户自定义,接收方会根据类型选择接受
+    char text[BUFSIZ];  //发送的消息，不一定是char
+};
+  msg_sz:消息结构体中待传输数据的大小
+  msgflag:IPC_NOTWAIT(消息队列满时返回-1)、0(消息队列满时堵塞)
+  
+*/</span>
+<span class="c1">//3. 接受消息</span>
+<span class="kt">int</span> <span class="nf">msgrcv</span><span class="p">(</span><span class="kt">int</span> <span class="n">msqid</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">msg_ptr</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">msg_sz</span><span class="p">,</span> <span class="kt">long</span> <span class="kt">int</span> <span class="n">msgtype</span><span class="p">,</span> <span class="kt">int</span> <span class="n">msgflg</span><span class="p">);</span>
+<span class="cm">/*
+  除了msgtype，其他四个参数同msgsnd
+  msgtype：
+    msgtype = 0 读取消息队列第一个消息
+    msgtype &gt; 0 读取消息队列第一个类型是msgtype的消息 除非标志了MSG_EXCEPT
+    msgtype &lt; 0 读取第一个 类型值 &lt; abs(msgtype)的消息
+*/</span>
+
+<span class="c1">//4. 控制消息队列</span>
+<span class="kt">int</span> <span class="nf">msgctl</span><span class="p">(</span><span class="kt">int</span> <span class="n">msqid</span><span class="p">,</span> <span class="kt">int</span> <span class="n">command</span><span class="p">,</span> <span class="k">struct</span> <span class="nc">msqid_ds</span> <span class="o">*</span><span class="n">buf</span><span class="p">);</span>
+<span class="cm">/*
+  msqid:消息队列标识符
+  command:
+    PC_STAT 复制消息队列关联的数据结构存储在buf中
+    IPC_SET 将buf中的部分成员更新到目标的内核数据
+    IPC_RMID 立即移除消息队列, 唤醒所有等待读消息和写消息的进程
+  msqid_ds:如下图
+*/</span>
+</code></pre></div></div>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002620.png" alt="image-20220501165712574" /></p>
+
+<h4 id="共享内存-shared-memory">共享内存 shared memory</h4>
+
+<p>🐦🐦🐦</p>
+
+<h2 id="多线程编程">多线程编程</h2>
+
+<h3 id="线程api">线程API</h3>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//1. 创建线程</span>
+<span class="err">成功返回</span><span class="mi">0</span><span class="err">，失败返回错误码</span>
+<span class="kt">int</span> <span class="nf">pthread_create</span><span class="p">(</span><span class="n">pthread_t</span><span class="o">*</span> <span class="kr">thread</span><span class="p">,</span> <span class="k">const</span> <span class="n">pthread_attr_t</span><span class="o">*</span> <span class="n">attr</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">(</span><span class="o">*</span><span class="n">start_routine</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span><span class="p">),</span> <span class="kt">void</span><span class="o">*</span> <span class="n">arg</span><span class="p">);</span>
+
+<span class="c1">//2. 退出线程</span>
+<span class="kt">void</span> <span class="nf">pthread_exit</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="n">retval</span><span class="p">);</span>
+
+<span class="c1">//3. 回收(等待)线程，类似进程中的waitpid</span>
+<span class="c1">//成功时返回0, 失败返回错误码</span>
+<span class="kt">int</span> <span class="nf">pthread_join</span><span class="p">(</span><span class="n">pthread_t</span> <span class="kr">thread</span><span class="p">,</span> <span class="kt">void</span><span class="o">**</span> <span class="n">retval</span><span class="p">);</span>
+
+<span class="c1">//4. 终止线程</span>
+<span class="c1">//成功时返回0, 失败返回错误码</span>
+<span class="kt">int</span> <span class="n">pthread_cancel</span><span class="p">(</span><span class="n">pthread_t</span> <span class="kr">thread</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="多线程同步">多线程同步</h3>
+
+<h4 id="互斥量">互斥量</h4>
+
+<p>互斥量主要用于同步线程对共享数据的访问。</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 初始化互斥锁</span>
+<span class="c1">// 第一个参数指向目标互斥锁, 第二个参数指定属性 nullptr则为默认</span>
+<span class="kt">int</span> <span class="nf">pthread_mutex_init</span><span class="p">(</span><span class="n">pthread_mutex_t</span> <span class="o">*</span><span class="n">mutex</span><span class="p">,</span> <span class="k">const</span> <span class="n">pthread_mutexattr_t</span> <span class="o">*</span><span class="n">mutexattr</span><span class="p">);</span>
+
+<span class="c1">// 销毁目标互斥锁</span>
+<span class="kt">int</span> <span class="nf">pthread_mutex_destory</span><span class="p">(</span><span class="n">pthread_mutex_t</span> <span class="o">*</span><span class="n">mutex</span><span class="p">);</span>
+
+<span class="c1">// 针对普通锁加锁</span>
+<span class="kt">int</span> <span class="nf">pthread_mutex_lock</span><span class="p">(</span><span class="n">pthread_mutex_t</span> <span class="o">*</span><span class="n">mutex</span><span class="p">);</span>
+
+<span class="c1">// 针对普通锁立即返回 目标未加锁则加锁 如果已经加锁则返回错误码EBUSY</span>
+<span class="kt">int</span> <span class="nf">pthread_mutex_trylock</span><span class="p">(</span><span class="n">pthread_mutex_t</span> <span class="o">*</span><span class="n">mutex</span><span class="p">);</span>
+
+<span class="c1">// 解锁 如果有其他线程在等待这个互斥锁, 则其中之一获得</span>
+<span class="kt">int</span> <span class="nf">pthread_mutex_unlock</span><span class="p">(</span><span class="n">pthread_mutex_t</span> <span class="o">*</span><span class="n">mutex</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="条件变量">条件变量</h4>
+
+<p>条件变量主要用于线程之间同步共享数据的值，条件变量提供了一种线程间的通知机制，当某个共享数据达到某个值时，唤醒等待这个共享数据的线程。</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//初始化条件变量</span>
+<span class="kt">int</span> <span class="nf">pthread_cond_init</span><span class="p">(</span><span class="n">pthread_cond_t</span> <span class="o">*</span><span class="n">cond</span><span class="p">,</span> <span class="k">const</span> <span class="n">pthread_condattr</span> <span class="o">*</span><span class="n">cond_attr</span><span class="p">);</span>
+<span class="c1">//下述相当于初始化一个字段全为空的条件变量</span>
+<span class="n">pthread_cond_t</span> <span class="n">cond</span> <span class="o">=</span> <span class="n">PTHREAD_COND_INITIALIZER</span><span class="p">;</span>
+
+<span class="c1">// 销毁一个正在被等待的条件变量 将会失败并返回EBUSY</span>
+<span class="kt">int</span> <span class="nf">pthread_cont_destory</span><span class="p">(</span><span class="n">pthread_cond_t</span> <span class="o">*</span><span class="n">cond</span><span class="p">);</span>
+
+<span class="c1">// 广播式的唤醒所有等待目标条件变量的线程</span>
+<span class="kt">int</span> <span class="nf">pthread_cont_broadcast</span><span class="p">(</span><span class="n">pthread_cond_t</span> <span class="o">*</span><span class="n">cond</span><span class="p">);</span>
+
+<span class="c1">// 唤醒一个等待目标条件变量的线程</span>
+<span class="kt">int</span> <span class="nf">pthread_cond_signal</span><span class="p">(</span><span class="n">pthread_cond_t</span> <span class="o">*</span><span class="n">cond</span><span class="p">);</span>
+
+<span class="c1">// 等待目标条件变量</span>
+<span class="kt">int</span> <span class="nf">pthread_cond_wait</span><span class="p">(</span><span class="n">pthread_cond_t</span> <span class="o">*</span><span class="n">cond</span><span class="p">,</span> <span class="n">pthread_mutex_t</span> <span class="o">*</span><span class="n">mutex</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="posix-信号量">POSIX 信号量</h4>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span><span class="cpf">&lt;semaphore&gt;</span><span class="cp">
+</span><span class="c1">//创建信号量</span>
+<span class="kt">int</span> <span class="n">sem_init</span><span class="p">(</span><span class="n">sem_t</span><span class="o">*</span> <span class="n">sem</span><span class="p">,</span> <span class="kt">int</span> <span class="n">pshared</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">value</span><span class="p">)</span>
+<span class="cm">/*
+  sem:初始化的信号量
+  pshared为0表示是当前进程的局部信号量, 否则信号量可以在多个进程间共享
+  value:信号量的初始值，设置为1可以当锁使用
+*/</span>
+<span class="c1">// 销毁信号量, 释放其占用的系统资源</span>
+<span class="kt">int</span> <span class="n">sem_destory</span><span class="p">(</span><span class="n">sem_t</span><span class="o">*</span> <span class="n">sem</span><span class="p">)</span>
+
+<span class="c1">// 以原子操作的形式将信号量的值 -1, 如果信号量的值为0, 则sem_wait将被阻塞直到sem_wait具有非0值 p操作</span>
+<span class="kt">int</span> <span class="n">sem_wait</span><span class="p">(</span><span class="n">sem_t</span><span class="o">*</span> <span class="n">sem</span><span class="p">)</span>
+
+<span class="c1">// 跟上面的函数相同不过不会阻塞. 信号量不为0则减一操作, 为0则返回-1 errno</span>
+<span class="kt">int</span> <span class="n">sem_trywait</span><span class="p">(</span><span class="n">sem_t</span><span class="o">*</span> <span class="n">sem</span><span class="p">)</span>
+
+<span class="c1">// 原子操作将信号量的值 +1 v操作</span>
+<span class="kt">int</span> <span class="n">sem_post</span><span class="p">(</span><span class="n">sem_t</span><span class="o">*</span> <span class="n">sem</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="进程池和线程池">进程池和线程池</h2>
+
+<p>进程池和线程池类似，基本上完全适用。</p>
+
+<p>线程池就是服务器预先创建的一组子线程，线程池中的所有子线程都运行着相同的代码。当有新的任务到来时，主线程将通过某种方式选择线程池中的某一个子线程来为之服务。相比与动态的创建子线程，选择一个已经存在的子线程的代价显然要小得多。</p>
+
+<ol>
+  <li>
+    <p>主线程使用某种算法来主动选择子线程。最简单、最常用的算法是随机算法和 Round Robin(轮流 选取)算法，但更优秀、更智能的算法将使任务在各个工作线程中更均匀地分配，从而减轻服务器的整体压力。</p>
+  </li>
+  <li>
+    <p>主线程和所有子线程通过一个共享的工作队列来同步，子线程都睡眠在该工作队列上。当有新的任务到来时，主线程将任务添加到工作队列中。这将唤醒正在等待任务的子线程，不过只有一个子线程将获得新任务的”接管权“，它可以从工作队列中取出任务并执行之，而其他子线程将继续睡眠在工作队列上。</p>
+  </li>
+</ol>
+
+<p>这感觉上其实和golang的channel+ select机制差不多，实际上我后续在这里的写法就是仿照go的模式来写的。</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002626.png" alt="image-20220508001617260" /></p>
+
+<h2 id="高性能服务器程序框架">高性能服务器程序框架</h2>
+
+<p>书上把这一章内容放在了I/O复用之前，这是我没想到的。</p>
+
+<h3 id="服务器基础框架">服务器基础框架</h3>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002631.png" alt="image-20220505190335651" /></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>模块</th>
+      <th>功能</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>I/O处理单元</td>
+      <td>处理客户连接，读写网络数据</td>
+    </tr>
+    <tr>
+      <td>请求队列</td>
+      <td>各个单元之间的通信方式</td>
+    </tr>
+    <tr>
+      <td>逻辑单元</td>
+      <td>业务进程或线程</td>
+    </tr>
+    <tr>
+      <td>网络存储单元</td>
+      <td>本地数据库、文件或者缓存</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>I/O 处理单元</strong>是服务器管理客户连接的模块。它通常要完成以下工作：等待并接受新的客户连接，接收客户数据，将服务器响应数据返回给客户端。数据的收发不一定在 I/O 处理单元中执行，也可能在逻辑单元中执行，具体在何处执行取决于<strong>事件处理模式</strong>。</p>
+
+<p><strong>请求队列</strong>是各个单元之间通信方式的抽象。请求队列通常被实现为<strong>池</strong>的一部分。</p>
+
+<p><strong>逻辑单元</strong>通常是一个进程或线程。它分析并处理客户数据，然后将结果传递给 I/O 处理单元或者直接发送给客户（具体使用哪种方式取决于事件处理模式）。服务器通常拥有多个逻辑单元，以实现对多个客户任务的并发处理。</p>
+
+<p><strong>网络存储单元</strong>可以是数据库、缓存和文件。</p>
+
+<h3 id="事件处理模式">事件处理模式</h3>
+
+<p>服务器程序通常需要处理三类事件：I/O 事件、信号及定时事件。有两种高效的事件处理模式：<strong>Reactor</strong> 和 <strong>Proactor</strong>。</p>
+
+<h4 id="reactor模式">Reactor模式</h4>
+
+<blockquote>
+  <p>Reactor模式要求主线程（I/O处理单元）只负责监听文件描述符上是否有事件发生，有的话就立即将该事件通知工作</p>
+
+  <p>线程（逻辑单元），将 socket 可读可写事件放入请求队列，交给工作线程处理。除此之外，主线程不做</p>
+
+  <p>任何其他实质性的工作。读写数据，接受新的连接，以及处理客户请求均在工作线程中完成。</p>
+</blockquote>
+
+<p>使用同步 I/O（以 epoll_wait 为例）实现的 Reactor 模式的工作流程是：</p>
+<ol>
+  <li>主线程往 epoll 内核事件表中注册 socket 上的读就绪事件。</li>
+  <li>主线程调用 <code class="language-plaintext highlighter-rouge">epoll_wait</code> 等待 socket 上有数据可读。</li>
+  <li>当 socket 上有数据可读时， <code class="language-plaintext highlighter-rouge">epoll_wait</code> 通知主线程。主线程则将 socket 可读事件放入请求队列。</li>
+  <li>睡眠在请求队列上的某个工作线程被唤醒，它从 socket 读取数据，并处理客户请求，然后往 epoll
+内核事件表中注册该 socket 上的写就绪事件。</li>
+  <li>当主线程调用 <code class="language-plaintext highlighter-rouge">epoll_wait</code> 等待 socket 可写。</li>
+  <li>当 socket 可写时，<code class="language-plaintext highlighter-rouge">epoll_wait</code> 通知主线程。主线程将 socket 可写事件放入请求队列。</li>
+  <li>睡眠在请求队列上的某个工作线程被唤醒，它往 socket 上写入服务器处理客户请求的结果。</li>
+</ol>
+
+<p>Reactor 模式的工作流程图：</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002636.png" alt="image-20220505191735615" /></p>
+
+<h4 id="proactor模式">Proactor模式</h4>
+
+<blockquote>
+  <p>Proactor 模式将所有 I/O 操作都交给主线程和内核来处理（进行读、写），工作线程仅仅负责业务逻</p>
+
+  <p>辑。使用异步 I/O 模型（以 aio_read 和 aio_write 为例）实现的 Proactor 模式的工作流程是：</p>
+</blockquote>
+
+<ol>
+  <li>主线程调用 aio_read 函数向内核注册 socket 上的读完成事件，并告诉内核用户读缓冲区的位置，
+以及读操作完成时如何通知应用程序（这里以信号为例）。</li>
+  <li>主线程继续处理其他逻辑。</li>
+  <li>当 socket 上的数据被读入用户缓冲区后，内核将向应用程序发送一个信号，以通知应用程序数据
+已经可用。</li>
+  <li>应用程序预先定义好的信号处理函数选择一个工作线程来处理客户请求。工作线程处理完客户请求
+后，调用 aio_write 函数向内核注册 socket 上的写完成事件，并告诉内核用户写缓冲区的位置，以
+及写操作完成时如何通知应用程序。</li>
+  <li>主线程继续处理其他逻辑。</li>
+  <li>当用户缓冲区的数据被写入 socket 之后，内核将向应用程序发送一个信号，以通知应用程序数据
+已经发送完毕。</li>
+  <li>应用程序预先定义好的信号处理函数选择一个工作线程来做善后处理，比如决定是否关闭 socket。</li>
+</ol>
+
+<p>Proactor 模式的工作流程图：</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002645.png" alt="image-20220505213405420" /></p>
+
+<h4 id="同步方式的proactor">同步方式的Proactor</h4>
+
+<p>上述所说的Proactor模式需要异步I/O接口，下述使用同步方式模拟：</p>
+
+<ol>
+  <li>主线程往 epoll 内核事件表中注册 socket 上的读就绪事件。</li>
+  <li>主线程调用 epoll_wait 等待 socket 上有数据可读。</li>
+  <li>当 socket 上有数据可读时，epoll_wait 通知主线程。主线程从 socket 循环读取数据，直到没有更
+多数据可读，然后将读取到的数据封装成一个请求对象并插入请求队列。</li>
+  <li>睡眠在请求队列上的某个工作线程被唤醒，它获得请求对象并处理客户请求，然后往 epoll 内核事
+件表中注册 socket 上的写就绪事件。</li>
+  <li>主线程调用 epoll_wait 等待 socket 可写。</li>
+  <li>当 socket 可写时，epoll_wait 通知主线程。主线程往 socket 上写入服务器处理客户请求的结果。</li>
+</ol>
+
+<p>同步 I/O 模拟 Proactor 模式的工作流程：</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002642.png" alt="image-20220506142214571" /></p>
+
+<p>Reactor 模式和Proactor 模式的主要区别在于：对于工作线程而言，Reactor 发来的是已就绪的读写事件，而Proactor 发来的是已经完成的读写事件（异步I/O的处理在内核中完成，同步I/O在主线程自己实现）</p>
+
+</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-04-26T00:00:00+08:00"><!-- start custom article footer snippet -->
+
+<!-- end custom article footer snippet -->
+<div class="article__subscribe"><div class="subscribe"><i class="fas fa-rss"></i> <a type="application/rss+xml" href="/feed.xml">Subscribe</a></div>
+</div><div class="article__license"><div class="license">
+    <p>This work is licensed under a <a itemprop="license" rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution-NonCommercial 4.0 International</a> license.
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">
+        <img alt="Attribution-NonCommercial 4.0 International" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" />
+      </a>
+    </p>
+  </div></div></footer>
+<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/2022/spring4shell">CVE-2022-22965 SpringFramework 漏洞分析</a></div><div class="next"><span>NEXT</span><a href="/2022/Java-Prepstatementared">浅谈Java预编译</a></div></div></div>
+
+</div>
+
+<script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    $(function() {
+      var $this ,$scroll;
+      var $articleContent = $('.js-article-content');
+      var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+      var scroll = hasSidebar ? '.js-page-main' : 'html, body';
+      $scroll = $(scroll);
+
+      $articleContent.find('.highlight').each(function() {
+        $this = $(this);
+        $this.attr('data-lang', $this.find('code').attr('data-lang'));
+      });
+      $articleContent.find('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]').each(function() {
+        $this = $(this);
+        $this.append($('<a class="anchor d-print-none" aria-hidden="true"></a>').html('<i class="fas fa-anchor"></i>'));
+      });
+      $articleContent.on('click', '.anchor', function() {
+        $scroll.scrollToAnchor('#' + $(this).parent().attr('id'), 400);
+      });
+    });
+  });
+})();
+</script>
+</div><section class="page__comments d-print-none"><div id="disqus_thread"></div>
+  <script>
+  /**
+  *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+  *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+  var disqus_config = function () {
+    this.page.url = 'http://localhost:4000/2022/cource/LinuxServerProgram';
+    this.page.identifier = 'Linux高性能服务器编程读书笔记';
+  };
+  (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://theoyu.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></section></article><!-- start custom main bottom snippet -->
+
+<!-- end custom main bottom snippet -->
+</div>
+            </div></div></div><div class="page__footer d-print-none">
+<footer class="footer py-4 js-page-footer">
+  <div class="main"><div itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Theoyu"><meta itemprop="url" content="/"><meta itemprop="description" content="I am an amazing person."><div class="footer__author-links"><div class="author-links">
+  <ul class="menu menu--nowrap menu--inline"><li title="Send me an Email.">
+      <a class="button button--circle mail-button" itemprop="email" href="mailto:zeyu.ou@foxmail.com" target="_blank">
+        <i class="fas fa-envelope"></i>
+      </a><li title="Follow me on Github.">
+        <a class="button button--circle github-button" itemprop="sameAs" href="https://github.com/yuuuuu422" target="_blank">
+          <div class="icon"><svg fill="#000000" width="24px" height="24px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path class="svgpath" data-index="path_0" fill="#272636" d="M0 525.2c0 223.6 143.3 413.7 343 483.5 26.9 6.8 22.8-12.4 22.8-25.4l0-88.7c-155.3 18.2-161.5-84.6-172-101.7-21.1-36-70.8-45.2-56-62.3 35.4-18.2 71.4 4.6 113.1 66.3 30.2 44.7 89.1 37.2 119 29.7 6.5-26.9 20.5-50.9 39.7-69.6C248.8 728.2 181.7 630 181.7 513.2c0-56.6 18.7-108.7 55.3-150.7-23.3-69.3 2.2-128.5 5.6-137.3 66.5-6 135.5 47.6 140.9 51.8 37.8-10.2 80.9-15.6 129.1-15.6 48.5 0 91.8 5.6 129.8 15.9 12.9-9.8 77-55.8 138.8-50.2 3.3 8.8 28.2 66.7 6.3 135 37.1 42.1 56 94.6 56 151.4 0 117-67.5 215.3-228.8 243.7 26.9 26.6 43.6 63.4 43.6 104.2l0 128.8c0.9 10.3 0 20.5 17.2 20.5C878.1 942.4 1024 750.9 1024 525.3c0-282.9-229.3-512-512-512C229.1 13.2 0 242.3 0 525.2L0 525.2z" />
+</svg>
+</div>
+        </a>
+      </li></ul>
+</div>
+</div>
+    </div><div class="site-info mt-2">
+      <div>© Theoyu 2021,
+        Powered by <a title="Jekyll is a simple, blog-aware, static site generator." href="http://jekyllrb.com/">Jekyll</a> & <a
+        title="TeXt is a super customizable Jekyll theme." href="https://github.com/kitian616/jekyll-TeXt-theme">TeXt Theme</a>.
+      </div>
+    </div>
+  </div>
+</footer>
+</div></div>
+    </div><script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $body = $('body'), $window = $(window);
+    var $pageRoot = $('.js-page-root'), $pageMain = $('.js-page-main');
+    var activeCount = 0;
+    function modal(options) {
+      var $root = this, visible, onChange, hideWhenWindowScroll = false;
+      var scrollTop;
+      function setOptions(options) {
+        var _options = options || {};
+        visible = _options.initialVisible === undefined ? false : show;
+        onChange = _options.onChange;
+        hideWhenWindowScroll = _options.hideWhenWindowScroll;
+      }
+      function init() {
+        setState(visible);
+      }
+      function setState(isShow) {
+        if (isShow === visible) {
+          return;
+        }
+        visible = isShow;
+        if (visible) {
+          activeCount++;
+          scrollTop = $(window).scrollTop() || $pageMain.scrollTop();
+          $root.addClass('modal--show');
+          $pageMain.scrollTop(scrollTop);
+          activeCount === 1 && ($pageRoot.addClass('show-modal'), $body.addClass('of-hidden'));
+          hideWhenWindowScroll && window.hasEvent('touchstart') && $window.on('scroll', hide);
+          $window.on('keyup', handleKeyup);
+        } else {
+          activeCount > 0 && activeCount--;
+          $root.removeClass('modal--show');
+          $window.scrollTop(scrollTop);
+          activeCount === 0 && ($pageRoot.removeClass('show-modal'), $body.removeClass('of-hidden'));
+          hideWhenWindowScroll && window.hasEvent('touchstart') && $window.off('scroll', hide);
+          $window.off('keyup', handleKeyup);
+        }
+        onChange && onChange(visible);
+      }
+      function show() {
+        setState(true);
+      }
+      function hide() {
+        setState(false);
+      }
+      function handleKeyup(e) {
+        // Char Code: 27  ESC
+        if (e.which ===  27) {
+          hide();
+        }
+      }
+      setOptions(options);
+      init();
+      return {
+        show: show,
+        hide: hide,
+        $el: $root
+      };
+    }
+    $.fn.modal = modal;
+  });
+})();
+</script><div class="modal modal--overflow page__search-modal d-print-none js-page-search-modal"><script>
+(function () {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    // search panel
+    var search = (window.search || (window.search = {}));
+    var useDefaultSearchBox = window.useDefaultSearchBox === undefined ?
+      true : window.useDefaultSearchBox ;
+
+    var $searchModal = $('.js-page-search-modal');
+    var $searchToggle = $('.js-search-toggle');
+    var searchModal = $searchModal.modal({ onChange: handleModalChange, hideWhenWindowScroll: true });
+    var modalVisible = false;
+    search.searchModal = searchModal;
+
+    var $searchBox = null;
+    var $searchInput = null;
+    var $searchClear = null;
+
+    function getModalVisible() {
+      return modalVisible;
+    }
+    search.getModalVisible = getModalVisible;
+
+    function handleModalChange(visible) {
+      modalVisible = visible;
+      if (visible) {
+        search.onShow && search.onShow();
+        useDefaultSearchBox && $searchInput[0] && $searchInput[0].focus();
+      } else {
+        search.onShow && search.onHide();
+        useDefaultSearchBox && $searchInput[0] && $searchInput[0].blur();
+        setTimeout(function() {
+          useDefaultSearchBox && ($searchInput.val(''), $searchBox.removeClass('not-empty'));
+          search.clear && search.clear();
+          window.pageAsideAffix && window.pageAsideAffix.refresh();
+        }, 400);
+      }
+    }
+
+    $searchToggle.on('click', function() {
+      modalVisible ? searchModal.hide() : searchModal.show();
+    });
+    // Char Code: 83  S, 191 /
+    $(window).on('keyup', function(e) {
+      if (!modalVisible && !window.isFormElement(e.target || e.srcElement) && (e.which === 83 || e.which === 191)) {
+        modalVisible || searchModal.show();
+      }
+    });
+
+    if (useDefaultSearchBox) {
+      $searchBox = $('.js-search-box');
+      $searchInput = $searchBox.children('input');
+      $searchClear = $searchBox.children('.js-icon-clear');
+      search.getSearchInput = function() {
+        return $searchInput.get(0);
+      };
+      search.getVal = function() {
+        return $searchInput.val();
+      };
+      search.setVal = function(val) {
+        $searchInput.val(val);
+      };
+
+      $searchInput.on('focus', function() {
+        $(this).addClass('focus');
+      });
+      $searchInput.on('blur', function() {
+        $(this).removeClass('focus');
+      });
+      $searchInput.on('input', window.throttle(function() {
+        var val = $(this).val();
+        if (val === '' || typeof val !== 'string') {
+          search.clear && search.clear();
+        } else {
+          $searchBox.addClass('not-empty');
+          search.onInputNotEmpty && search.onInputNotEmpty(val);
+        }
+      }, 400));
+      $searchClear.on('click', function() {
+        $searchInput.val(''); $searchBox.removeClass('not-empty');
+        search.clear && search.clear();
+      });
+    }
+  });
+})();
+</script><div class="search search--dark">
+  <div class="main">
+    <div class="search__header">Search</div>
+    <div class="search-bar">
+      <div class="search-box js-search-box">
+        <div class="search-box__icon-search"><i class="fas fa-search"></i></div>
+        <input type="text" />
+        <div class="search-box__icon-clear js-icon-clear">
+          <a><i class="fas fa-times"></i></a>
+        </div>
+      </div>
+      <button class="button button--theme-dark button--pill search__cancel js-search-toggle">
+        Cancel</button>
+    </div>
+    <div class="search-result js-search-result"></div>
+  </div>
+</div>
+<script>var SOURCES = window.TEXT_VARIABLES.sources;
+var PAHTS = window.TEXT_VARIABLES.paths;
+window.Lazyload.js([SOURCES.jquery, PAHTS.search_js], function() {
+  var search = (window.search || (window.search = {}));
+  var searchData = window.TEXT_SEARCH_DATA || {};
+
+  function memorize(f) {
+    var cache = {};
+    return function () {
+      var key = Array.prototype.join.call(arguments, ',');
+      if (key in cache) return cache[key];
+      else return cache[key] = f.apply(this, arguments);
+    };
+  }
+
+  /// search
+  function searchByQuery(query) {
+    var i, j, key, keys, cur, _title, result = {};
+    keys = Object.keys(searchData);
+    for (i = 0; i < keys.length; i++) {
+      key = keys[i];
+      for (j = 0; j < searchData[key].length; j++) {
+        cur = searchData[key][j], _title = cur.title;
+        if ((result[key] === undefined || result[key] && result[key].length < 4 )
+          && _title.toLowerCase().indexOf(query.toLowerCase()) >= 0) {
+          if (result[key] === undefined) {
+            result[key] = [];
+          }
+          result[key].push(cur);
+        }
+      }
+    }
+    return result;
+  }
+
+  var renderHeader = memorize(function(header) {
+    return $('<p class="search-result__header">' + header + '</p>');
+  });
+
+  var renderItem = function(index, title, url) {
+    return $('<li class="search-result__item" data-index="' + index + '"><a class="button" href="' + url + '">' + title + '</a></li>');
+  };
+
+  function render(data) {
+    if (!data) { return null; }
+    var $root = $('<ul></ul>'), i, j, key, keys, cur, itemIndex = 0;
+    keys = Object.keys(data);
+    for (i = 0; i < keys.length; i++) {
+      key = keys[i];
+      $root.append(renderHeader(key));
+      for (j = 0; j < data[key].length; j++) {
+        cur = data[key][j];
+        $root.append(renderItem(itemIndex++, cur.title, cur.url));
+      }
+    }
+    return $root;
+  }
+
+  // search box
+  var $result = $('.js-search-result'), $resultItems;
+  var lastActiveIndex, activeIndex;
+
+  function clear() {
+    $result.html(null);
+    $resultItems = $('.search-result__item'); activeIndex = 0;
+  }
+  function onInputNotEmpty(val) {
+    $result.html(render(searchByQuery(val)));
+    $resultItems = $('.search-result__item'); activeIndex = 0;
+    $resultItems.eq(0).addClass('active');
+  }
+
+  search.clear = clear;
+  search.onInputNotEmpty = onInputNotEmpty;
+
+  function updateResultItems() {
+    lastActiveIndex >= 0 && $resultItems.eq(lastActiveIndex).removeClass('active');
+    activeIndex >= 0 && $resultItems.eq(activeIndex).addClass('active');
+  }
+
+  function moveActiveIndex(direction) {
+    var itemsCount = $resultItems ? $resultItems.length : 0;
+    if (itemsCount > 1) {
+      lastActiveIndex = activeIndex;
+      if (direction === 'up') {
+        activeIndex = (activeIndex - 1 + itemsCount) % itemsCount;
+      } else if (direction === 'down') {
+        activeIndex = (activeIndex + 1 + itemsCount) % itemsCount;
+      }
+      updateResultItems();
+    }
+  }
+
+  // Char Code: 13  Enter, 37  ⬅, 38  ⬆, 39  ➡, 40  ⬇
+  $(window).on('keyup', function(e) {
+    var modalVisible = search.getModalVisible && search.getModalVisible();
+    if (modalVisible) {
+      if (e.which === 38) {
+        modalVisible && moveActiveIndex('up');
+      } else if (e.which === 40) {
+        modalVisible && moveActiveIndex('down');
+      } else if (e.which === 13) {
+        modalVisible && $resultItems && activeIndex >= 0 && $resultItems.eq(activeIndex).children('a')[0].click();
+      }
+    }
+  });
+
+  $result.on('mouseover', '.search-result__item > a', function() {
+    var itemIndex = $(this).parent().data('index');
+    itemIndex >= 0 && (lastActiveIndex = activeIndex, activeIndex = itemIndex, updateResultItems());
+  });
+});
+</script>
+</div></div>
+
+
+<script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function scrollToAnchor(anchor, duration, callback) {
+      var $root = this;
+      $root.animate({ scrollTop: $(anchor).position().top }, duration, function() {
+        window.history.replaceState(null, '', window.location.href.split('#')[0] + anchor);
+        callback && callback();
+      });
+    }
+    $.fn.scrollToAnchor = scrollToAnchor;
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function affix(options) {
+      var $root = this, $window = $(window), $scrollTarget, $scroll,
+        offsetBottom = 0, scrollTarget = window, scroll = window.document, disabled = false, isOverallScroller = true,
+        rootTop, rootLeft, rootHeight, scrollBottom, rootBottomTop,
+        hasInit = false, curState;
+
+      function setOptions(options) {
+        var _options = options || {};
+        _options.offsetBottom && (offsetBottom = _options.offsetBottom);
+        _options.scrollTarget && (scrollTarget = _options.scrollTarget);
+        _options.scroll && (scroll = _options.scroll);
+        _options.disabled !== undefined && (disabled = _options.disabled);
+        $scrollTarget = $(scrollTarget);
+        isOverallScroller = window.isOverallScroller($scrollTarget[0]);
+        $scroll = $(scroll);
+      }
+      function preCalc() {
+        top();
+        rootHeight = $root.outerHeight();
+        rootTop = $root.offset().top + (isOverallScroller ? 0 :  $scrollTarget.scrollTop());
+        rootLeft = $root.offset().left;
+      }
+      function calc(needPreCalc) {
+        needPreCalc && preCalc();
+        scrollBottom = $scroll.outerHeight() - offsetBottom - rootHeight;
+        rootBottomTop = scrollBottom - rootTop;
+      }
+      function top() {
+        if (curState !== 'top') {
+          $root.removeClass('fixed').css({
+            left: 0,
+            top: 0
+          });
+          curState = 'top';
+        }
+      }
+      function fixed() {
+        if (curState !== 'fixed') {
+          $root.addClass('fixed').css({
+            left: rootLeft + 'px',
+            top: 0
+          });
+          curState = 'fixed';
+        }
+      }
+      function bottom() {
+        if (curState !== 'bottom') {
+          $root.removeClass('fixed').css({
+            left: 0,
+            top: rootBottomTop + 'px'
+          });
+          curState = 'bottom';
+        }
+      }
+      function setState() {
+        var scrollTop = $scrollTarget.scrollTop();
+        if (scrollTop >= rootTop && scrollTop <= scrollBottom) {
+          fixed();
+        } else if (scrollTop < rootTop) {
+          top();
+        } else {
+          bottom();
+        }
+      }
+      function init() {
+        if(!hasInit) {
+          var interval, timeout;
+          calc(true); setState();
+          // run calc every 100 millisecond
+          interval = setInterval(function() {
+            calc();
+          }, 100);
+          timeout = setTimeout(function() {
+            clearInterval(interval);
+          }, 45000);
+          window.pageLoad.then(function() {
+            setTimeout(function() {
+              clearInterval(interval);
+              clearTimeout(timeout);
+            }, 3000);
+          });
+          $scrollTarget.on('scroll', function() {
+            disabled || setState();
+          });
+          $window.on('resize', function() {
+            disabled || (calc(true), setState());
+          });
+          hasInit = true;
+        }
+      }
+
+      setOptions(options);
+      if (!disabled) {
+        init();
+      }
+      $window.on('resize', window.throttle(function() {
+        init();
+      }, 200));
+      return {
+        setOptions: setOptions,
+        refresh: function() {
+          calc(true, { animation: false }); setState();
+        }
+      };
+    }
+    $.fn.affix = affix;
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function toc(options) {
+      var $root = this, $window = $(window), $scrollTarget, $scroller, $tocUl = $('<ul class="toc toc--ellipsis"></ul>'), $tocLi, $headings, $activeLast, $activeCur,
+        selectors = 'h1,h2,h3', container = 'body', scrollTarget = window, scroller = 'html, body', disabled = false,
+        headingsPos, scrolling = false, hasRendered = false, hasInit = false;
+
+      function setOptions(options) {
+        var _options = options || {};
+        _options.selectors && (selectors = _options.selectors);
+        _options.container && (container = _options.container);
+        _options.scrollTarget && (scrollTarget = _options.scrollTarget);
+        _options.scroller && (scroller = _options.scroller);
+        _options.disabled !== undefined && (disabled = _options.disabled);
+        $headings = $(container).find(selectors).filter('[id]');
+        $scrollTarget = $(scrollTarget);
+        $scroller = $(scroller);
+      }
+      function calc() {
+        headingsPos = [];
+        $headings.each(function() {
+          headingsPos.push(Math.floor($(this).position().top));
+        });
+      }
+      function setState(element, disabled) {
+        var scrollTop = $scrollTarget.scrollTop(), i;
+        if (disabled || !headingsPos || headingsPos.length < 1) { return; }
+        if (element) {
+          $activeCur = element;
+        } else {
+          for (i = 0; i < headingsPos.length; i++) {
+            if (scrollTop >= headingsPos[i]) {
+              $activeCur = $tocLi.eq(i);
+            } else {
+              $activeCur || ($activeCur = $tocLi.eq(i));
+              break;
+            }
+          }
+        }
+        $activeLast && $activeLast.removeClass('active');
+        ($activeLast = $activeCur).addClass('active');
+      }
+      function render() {
+        if(!hasRendered) {
+          $root.append($tocUl);
+          $headings.each(function() {
+            var $this = $(this);
+            $tocUl.append($('<li></li>').addClass('toc-' + $this.prop('tagName').toLowerCase())
+              .append($('<a></a>').text($this.text()).attr('href', '#' + $this.prop('id'))));
+          });
+          $tocLi = $tocUl.children('li');
+          $tocUl.on('click', 'a', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+            scrolling = true;
+            setState($this.parent());
+            $scroller.scrollToAnchor($this.attr('href'), 400, function() {
+              scrolling = false;
+            });
+          });
+        }
+        hasRendered = true;
+      }
+      function init() {
+        var interval, timeout;
+        if(!hasInit) {
+          render(); calc(); setState(null, scrolling);
+          // run calc every 100 millisecond
+          interval = setInterval(function() {
+            calc();
+          }, 100);
+          timeout = setTimeout(function() {
+            clearInterval(interval);
+          }, 45000);
+          window.pageLoad.then(function() {
+            setTimeout(function() {
+              clearInterval(interval);
+              clearTimeout(timeout);
+            }, 3000);
+          });
+          $scrollTarget.on('scroll', function() {
+            disabled || setState(null, scrolling);
+          });
+          $window.on('resize', window.throttle(function() {
+            if (!disabled) {
+              render(); calc(); setState(null, scrolling);
+            }
+          }, 100));
+        }
+        hasInit = true;
+      }
+
+      setOptions(options);
+      if (!disabled) {
+        init();
+      }
+      $window.on('resize', window.throttle(function() {
+        init();
+      }, 200));
+      return {
+        setOptions: setOptions
+      };
+    }
+    $.fn.toc = toc;
+  });
+})();
+/*(function () {
+
+})();*/
+</script><script>
+  /* toc must before affix, since affix need to konw toc' height. */(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  var TOC_SELECTOR = window.TEXT_VARIABLES.site.toc.selectors;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $window = $(window);
+    var $articleContent = $('.js-article-content');
+    var $tocRoot = $('.js-toc-root'), $col2 = $('.js-col-aside');
+    var toc;
+    var tocDisabled = false;
+    var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+    var hasToc = $articleContent.find(TOC_SELECTOR).length > 0;
+
+    function disabled() {
+      return $col2.css('display') === 'none' || !hasToc;
+    }
+
+    tocDisabled = disabled();
+
+    toc = $tocRoot.toc({
+      selectors: TOC_SELECTOR,
+      container: $articleContent,
+      scrollTarget: hasSidebar ? '.js-page-main' : null,
+      scroller: hasSidebar ? '.js-page-main' : null,
+      disabled: tocDisabled
+    });
+
+    $window.on('resize', window.throttle(function() {
+      tocDisabled = disabled();
+      toc && toc.setOptions({
+        disabled: tocDisabled
+      });
+    }, 100));
+
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $window = $(window), $pageFooter = $('.js-page-footer');
+    var $pageAside = $('.js-page-aside');
+    var affix;
+    var tocDisabled = false;
+    var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+
+    affix = $pageAside.affix({
+      offsetBottom: $pageFooter.outerHeight(),
+      scrollTarget: hasSidebar ? '.js-page-main' : null,
+      scroller: hasSidebar ? '.js-page-main' : null,
+      scroll: hasSidebar ? $('.js-page-main').children() : null,
+      disabled: tocDisabled
+    });
+
+    $window.on('resize', window.throttle(function() {
+      affix && affix.setOptions({
+        disabled: tocDisabled
+      });
+    }, 100));
+
+    window.pageAsideAffix = affix;
+  });
+})();
+</script><script type="text/x-mathjax-config">
+	var _config = { tex2jax: {
+		inlineMath: [['$','$'], ['\\(','\\)']]
+	}};MathJax.Hub.Config(_config);
+</script>
+<script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+    </div>
+    <script>(function () {
+  var $root = document.getElementsByClassName('root')[0];
+  if (window.hasEvent('touchstart')) {
+    $root.dataset.isTouch = true;
+    document.addEventListener('touchstart', function(){}, false);
+  }
+})();
+</script>
+  </body>
+</html>
+

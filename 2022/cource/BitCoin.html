@@ -1,0 +1,1831 @@
+<!DOCTYPE html><html lang="en">
+  <head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>『区块链技术与应用』学习笔记 - Theoyu</title>
+
+<meta name="description" content="">
+<link rel="canonical" href="http://localhost:4000/2022/cource/BitCoin"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+
+<meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
+
+<meta name="theme-color" content="#ffffff">
+
+<link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+<!-- end favicons snippet --><link rel="stylesheet" href="/assets/css/main.css"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.1/css/all.css" ><!-- start custom head snippets -->
+
+<!-- end custom head snippets -->
+<script>(function() {
+  window.isArray = function(val) {
+    return Object.prototype.toString.call(val) === '[object Array]';
+  };
+  window.isString = function(val) {
+    return typeof val === 'string';
+  };
+
+  window.hasEvent = function(event) {
+    return 'on'.concat(event) in window.document;
+  };
+
+  window.isOverallScroller = function(node) {
+    return node === document.documentElement || node === document.body || node === window;
+  };
+
+  window.isFormElement = function(node) {
+    var tagName = node.tagName;
+    return tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA';
+  };
+
+  window.pageLoad = (function () {
+    var loaded = false, cbs = [];
+    window.addEventListener('load', function () {
+      var i;
+      loaded = true;
+      if (cbs.length > 0) {
+        for (i = 0; i < cbs.length; i++) {
+          cbs[i]();
+        }
+      }
+    });
+    return {
+      then: function(cb) {
+        cb && (loaded ? cb() : (cbs.push(cb)));
+      }
+    };
+  })();
+})();
+(function() {
+  window.throttle = function(func, wait) {
+    var args, result, thisArg, timeoutId, lastCalled = 0;
+
+    function trailingCall() {
+      lastCalled = new Date;
+      timeoutId = null;
+      result = func.apply(thisArg, args);
+    }
+    return function() {
+      var now = new Date,
+        remaining = wait - (now - lastCalled);
+
+      args = arguments;
+      thisArg = this;
+
+      if (remaining <= 0) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+        lastCalled = now;
+        result = func.apply(thisArg, args);
+      } else if (!timeoutId) {
+        timeoutId = setTimeout(trailingCall, remaining);
+      }
+      return result;
+    };
+  };
+})();
+(function() {
+  var Set = (function() {
+    var add = function(item) {
+      var i, data = this._data;
+      for (i = 0; i < data.length; i++) {
+        if (data[i] === item) {
+          return;
+        }
+      }
+      this.size ++;
+      data.push(item);
+      return data;
+    };
+
+    var Set = function(data) {
+      this.size = 0;
+      this._data = [];
+      var i;
+      if (data.length > 0) {
+        for (i = 0; i < data.length; i++) {
+          add.call(this, data[i]);
+        }
+      }
+    };
+    Set.prototype.add = add;
+    Set.prototype.get = function(index) { return this._data[index]; };
+    Set.prototype.has = function(item) {
+      var i, data = this._data;
+      for (i = 0; i < data.length; i++) {
+        if (this.get(i) === item) {
+          return true;
+        }
+      }
+      return false;
+    };
+    Set.prototype.is = function(map) {
+      if (map._data.length !== this._data.length) { return false; }
+      var i, j, flag, tData = this._data, mData = map._data;
+      for (i = 0; i < tData.length; i++) {
+        for (flag = false, j = 0; j < mData.length; j++) {
+          if (tData[i] === mData[j]) {
+            flag = true;
+            break;
+          }
+        }
+        if (!flag) { return false; }
+      }
+      return true;
+    };
+    Set.prototype.values = function() {
+      return this._data;
+    };
+    return Set;
+  })();
+
+  window.Lazyload = (function(doc) {
+    var queue = {js: [], css: []}, sources = {js: {}, css: {}}, context = this;
+    var createNode = function(name, attrs) {
+      var node = doc.createElement(name), attr;
+      for (attr in attrs) {
+        if (attrs.hasOwnProperty(attr)) {
+          node.setAttribute(attr, attrs[attr]);
+        }
+      }
+      return node;
+    };
+    var end = function(type, url) {
+      var s, q, qi, cbs, i, j, cur, val, flag;
+      if (type === 'js' || type ==='css') {
+        s = sources[type], q = queue[type];
+        s[url] = true;
+        for (i = 0; i < q.length; i++) {
+          cur = q[i];
+          if (cur.urls.has(url)) {
+            qi = cur, val = qi.urls.values();
+            qi && (cbs = qi.callbacks);
+            for (flag = true, j = 0; j < val.length; j++) {
+              cur = val[j];
+              if (!s[cur]) {
+                flag = false;
+              }
+            }
+            if (flag && cbs && cbs.length > 0) {
+              for (j = 0; j < cbs.length; j++) {
+                cbs[j].call(context);
+              }
+              qi.load = true;
+            }
+          }
+        }
+      }
+    };
+    var load = function(type, urls, callback) {
+      var s, q, qi, node, i, cur,
+        _urls = typeof urls === 'string' ? new Set([urls]) : new Set(urls), val, url;
+      if (type === 'js' || type ==='css') {
+        s = sources[type], q = queue[type];
+        for (i = 0; i < q.length; i++) {
+          cur = q[i];
+          if (_urls.is(cur.urls)) {
+            qi = cur;
+            break;
+          }
+        }
+        val = _urls.values();
+        if (qi) {
+          callback && (qi.load || qi.callbacks.push(callback));
+          callback && (qi.load && callback());
+        } else {
+          q.push({
+            urls: _urls,
+            callbacks: callback ? [callback] : [],
+            load: false
+          });
+          for (i = 0; i < val.length; i++) {
+            node = null, url = val[i];
+            if (s[url] === undefined) {
+              (type === 'js' ) && (node = createNode('script', { src: url }));
+              (type === 'css') && (node = createNode('link', { rel: 'stylesheet', href: url }));
+              if (node) {
+                node.onload = (function(type, url) {
+                  return function() {
+                    end(type, url);
+                  };
+                })(type, url);
+                (doc.head || doc.body).appendChild(node);
+                s[url] = false;
+              }
+            }
+          }
+        }
+      }
+    };
+    return {
+      js: function(url, callback) {
+        load('js', url, callback);
+      },
+      css: function(url, callback) {
+        load('css', url, callback);
+      }
+    };
+  })(this.document);
+})();
+</script><script>
+  (function() {
+    var TEXT_VARIABLES = {
+      version: '2.2.6',
+      sources: {
+        font_awesome: 'https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.1/css/all.css',
+        jquery: 'https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js',
+        leancloud_js_sdk: '//cdn.jsdelivr.net/npm/leancloud-storage@3.13.2/dist/av-min.js',
+        chart: 'https://cdn.bootcss.com/Chart.js/2.7.2/Chart.bundle.min.js',
+        gitalk: {
+          js: 'https://cdn.bootcss.com/gitalk/1.2.2/gitalk.min.js',
+          css: 'https://cdn.bootcss.com/gitalk/1.2.2/gitalk.min.css'
+        },
+        valine: 'https://unpkg.com/valine/dist/Valine.min.js',
+        mathjax: 'https://cdn.bootcss.com/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML',
+        mermaid: 'https://cdn.bootcss.com/mermaid/8.0.0-rc.8/mermaid.min.js'
+      },
+      site: {
+        toc: {
+          selectors: 'h1,h2,h3,h4'
+        }
+      },
+      paths: {
+        search_js: '/assets/search.js'
+      }
+    };
+    window.TEXT_VARIABLES = TEXT_VARIABLES;
+  })();
+</script>
+</head>
+  <body>
+    <div class="root" data-is-touch="false">
+      <div class="layout--page js-page-root"><div class="page__main js-page-main page__viewport has-aside cell cell--auto">
+
+      <div class="page__main-inner"><div class="page__header d-print-none"><header class="header"><div class="main">
+      <div class="header__title">
+        <div class="header__brand"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="152px" height="150px" viewBox="0 0 152 150" enable-background="new 0 0 152 150" xml:space="preserve">  <image id="image0" width="152" height="150" x="0" y="0"
+    href="data:image/png;base64,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" />
+</svg>
+<a title="Be cool,but also be warm.
+" href="/">Theoyu</a></div><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></div><nav class="navigation">
+        <ul><li class="navigation__item"><a href="/archive.html">Archive</a></li><li class="navigation__item"><a href="/about.html">About</a></li><li class="navigation__item"><a href="/cs">CS</a></li><li><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></li></ul>
+      </nav></div>
+  </header>
+</div><div class="page__content"><div class ="main"><div class="grid grid--reverse">
+
+              <div class="col-aside d-print-none js-col-aside"><aside class="page__aside js-page-aside"><div class="toc-aside js-toc-root"></div>
+</aside></div>
+
+              <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
+
+<!-- end custom main top snippet -->
+<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>『区块链技术与应用』学习笔记</h1></header></div><meta itemprop="headline" content="『区块链技术与应用』学习笔记"><div class="article__info clearfix"><ul class="left-col menu"><li>
+              <a class="button button--secondary button--pill button--sm"
+                href="/archive.html?tag=cource">cource</a>
+            </li></ul><ul class="right-col menu"><li><i class="fas fa-user"></i> <span>Theoyu</span></li><li><i class="far fa-calendar-alt"></i> <span>May 13, 2022</span>
+            </li><li><i class="far fa-eye"></i> <span class="js-pageview" data-page-key="『区块链技术与应用』学习笔记">0</span> views</li></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-05-13T00:00:00+08:00">
+    <meta itemprop="keywords" content="cource"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
+
+<!-- end custom article top snippet -->
+<div class="article__content" itemprop="articleBody"><!--more-->
+
+<h1 id="比特币">比特币</h1>
+
+<h2 id="比特币中的密码学">比特币中的密码学</h2>
+
+<h3 id="哈希">哈希</h3>
+
+<p>hash的性质：</p>
+
+<ol>
+  <li><strong>collision resistance</strong>：哈希碰撞不是不会发生，是指很难以人为的方式去构造。</li>
+  <li><strong>hiding</strong>：哈希函数的计算过程是单向、不可逆的。</li>
+  <li><strong>puzzle friendly</strong>：hash计算的结果无法预测。</li>
+</ol>
+
+<p>比特币中用到的哈希函数是 SHA-256（Secure Hash Algorithm）。</p>
+
+<h3 id="签名">签名</h3>
+
+<p>去中心化的比特币系统中，由于没有第三方，所以需要『 签名 』明确交易的账户。</p>
+
+<p>数字签名采用私钥进行签名，公布的公钥进行验证。</p>
+
+<h2 id="比特币中的数据结构">比特币中的数据结构</h2>
+
+<h3 id="hash-pointer哈希指针">Hash pointer（哈希指针）</h3>
+
+<p>区块链结构本身是一条链表，节点为区块，链表通过指针指向的地址把节点所串连起来，在区块链中使用的哈希指针除了前一区块的地址，还包含前一区块的哈希。</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+    <span class="n">genesis</span> <span class="n">block</span>        <span class="n">A</span>             <span class="n">B</span>       <span class="n">most</span> <span class="n">recent</span> <span class="n">block</span>
+    <span class="err">┌──────────┐</span>   <span class="err">┌──────────┐</span>   <span class="err">┌──────────┐</span>   <span class="err">┌──────────┐</span>
+    <span class="err">│</span>          <span class="err">│</span>   <span class="err">│</span> <span class="n">H</span><span class="p">()</span>      <span class="err">│</span>   <span class="err">│</span> <span class="n">H</span><span class="p">()</span>      <span class="err">│</span>   <span class="err">│</span> <span class="n">H</span><span class="p">()</span>      <span class="err">│</span>
+    <span class="err">│</span>          <span class="err">│◄──┤</span>          <span class="err">│◄──┤</span>          <span class="err">│◄──┤</span>          <span class="err">│</span>
+    <span class="err">│</span>          <span class="err">│</span>   <span class="err">│</span>          <span class="err">│</span>   <span class="err">│</span>          <span class="err">│</span>   <span class="err">│</span>          <span class="err">│</span>
+    <span class="err">└──────────┘</span>   <span class="err">└──────────┘</span>   <span class="err">└──────────┘</span>   <span class="err">└──────────┘</span>
+
+</code></pre></div></div>
+
+<p>如上图，每个区块都存有一个哈希值，哈希值的计算包括上一个区块内容本身+上一个区块的哈希，从而保证了内容不被篡改（<strong>tamper- evident log</strong>）。</p>
+
+<p>比如如果破坏A的区块，则B存放的哈希值需要修改，最新的区块哈希值会计算B的哈希，从而也会修改，所以只要记住最后一个区块的地址，即可检测链上内容是否被篡改。</p>
+
+<h3 id="merkle-tree-默克尔树">Merkle tree （默克尔树）</h3>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220611171217.png" alt="image-20220611145500812" /></p>
+
+<p>如图下方是数据块，上方是节点，默克尔树和二叉树的区别在于前者使用哈希指针代替普通指针，比如AB数据块的父节点就存有其二者的哈希，其父节点同理，所以只需要记住根哈希，便可以检测出对树中任何部位的修改。</p>
+
+<p>对于区块链来说，不同区块通过哈希指针连接，每一个区块分为块头和块身，块身中存放交易列表，而由这个区块包含的交易，所组成的默克尔树的根哈希，就存放在块头中。</p>
+
+<p>Merkle tree的具体用途：</p>
+
+<p>比特币系统中，节点分为轻节点和全节点，轻节点只保存块头信息，而全节点保存区块所有内容。因为一个区块比较大，对硬件要求会比较高，比如像手机钱包，就会采用轻节点的方式存储。</p>
+
+<p>当对一个轻节点证明某条交易（tx，<strong>transaction</strong>）是否被写入区块链时，便会用到 Merkle proof。我们把交易到到根节点这一条路径叫做Merkle proof ，如下图，当轻节点确认黄色交易是否属实时，会向全节点请求需要的哈希（下图红色哈希），然后自底向上进行计算，把得到的最终结果和根哈希进行比对，进而进行判断。</p>
+
+<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220611171035.png" alt="image-20220611155011261" /></p>
+
+<p>那这样是否是安全的呢？如果待验证交易是虚假的，是否可以再伪造一个红色哈希，来满足验证的需求，我们从哈希的三个性质来看，显然是不成立的。</p>
+
+<p>Merkel proof 可以证明 Merkel tree中是否包含某个交易，所以这种证明又称为 <strong>proof of membership</strong> 或 <strong>proof of inclusion</strong>。 对于一个轻节点来说，验证一个 Merkel proof 的时间复杂度是多少呢？如果底层一共有 n 个交易，则时间复杂度为 $\theta(log(n)) $。</p>
+
+<p>如何证明  Merkel tree 中不包含某个交易呢？即 <strong>proof of non- membership</strong>。可以把整颗树传给轻节点，轻节点收到后验证书的构造是对的，每一层用到的哈希值都是正确的，说明树中只有这些叶节点，如果不在这里面，则证明proof of non- membership。这样的时间复杂度为 $\theta (n)$ 。不过比特币中不需要不存在证明。</p>
+
+<h2 id="比特币中的协议">比特币中的协议</h2>
+
+<h3 id="交易transaction-based-ledger">交易（transaction based ledger）</h3>
+
+<p>说比特币之前，我们先看一下中心化的数字货币是怎么进行交易的。</p>
+
+<p>比如央行发行数字货币，央行用私钥对数字货币进行签名，人民群众用央行的公钥进行验证，从而对数字货币的真伪进行判断。</p>
+
+<p>如果说某人有100的数字货币，他可以对这100的数字货币进行复制，这样相当于可以支付两次，也就造成了双花攻击（<strong>double spending attack</strong>）。</p>
+
+<p>要想预防这种攻击，就需要央行给每个数字货币一个编号，再维护一个数据库。数据库中存有货币的编号及其所属人。当一个人想要进行交易时，需要从数据库中确认货币是否真实以及是否所属于他，都满足后数据库中货币的编号将指向收款人。</p>
+
+<p>但是这样，每次交易太过于依赖一个中心化的机构，这时去中心化的比特币出现了。</p>
+
+<p>比特币，同样也需要解决以下两个问题：</p>
+
+<ol>
+  <li>谁有权利发行货币，发行多少，什么时候发行？</li>
+  <li>交易如何验证身份？如何防范双花攻击？</li>
+</ol>
+
+<p>第一个问题的答案是挖矿，这个部分后面会进行学习。第二个问题，我们通过以下的具体例子进行解决：</p>
+
+<p><img src="../../assets/images/image-20220611220508617.png" alt="image-20220611220508617" /></p>
+
+<p>图中，A具有铸币权，发布了10个比特币，第一个区块内的交易也称为铸币交易。同时A转账给B 5个比特币 C 5个比特币，A对该交易进行签名，同时该交易需要说明花掉这10个比特币的来源 —&gt; 铸币中产生的10个币，之后以此类推。</p>
+
+<p>可以看到图中有两类哈希指针（不算块内的交易箭头），一类是指向前一个区块用于形成链，第二类是说明交易比特币的来源（红色➡️），可以防止双花攻击。</p>
+
+<p>通过上述实例，我们可以总结比特币采用的是『 交易追溯 』的方法检验是否满足交易条件。</p>
+
+<p>我们管『 记录账户模式 』的方法叫做 <strong>account-based ledger</strong>，现实世界以及以太坊，使用的就是这种模式；『 追溯交易模式 』的方法称为 **transaction-based ledger **。</p>
+
+<p>那么交易的过程，到底需要哪些信息呢？</p>
+
+<ol>
+  <li>
+    <p>从A  —&gt; B  的转账中，A 需要知道  B 的信息：</p>
+
+    <blockquote>
+      <p>A 毫无疑问只需要知道 B 的地址就可以了，这个地址由 B 公开的公钥进行二次哈希得到。</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>从A  —&gt; B  的转账中，B 需要知道 A 的信息：</p>
+
+    <blockquote>
+      <p>B 需要知道 A的公钥，不仅是B所有节点都需要知道A的公钥用于验证A的签名。</p>
+    </blockquote>
+  </li>
+</ol>
+
+<p>这个公钥怎么得到呢？在A交易时，他需要提供出来，同时还需要提供货币来源，这样会不会有安全问题呢？</p>
+
+<p>如果有一个B’冒充A，用自己的私钥进行签名，同时在交易时制定自己的公钥和A的货币来源，那么这样在签名验证肯定是没有问题的，但这无法伪造A的交易。因为追溯货币来源时，会得到A的地址（A的公钥哈希），只需把B所提供的公钥进行哈希之后比对，即可确认是不是存在身份伪造。</p>
+
+<p>在上面的演示中每个区块都只有一个交易，但是实际上一个区块存在多个交易，这些交易也就组织成了 Merkel tree。</p>
+
+<h3 id="挖矿求解">挖矿求解</h3>
+
+<p>我们一直说挖矿，那挖矿到底是什么？挖矿简单来说就是根据算力，不断去尝试求解一个问题，我们先看看一个 <strong>block Header</strong> 的组成：</p>
+
+<ol>
+  <li>
+    <p>version</p>
+  </li>
+  <li>
+    <p>Hash of previous block header （指向前一个区块指针）</p>
+  </li>
+  <li>
+    <p>merkle  root hash（默克尔树根哈希值）</p>
+  </li>
+  <li>
+    <p>更新时间</p>
+  </li>
+  <li>
+    <p>target（挖矿难度）</p>
+  </li>
+  <li>
+    <p>nonce （一个随机数）</p>
+  </li>
+</ol>
+
+<p>以上的内容，1-5是固定的，唯一变化的是6，把以上内容首位连接起来，得到一个字符串，对该字符串做两次SHA-256运算，得到256位的B，挖矿，就是不断的随机尝试nonce，直到B ≤ target，通俗一点就是B的前n位为0。</p>
+
+<p>挖矿的具体细节和难度调整会在后面学习到。</p>
+
+<h3 id="分布式共识">分布式共识</h3>
+
+<p>分布式共识是什么？如果说系统中有很多台机器，共同维护一个全局的哈希表，那么这里的共识指的就是哈希表中包含了哪些键值对，假如机器 A中插入了一个键值对，那么要求其他机器也能够读出来。</p>
+
+<blockquote>
+  <p>分布式系统有很多结论，这里不展开介绍；</p>
+
+  <p>FLP ( 三个专家名字的缩写 )不可能结论：在一个异步的 ( asynchronous ) 系统里，网络时延无上限，即使只有一个成员是有问题的 ( faulty ) ，也不可能达成共识。</p>
+
+  <p>CAP Theorem ：任何一个分布式系统，Consistency ( 系统一致性 )、Availability ( 可用性 )、Partition tolerance ( 容错性 ) 只能最多满足其中两个性质 。</p>
+</blockquote>
+
+<p>那区块链中，需要满足怎样的共识呢？答案就是区块的共识，每个全节点都在本地维护了一个区块，这个区块包含了多个交易，那么哪些交易被写进区块，按什么顺序写入，这需要达到一个统一。这么多全节点，那么由哪一个被写入真正的区块链，作为大家所公认的，拥有记账权，这就是共识的问题。</p>
+
+<p>在很多分布式系统中，都采用投票的机制以达到某个共识，但这才区块链中是否可行呢？</p>
+
+<p>如果说这个链对加入的成员有所要求，比如联盟链，那么基于投票是可行的。问题在于区块链创建账号的成本几乎没有，只需要本地产生公私钥对即可，任何人都可以加入，如果黑客专门产生大量的公私钥对，当其超过系统的一半时，就可以获得支配地位，也就是女巫攻击（sybil attack ）。</p>
+
+<p>那么区块链是怎么做到呢？区块链采用的是 POW  （proof of works ）机制，具体运作如下：</p>
+
+<blockquote>
+  <p>step1：全网广播新的数据记录 ，通过基本合法性验证的数据被暂存。这点是说，所有候选区块都是合法区块，非法区块（非法意思是区块中包含的交易不合法）是不会作为候选区块的。</p>
+
+  <p>step2：全网执行共识算法，即找到合适的nonce，使得H(Block header)≤target，俗称挖矿</p>
+
+  <p>step3：率先找到nonce节点获得记账权，其打包的区块可上传至区块链中</p>
+
+  <p>step4：对外广播新区块，其他节点验证通过后，将其加至主链中。</p>
+</blockquote>
+
+<p>首先确定一点，为什么大家都想打包区块，争夺所谓的记账权呢？挖矿，自然是为了挖矿的奖励：</p>
+
+<p>一个获得合法区块的节点，可以在区块中获得一个铸币交易 ，也就是出块奖励，实际上这种方式也是唯一一个产生新比特币的途径。</p>
+
+<p>比特币系统规定，起初每个打包成功的区块可以获得50个比特币，之后每过 21万个区块，奖励减半，通过计算我们知道比特币一共有2100万个。</p>
+
+<p>原来区块链是通过算力来进行投票，大家争夺的并不是记账权，而是挖矿后的奖励，记账只是在区块链中默认履行的义务。</p>
+
+<p>下面我们再看看在共识中可能出现的几种特殊情况。</p>
+
+<p><img src="../../assets/images/image-20220612214104372.png" alt="	" /></p>
+
+<p>上图中，A在第5个区块发布之后，发布了第4’区块，并尝试上传到区块链中，这种情况是否可行？</p>
+
+<p>首先，区块链遵循最长链原则，1-4’ 这条链虽然合法，但不是最长的，对于现在正准备挖矿打包的其他节点而言，他们的父哈希（Hash of previous block header ）已经指向了第五个区块，也就决定了之后的候选区块必然是连在5号区块之后的。</p>
+
+<p>那么这种攻击 ( 分叉攻击 ) 有可能成立吗？如果A在上传4’后，马上又计算好了5’区块，然后计算好了6’区块，之后A同时上传，如果整个区块链网络还没能算好第六个区块，他们就会放弃计算6号区块，转而去计算7’，这就是分叉攻击，4号和5号的所有合法交易都被回滚。</p>
+
+<p><img src="../../assets/images/image-20220612215231599.png" alt="image-20220612215231599" /></p>
+
+<p>理论上是可行的，实际上A所对抗的算力是整个区块链网络的其他所有计算机，所以只有A达到整个系统的 51% 算力，才可能实现。</p>
+
+<p>还有一种情况是自然分叉：</p>
+
+<p><img src="../../assets/images/image-20220612215845702.png" alt="image-20220612215845702" /></p>
+
+<p>两个符合要求的矿工，同时计算到了nonce并广播，在区块链网络中，有一部分人会接受上面的区块，一部分会接受下面的，分别用上面区块的哈希值作为父哈希进行计算，随着时间推移，总有一条链胜出（他的子节点先挖到矿并打包），成为最长合法链，由此保证了区块链的一致性，而被抛弃的区块称为 orphan block （孤儿区块，没有大爹算出来，是这样的），其中的交易就被全部回滚了。</p>
+
+<h2 id="比特币系统的实现">比特币系统的实现</h2>
+
+<p>上一节我们说到比特币采用交易模式是transaction-based ledger，因为系统中并没有显示记录每个账户的比特币数目，需要通过交易回溯推算。因此，在比特币系统中维护了一个 <strong>UTXO(Unspent Transaction Output)</strong>:尚未被花掉的交易。</p>
+
+<p>后面的内容比较简单，介绍了一些具体的区块信息和交易信息，安全性分析也都是共识中谈过的内容，就不记录了。</p>
+
+<h2 id="比特币网络">比特币网络</h2>
+
+<p>在网络中需要传播两种信息：新发布交易的信息和新发布区块的信息。</p>
+
+<p>比特币工作于应用层，其网络层为一个P2P overlay network。比特币系统中所有节点完全平等，要想加入网络，至少需要知道一个种子节点，通过种子节点告知他所知道的其他节点。当节点离开时，只需自行退出，其他节点一定时间没有收到该节点信息便会自行删除。</p>
+
+<p>比特币网络设计原则：<strong>simple、robust、but not efficient</strong>。每个节点维护一个邻节点集合，消息传播在网络中采用flood 模式，某个节点在收到一条消息会将其发送给所有邻居节点并标记，下次再收到便不会再发送该消息，以免消息无限循环。邻居节点选取随机，未考虑网络底层拓扑结构，也与现实世界物理地址无关。该网络具有极强鲁棒性，但牺牲了网络效率。</p>
+
+<p>如果有两个冲突交易 A-&gt;B 和 A-&gt;C（花费同一笔钱），取决于节点先收到哪个交易，宁外一个将抛弃。</p>
+
+<h2 id="比特币的挖矿难度调整和历史">比特币的挖矿难度调整和历史</h2>
+
+<p>在比特币系统中，平均出块时间保持到10min 左右，随着挖矿的人增多以及设备的强大，系统总算力不断增强，要想保持出块时间就得对挖矿的难度做出调整。</p>
+
+<h3 id="挖矿难度调整">挖矿难度调整</h3>
+
+<p>之前说到挖矿就是不断尝试 block header 中的 nonce 值，使得整个 block header 对两次哈希值小于 target ，那么调整挖矿难度，其实就是调整 target 。</p>
+
+<p>对于挖矿难度，有以下几个问题：</p>
+
+<ol>
+  <li>
+    <p>如果不调整挖矿难度会怎么样？</p>
+
+    <blockquote>
+      <p>随着系统算力的增强，挖矿难度不变，出块时间会越来越短。</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>出块时间越来越短是好事吗？</p>
+
+    <blockquote>
+      <p>出块时间短的好处是交易很快能被写入区块链，提高了区块链的效率。但是问题是区块链网络传播有时延，如果出块时间短会使得系统中的节点经常处于不一致的状态，增加了系统的不稳定性，这种不稳定性会导致区块分叉状态过多，不利于达到共识，造成算力分散，黑客如果集中攻击的成本会大大降低。</p>
+    </blockquote>
+  </li>
+</ol>
+
+<h3 id="挖矿历史">挖矿历史</h3>
+
+<p>列一下全节点和轻节点的区别：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">全节点</th>
+      <th style="text-align: center">轻节点</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">一直在线</td>
+      <td style="text-align: center">不是一直在线</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">在本地硬盘上维护完整区块链信息</td>
+      <td style="text-align: center">不保存整个区块链，只需要保存每隔区块块头</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">在内存中维护UTXO集合，以便于快速检验交易合法性</td>
+      <td style="text-align: center">不保存全部交易，只保存和自己有关的交易</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">监听比特币网络中交易内容，验证每个交易合法性</td>
+      <td style="text-align: center">无法验证大多数交易合法性，只能检验和自己相关的交易合法性</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">决定哪些交易会打包到区块中</td>
+      <td style="text-align: center">无法检测网上发布的区块正确性</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">监听其他矿工挖出的区块，验证其合法性</td>
+      <td style="text-align: center">可以验证挖矿难度</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">挖矿：<br />1 . 决定沿着哪条链挖下去。<br />2. 当出现等长分叉，选择哪一个分叉</td>
+      <td style="text-align: center">只能检测哪个是最长链，不知道哪个是最长合法链</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>目前挖矿越来越趋近于专业化，总体分为三个阶段，从通用演变为专用：</p>
+
+<ol>
+  <li>
+    <p>CPU阶段</p>
+
+    <blockquote>
+      <p>早期，很多人使用自己的个人电脑挖矿，但挖矿过程中大多数的内存，硬盘以及CPU的大部分组件（因为挖矿求解本身运用到的指令就很少）都是闲置状态，随着挖矿难度的提高，用CPU挖矿根本不划算。</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>GPU阶段</p>
+
+    <blockquote>
+      <p>GPU主要用作大规模并行计算，如深度学习，但GPU挖矿还是有一定的浪费，比如挖矿只使用整数，浮点数运算的部件将会闲置。</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>ASIC芯片（<strong>Application Specific Integrated Circuit</strong>）阶段</p>
+
+    <blockquote>
+      <p>这种芯片相当于针对一类挖矿的求解问题（mining puzzle）进行针对性设计。</p>
+    </blockquote>
+  </li>
+</ol>
+
+<p><strong>ASIC芯片的出现是好事吗？</strong></p>
+
+<blockquote>
+  <p>ASIC芯片不是每个人都能参与进来，一定程度上提高了挖矿的门槛，这与去中心化相违背。并且ASIC的定制开发需要很长的周期（大于一年），如果这个时间内对应币的价值大幅度贬值价格跳水，投入的成本将血本无归。</p>
+
+  <p>理想状态下，所有人应该都可以用家用计算机 CPU 进行挖矿，后续一些货币就考虑了这个问题，设计了对抗 ASIC 芯片化的解决方案，后续的以太坊就会介绍到。</p>
+</blockquote>
+
+<p>对于单个的矿工而言，即使使用了ASIC芯片，其算力在整个系统中仍然是很小的一部分，并且他还需要担任全节点的其他责任，造成了算力的浪费。</p>
+
+<p>因此，后面变形成了矿池的概念：</p>
+
+<p><img src="../../assets/images/image-20220618201028144.png" alt="image-20220618201028144" /></p>
+
+<p>一个简单的矿池如上：一个全节点驱动多台矿机。矿工只需要不断的计算哈希即可，其他全节点的责任由矿主承担，当获得收益后，对所有矿工进行分配。</p>
+
+<p>矿池一般有两种组织形式，一是同一机构对大规模数据中心统一挖矿，二是分布式，矿主和矿工不认识，矿工自愿加入矿池，矿主分配任务，但这一种情况的话利益的分配就成了一个问题：</p>
+
+<ol>
+  <li>
+    <p>平均分配，所有人平分出块奖励</p>
+
+    <blockquote>
+      <p>这样肯定不行，首先不同矿工的算力有所差距，而且这种 『 吃大锅饭 』的方式肯定会让有一些矿工偷懒，所以需要按劳分配，要有一个工作量证明的制度。</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>按劳计算，根据工作量分配</p>
+
+    <blockquote>
+      <p>假设原本的挖矿难度是计算所得前70位为0，现在降低要求只需前60位，这样挖矿更加容易，当然这个哈希本身是没有用的，并不满足挖矿的条件，我们把其称为一个 <strong>share</strong> ，或者 <strong>almost valid share</strong>，矿工没挖到一个share，便提交给矿主，作为其工作量的证明，等某个矿工真正挖到符合条件的区块后，再根据矿工所提交的的share所分配。</p>
+    </blockquote>
+  </li>
+</ol>
+
+<p>注意，每个矿工挖矿都是 <strong>随机的</strong> 生成nonce并尝试，不会说我从1-10000这个区间尝试，你从10001到20000这样，所有人都是随机的，尽管可能会重合（概率也很低）。</p>
+
+<p>同时，一下几种情况也需要考虑：</p>
+
+<ol>
+  <li>
+    <p>会不会存在有矿工平时正常挖矿交share，但是挖到真正的矿不是交给矿主而是自己偷偷发布出去（私吞）</p>
+
+    <blockquote>
+      <p>这种情况不可能，矿主组装区块交给矿工计算，其中铸币交易的收款地址是矿主，如果矿工修改改地址，其nonce也会失去其意义。</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>会不会有矿工捣乱，平时提交share，挖到区块反而扔掉不提交。</p>
+
+    <blockquote>
+      <p>这种情况是有可能的，如果矿工本身想捣乱，可以这么做，虽然对他自身来说没有任何获利，损人不利己。</p>
+
+      <p>但是矿池直接是存在竞争关系的，为了打击竞争对手可能排矿机加入对方矿池挖矿，只参与其他矿工挖矿分红，自己挖到的区块却丢掉不给他人分。</p>
+    </blockquote>
+  </li>
+</ol>
+
+<p>随着矿池的出现，算力也变得集中起来，在2014年曾有一个名叫 『 GHash 』的矿池达到了高达 51%的算力：</p>
+
+<p><img src="../../assets/images/image-20220619003824934.png" alt="image-20220619003824934" /></p>
+
+<p>我们之前说到如果算力达到51%就有可能可以发起分叉攻击，如果攻击者不喜欢某个账户A，在监听到A将交易发布到区块链后，立马发动分叉攻击使A无法成为最长合法链，这样便实现对对A的封锁（<strong>Boycott</strong>）。</p>
+
+<p>可见矿池的出现威胁了区块链去中心化的特性，之后 GHash 主动降低了矿池算力，避免动摇人们对比特币的信心。</p>
+
+<p>如果矿池表面上是安全的，实际上某个机构拥有超过百分之50的算力，不将其放入一个矿池中而是分散隐蔽，还是可以发动51%算力的攻击。</p>
+
+<h2 id="比特币分叉">比特币分叉</h2>
+
+<p>分叉是指原来比特币系统中的一条链变成了两条链。造成分叉的原因有很多，简单来说有以下三种：</p>
+
+<ol>
+  <li>state fork：两个时间差不多的矿工同时出矿，发布区块对比特币系统当前状态产生分歧的分叉。</li>
+  <li>forking attack：人为分叉攻击造成的分叉。</li>
+  <li>protocal fork：比特币协议改变，在分布式系统中不是所有的节点都进行升级，导致分叉。</li>
+</ol>
+
+<p>而这一节所说的分叉,主要就是围绕 protocal fork 所展开的，比特币协议改变，简单来说就是进行了更新。</p>
+
+<p>回想一下我们现实软件中更新的例子，有的软件会在打开时提示你是否进行更新，你可以根据产品变更自行选择；有的软件会在下载时就默认确认自动更新，在连网的情况下自动获取数据包；有的软件在你选择是否更新后（否）自动退出，默认不进行更新则无法继续使用，这都是非常常见的例子。</p>
+
+<p>说到更新其实离不开一个兼容性的问题，我在这个方面被小绕晕了一会，也简单谈谈 <strong>兼容性的异议</strong> <sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup>：</p>
+
+<p>兼容性主要分为 <strong>向前兼容</strong>（<strong>Forward Compatibility</strong>）和 <strong>向后兼容</strong> （<strong>Backward Compatibility</strong>）两种，这里主要的异议在于英文中，<strong>前后</strong> 两词在时间上和空间上是统一的，比如 <strong>Forward</strong> 在空间上指前进，时间上指未来，而汉语中 『 前 』 在空间上指前进，时间上通常指以前，过去。</p>
+
+<p>而正是这种差异，我也赞同知乎下面的一个评论，不如把这两者直译为：<strong>Forward Compatibility</strong> 兼容未来，<strong>Backward Compatibility</strong> 兼容过去。</p>
+
+<blockquote>
+  <p>兼容未来（<strong>Forward Compatibility</strong>）：指老的软件 / 硬件 兼容新的软件 / 硬件 的数据，如果在现实中会少一些，因为开发者需要在设计之初考虑各种情况，比如 HTML 页面就是兼容未来的，浏览器遇到新版本的 HTML语言时，即使有一些标签无法不支持，也会选择忽视正常使用，而比如 lambda 表达式是 java 8 所推新的特性，如果是java 5的编译器则会报错，这就是不兼容未来的例子。</p>
+
+  <p>兼容过去（<strong>Backward Compatibility</strong> ）：指新的软件 / 硬件 兼容老的软件 / 硬件 的数据，这个在大部分的编程语言中都满足，即使有一些特性被删去，也只是给出一个 warning，并不影响正常编译使用。但很多软件就不这样，因为设计之初没有考虑到很多情况，可能必须要抛弃过去的一些特性，只能强行更新不兼容。</p>
+</blockquote>
+
+<p>好了刚刚我们聊的都是现实生活的例子，通常会有一个管理方或者平台分发更新的报告，而在加密货币体系中，去中心化的环境并没有严格的层次结构，所谓更新只是矿工们广义上达到的某种 <strong>共识</strong> 而已，比较不可能会有人顺着地址摸到矿工家里拿着枪逼他进行更新。</p>
+
+<p>其实上面的两种兼容模式都是我另外补充的，肖臻老师在课堂上只用两个例子来描述软硬分叉，可能我理解能力比较差所以另外补充了一些知识进行概括，如果有不对的地方还望批评指正。</p>
+
+<h3 id="硬分叉">硬分叉</h3>
+
+<p>硬分叉用一句话概括就是 <strong>兼容过去，但不兼容未来</strong>。比特币协议修改后，未升级的节点不会认可这些修改，会认为这些特性是违法的，从而导致分叉，我们以一个具体的情况为例：</p>
+
+<p>在BTC系统中，区块大小最大为1MB，可以包含的交易最大数量为4000笔左右。而一个区块产生大概需要10min左右，也就是说，整个比特币系统，平均每10分钟最多只能处理4000笔交易(平均每秒7笔交易)，严重影响了吞吐率和交易处理，所以有人认为可以增大区块大小，使得一个区块中包含的交易数变多，我们假设区块大小从1MB增大到8MB。</p>
+
+<p>我们假设系统中大多数节点都进行了更新，只有少部分 <strong>守旧派</strong> 不愿意增大（区块增大也会导致网络传输变慢）。我们这里的<strong>大多数</strong>和<strong>少部分</strong>单纯指的是算力，而不是具体的人数。</p>
+
+<p><img src="../../assets/images/image-20220624005710693.png" alt="image-20220624005710693" /></p>
+
+<p>如上草图所示，图 1 为当前区块链，此时协议更新，绿色的新节点挖到了区块，如图2。但是对于旧节点来说因为不向未来兼容，它认为这是一个非法区块，故旧节点依旧照绿色区块前一个区块挖矿，如图三。</p>
+
+<p>但是因为新节点的算力强，它会沿着上方的最长合法链进行挖矿，而对于旧节点来说，上方链上存在非法区块，不会认可该链，也沿着自己下方的链挖矿，可见这种分叉是持续性的，<strong>只要这部分旧节点不更新，下方的链就永远不会消失</strong>。</p>
+
+<p>历史上BTC的分叉币BCH（比特币现金，区块大小为）就是这样硬分叉而来。而以太坊网络也同样发生过硬分叉，不过那是因为智能合约 THE DAO  存在<strong>重入漏洞</strong>，被黑客攻击后不得不以硬分叉的方式回滚交易，具体内容会在后续的以太坊中介绍。</p>
+
+<h3 id="软分叉">软分叉</h3>
+
+<p>关于软分叉的定义，其实我一直没有找到一个比较明确的结论，反而是在不同的资料上有不同的解释：大多数科普文章把软分叉归结于同时 <strong>兼容未来和兼容过去</strong>，即新旧节点可以完全共存在一条最长链上；而肖臻老师的讲义上举的例子是<strong>兼容未来，但不兼容过去</strong>。我暂且理解是否兼容过去取决于具体的协议变更，这么看维基百科上关于软分叉的描述可能更加规范<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote" rel="footnote">2</a></sup>：</p>
+
+<blockquote>
+  <p>与硬分叉相比，软分叉所产生之区块能够被旧软件识别为有效区块，即区块 <a href="https://zh.wikipedia.org/wiki/向下兼容">向下兼容</a>。然而，旧软件所产生之区块则<strong>未必</strong>在新规则下有效。</p>
+</blockquote>
+
+<p>我们同样以区块大小为例，不过这次更新是把区块变小，从1MB变为0.5MB。</p>
+
+<blockquote>
+  <p>注意这里只是简单打了一个比方，实际上更新不是简单调整一个参数那么简单，因为是否兼容一定意义上就是取决于修改协议的部分。</p>
+</blockquote>
+
+<p>我们假设大多数节点进行了更新（即更新之后的节点算力超过 50%），如果软分叉满足兼容过去，那么应该会出现以下这种情况：</p>
+
+<p><img src="../../assets/images/image-20220624134618348.png" alt="image-20220624134618348" /></p>
+
+<p>虽然旧节点无法识别新规则到真实含义，但因为新节点满足合法的规则，所以新旧节点同处于一条链上，对整个系统的影响比较小。</p>
+
+<p>但也有可能出现软分叉不兼容过去的情况，比如更新后的节点，可以拒绝大小超过0.5MB的区块：</p>
+
+<p><img src="../../assets/images/image-20220624142213372.png" alt="image-20220624142213372" /></p>
+
+<p>如果新节点不认可大于0.5MB的旧节点的话，认为其是一个非法区块，会从其前一个小区块开始，而旧节点一直被抛弃，不在最长合法链上，导致得不到出块奖励，最后逼迫旧节点升级，实现区块链上的所有矿工共同认可新协议，实现软件协议的升级。</p>
+
+<p>比特币中的很多功能都是后续通过软分叉加入其中，比如在比特币系统中简单带过的 UTXO，就是通过软分叉写入到了 CoinBase域，旧节点认可新节点的区块，但是新节点检查旧节点 CoinBase域时发现并没有UTXO，则不会认可其发布的区块。不过更新也是一个慢慢迭代的过程，我们上面所举的例子也是站在已经有 50%的用户进行更新的前提下。</p>
+
+<p>总结：</p>
+
+<p>硬分叉：必须系统中所有节点更新软件，系统才不会产生永久性分叉，当出现更新时，硬分叉导致用户必须做出选择，会把社区一分为二。</p>
+
+<p>软分叉：比较平稳，新的升级不会造成某种冲突，只需要实施某种限制，只要系统中一半以上的算力更新软件，系统就不会产生永久性分叉。</p>
+
+<h1 id="以太坊">以太坊</h1>
+
+<h2 id="以太坊概述">以太坊概述</h2>
+
+<p>BTC成为区块链1.0，以太坊成为区块链2.0。以太坊的出现，弥补了之前我们所说区块链存在的一些不足，比如：</p>
+
+<ol>
+  <li>
+    <p>挖矿时间</p>
+
+    <blockquote>
+      <p>比特币的出块时间为10min，很多人觉得这个时间太长了，在以太坊中大幅度见减小，改为10多秒。</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>共识机制不同</p>
+
+    <blockquote>
+      <p>针对以太坊的出块时间，以太坊研究出了 『 基于 Ghost 协议 』的共识机制。</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>mining puzzle</p>
+
+    <blockquote>
+      <p>比特币中的 mining puzzle 是纯暴力计算哈希，这样的结果是挖矿设备专业化。但这一定意义上违背了去中心化原则。以太坊的 mining puzzle 对内存是有一定要求的，这一定意义上限制了 ASIC 芯片的使用。</p>
+    </blockquote>
+  </li>
+  <li>以太坊用权益证明(pos proof of stake)代替了 工作量证明(pow)。</li>
+  <li>以太坊引入了对智能合约(smart contract)的支持。</li>
+</ol>
+
+<h2 id="以太坊账户">以太坊账户</h2>
+
+<p>BTC系统是基于交易的账本，系统没有记录每个账户有多少钱，只能通过 UTXO 进行推算。</p>
+
+<p>以太坊系统采用了账户的模式，和现实中的银行类似。</p>
+
+<p>以太坊中，有两类账户：外部账户和内部账户。</p>
+
+<ul>
+  <li>外部账户（externally owned account），存有类似BTC系统中的公私钥对、余额和计数器。</li>
+  <li>合约账户（smart contract account）：不能主动发起交易，只能接收到外部账户调用后才能发起交易或调用其他合约账户，其除了balance和nonce之外还有code(代码)、storage(相关状态-存储)。</li>
+</ul>
+
+<p>创建合约时会返回一个地址，通过地址即可调用。</p>
+
+<h2 id="以太坊中的数据结构">以太坊中的数据结构</h2>
+
+<h3 id="状态树">状态树</h3>
+
+<h3 id="交易树">交易树</h3>
+
+<h3 id="收据树">收据树</h3>
+
+<p>2022 6.20</p>
+
+<p>最近工作比较忙，以太坊这部分就先不整理了。</p>
+
+<h2 id="参考">参考</h2>
+
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:1" role="doc-endnote">
+      <p>知乎：<a href="https://zhuanlan.zhihu.com/p/28195702">向前兼容与向后兼容</a> <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:2" role="doc-endnote">
+      <p>维基百科：<a href="https://zh.wikipedia.org/wiki/%E5%88%86%E5%8F%89#%E8%BD%AF%E5%88%86%E5%8F%89">软分叉</a> <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-05-13T00:00:00+08:00"><!-- start custom article footer snippet -->
+
+<!-- end custom article footer snippet -->
+<div class="article__subscribe"><div class="subscribe"><i class="fas fa-rss"></i> <a type="application/rss+xml" href="/feed.xml">Subscribe</a></div>
+</div><div class="article__license"><div class="license">
+    <p>This work is licensed under a <a itemprop="license" rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution-NonCommercial 4.0 International</a> license.
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">
+        <img alt="Attribution-NonCommercial 4.0 International" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" />
+      </a>
+    </p>
+  </div></div></footer>
+<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/2022/Java-Prepstatementared">浅谈Java预编译</a></div><div class="next"><span>NEXT</span><a href="/2022/codeaudit/SmartBi-V10.5%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1">SmartBi V10.5代码审计</a></div></div></div>
+
+</div>
+
+<script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    $(function() {
+      var $this ,$scroll;
+      var $articleContent = $('.js-article-content');
+      var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+      var scroll = hasSidebar ? '.js-page-main' : 'html, body';
+      $scroll = $(scroll);
+
+      $articleContent.find('.highlight').each(function() {
+        $this = $(this);
+        $this.attr('data-lang', $this.find('code').attr('data-lang'));
+      });
+      $articleContent.find('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]').each(function() {
+        $this = $(this);
+        $this.append($('<a class="anchor d-print-none" aria-hidden="true"></a>').html('<i class="fas fa-anchor"></i>'));
+      });
+      $articleContent.on('click', '.anchor', function() {
+        $scroll.scrollToAnchor('#' + $(this).parent().attr('id'), 400);
+      });
+    });
+  });
+})();
+</script>
+</div><section class="page__comments d-print-none"><div id="disqus_thread"></div>
+  <script>
+  /**
+  *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+  *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+  var disqus_config = function () {
+    this.page.url = 'http://localhost:4000/2022/cource/BitCoin';
+    this.page.identifier = '『区块链技术与应用』学习笔记';
+  };
+  (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://theoyu.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></section></article><!-- start custom main bottom snippet -->
+
+<!-- end custom main bottom snippet -->
+</div>
+            </div></div></div><div class="page__footer d-print-none">
+<footer class="footer py-4 js-page-footer">
+  <div class="main"><div itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Theoyu"><meta itemprop="url" content="/"><meta itemprop="description" content="I am an amazing person."><div class="footer__author-links"><div class="author-links">
+  <ul class="menu menu--nowrap menu--inline"><li title="Send me an Email.">
+      <a class="button button--circle mail-button" itemprop="email" href="mailto:zeyu.ou@foxmail.com" target="_blank">
+        <i class="fas fa-envelope"></i>
+      </a><li title="Follow me on Github.">
+        <a class="button button--circle github-button" itemprop="sameAs" href="https://github.com/yuuuuu422" target="_blank">
+          <div class="icon"><svg fill="#000000" width="24px" height="24px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path class="svgpath" data-index="path_0" fill="#272636" d="M0 525.2c0 223.6 143.3 413.7 343 483.5 26.9 6.8 22.8-12.4 22.8-25.4l0-88.7c-155.3 18.2-161.5-84.6-172-101.7-21.1-36-70.8-45.2-56-62.3 35.4-18.2 71.4 4.6 113.1 66.3 30.2 44.7 89.1 37.2 119 29.7 6.5-26.9 20.5-50.9 39.7-69.6C248.8 728.2 181.7 630 181.7 513.2c0-56.6 18.7-108.7 55.3-150.7-23.3-69.3 2.2-128.5 5.6-137.3 66.5-6 135.5 47.6 140.9 51.8 37.8-10.2 80.9-15.6 129.1-15.6 48.5 0 91.8 5.6 129.8 15.9 12.9-9.8 77-55.8 138.8-50.2 3.3 8.8 28.2 66.7 6.3 135 37.1 42.1 56 94.6 56 151.4 0 117-67.5 215.3-228.8 243.7 26.9 26.6 43.6 63.4 43.6 104.2l0 128.8c0.9 10.3 0 20.5 17.2 20.5C878.1 942.4 1024 750.9 1024 525.3c0-282.9-229.3-512-512-512C229.1 13.2 0 242.3 0 525.2L0 525.2z" />
+</svg>
+</div>
+        </a>
+      </li></ul>
+</div>
+</div>
+    </div><div class="site-info mt-2">
+      <div>© Theoyu 2021,
+        Powered by <a title="Jekyll is a simple, blog-aware, static site generator." href="http://jekyllrb.com/">Jekyll</a> & <a
+        title="TeXt is a super customizable Jekyll theme." href="https://github.com/kitian616/jekyll-TeXt-theme">TeXt Theme</a>.
+      </div>
+    </div>
+  </div>
+</footer>
+</div></div>
+    </div><script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $body = $('body'), $window = $(window);
+    var $pageRoot = $('.js-page-root'), $pageMain = $('.js-page-main');
+    var activeCount = 0;
+    function modal(options) {
+      var $root = this, visible, onChange, hideWhenWindowScroll = false;
+      var scrollTop;
+      function setOptions(options) {
+        var _options = options || {};
+        visible = _options.initialVisible === undefined ? false : show;
+        onChange = _options.onChange;
+        hideWhenWindowScroll = _options.hideWhenWindowScroll;
+      }
+      function init() {
+        setState(visible);
+      }
+      function setState(isShow) {
+        if (isShow === visible) {
+          return;
+        }
+        visible = isShow;
+        if (visible) {
+          activeCount++;
+          scrollTop = $(window).scrollTop() || $pageMain.scrollTop();
+          $root.addClass('modal--show');
+          $pageMain.scrollTop(scrollTop);
+          activeCount === 1 && ($pageRoot.addClass('show-modal'), $body.addClass('of-hidden'));
+          hideWhenWindowScroll && window.hasEvent('touchstart') && $window.on('scroll', hide);
+          $window.on('keyup', handleKeyup);
+        } else {
+          activeCount > 0 && activeCount--;
+          $root.removeClass('modal--show');
+          $window.scrollTop(scrollTop);
+          activeCount === 0 && ($pageRoot.removeClass('show-modal'), $body.removeClass('of-hidden'));
+          hideWhenWindowScroll && window.hasEvent('touchstart') && $window.off('scroll', hide);
+          $window.off('keyup', handleKeyup);
+        }
+        onChange && onChange(visible);
+      }
+      function show() {
+        setState(true);
+      }
+      function hide() {
+        setState(false);
+      }
+      function handleKeyup(e) {
+        // Char Code: 27  ESC
+        if (e.which ===  27) {
+          hide();
+        }
+      }
+      setOptions(options);
+      init();
+      return {
+        show: show,
+        hide: hide,
+        $el: $root
+      };
+    }
+    $.fn.modal = modal;
+  });
+})();
+</script><div class="modal modal--overflow page__search-modal d-print-none js-page-search-modal"><script>
+(function () {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    // search panel
+    var search = (window.search || (window.search = {}));
+    var useDefaultSearchBox = window.useDefaultSearchBox === undefined ?
+      true : window.useDefaultSearchBox ;
+
+    var $searchModal = $('.js-page-search-modal');
+    var $searchToggle = $('.js-search-toggle');
+    var searchModal = $searchModal.modal({ onChange: handleModalChange, hideWhenWindowScroll: true });
+    var modalVisible = false;
+    search.searchModal = searchModal;
+
+    var $searchBox = null;
+    var $searchInput = null;
+    var $searchClear = null;
+
+    function getModalVisible() {
+      return modalVisible;
+    }
+    search.getModalVisible = getModalVisible;
+
+    function handleModalChange(visible) {
+      modalVisible = visible;
+      if (visible) {
+        search.onShow && search.onShow();
+        useDefaultSearchBox && $searchInput[0] && $searchInput[0].focus();
+      } else {
+        search.onShow && search.onHide();
+        useDefaultSearchBox && $searchInput[0] && $searchInput[0].blur();
+        setTimeout(function() {
+          useDefaultSearchBox && ($searchInput.val(''), $searchBox.removeClass('not-empty'));
+          search.clear && search.clear();
+          window.pageAsideAffix && window.pageAsideAffix.refresh();
+        }, 400);
+      }
+    }
+
+    $searchToggle.on('click', function() {
+      modalVisible ? searchModal.hide() : searchModal.show();
+    });
+    // Char Code: 83  S, 191 /
+    $(window).on('keyup', function(e) {
+      if (!modalVisible && !window.isFormElement(e.target || e.srcElement) && (e.which === 83 || e.which === 191)) {
+        modalVisible || searchModal.show();
+      }
+    });
+
+    if (useDefaultSearchBox) {
+      $searchBox = $('.js-search-box');
+      $searchInput = $searchBox.children('input');
+      $searchClear = $searchBox.children('.js-icon-clear');
+      search.getSearchInput = function() {
+        return $searchInput.get(0);
+      };
+      search.getVal = function() {
+        return $searchInput.val();
+      };
+      search.setVal = function(val) {
+        $searchInput.val(val);
+      };
+
+      $searchInput.on('focus', function() {
+        $(this).addClass('focus');
+      });
+      $searchInput.on('blur', function() {
+        $(this).removeClass('focus');
+      });
+      $searchInput.on('input', window.throttle(function() {
+        var val = $(this).val();
+        if (val === '' || typeof val !== 'string') {
+          search.clear && search.clear();
+        } else {
+          $searchBox.addClass('not-empty');
+          search.onInputNotEmpty && search.onInputNotEmpty(val);
+        }
+      }, 400));
+      $searchClear.on('click', function() {
+        $searchInput.val(''); $searchBox.removeClass('not-empty');
+        search.clear && search.clear();
+      });
+    }
+  });
+})();
+</script><div class="search search--dark">
+  <div class="main">
+    <div class="search__header">Search</div>
+    <div class="search-bar">
+      <div class="search-box js-search-box">
+        <div class="search-box__icon-search"><i class="fas fa-search"></i></div>
+        <input type="text" />
+        <div class="search-box__icon-clear js-icon-clear">
+          <a><i class="fas fa-times"></i></a>
+        </div>
+      </div>
+      <button class="button button--theme-dark button--pill search__cancel js-search-toggle">
+        Cancel</button>
+    </div>
+    <div class="search-result js-search-result"></div>
+  </div>
+</div>
+<script>var SOURCES = window.TEXT_VARIABLES.sources;
+var PAHTS = window.TEXT_VARIABLES.paths;
+window.Lazyload.js([SOURCES.jquery, PAHTS.search_js], function() {
+  var search = (window.search || (window.search = {}));
+  var searchData = window.TEXT_SEARCH_DATA || {};
+
+  function memorize(f) {
+    var cache = {};
+    return function () {
+      var key = Array.prototype.join.call(arguments, ',');
+      if (key in cache) return cache[key];
+      else return cache[key] = f.apply(this, arguments);
+    };
+  }
+
+  /// search
+  function searchByQuery(query) {
+    var i, j, key, keys, cur, _title, result = {};
+    keys = Object.keys(searchData);
+    for (i = 0; i < keys.length; i++) {
+      key = keys[i];
+      for (j = 0; j < searchData[key].length; j++) {
+        cur = searchData[key][j], _title = cur.title;
+        if ((result[key] === undefined || result[key] && result[key].length < 4 )
+          && _title.toLowerCase().indexOf(query.toLowerCase()) >= 0) {
+          if (result[key] === undefined) {
+            result[key] = [];
+          }
+          result[key].push(cur);
+        }
+      }
+    }
+    return result;
+  }
+
+  var renderHeader = memorize(function(header) {
+    return $('<p class="search-result__header">' + header + '</p>');
+  });
+
+  var renderItem = function(index, title, url) {
+    return $('<li class="search-result__item" data-index="' + index + '"><a class="button" href="' + url + '">' + title + '</a></li>');
+  };
+
+  function render(data) {
+    if (!data) { return null; }
+    var $root = $('<ul></ul>'), i, j, key, keys, cur, itemIndex = 0;
+    keys = Object.keys(data);
+    for (i = 0; i < keys.length; i++) {
+      key = keys[i];
+      $root.append(renderHeader(key));
+      for (j = 0; j < data[key].length; j++) {
+        cur = data[key][j];
+        $root.append(renderItem(itemIndex++, cur.title, cur.url));
+      }
+    }
+    return $root;
+  }
+
+  // search box
+  var $result = $('.js-search-result'), $resultItems;
+  var lastActiveIndex, activeIndex;
+
+  function clear() {
+    $result.html(null);
+    $resultItems = $('.search-result__item'); activeIndex = 0;
+  }
+  function onInputNotEmpty(val) {
+    $result.html(render(searchByQuery(val)));
+    $resultItems = $('.search-result__item'); activeIndex = 0;
+    $resultItems.eq(0).addClass('active');
+  }
+
+  search.clear = clear;
+  search.onInputNotEmpty = onInputNotEmpty;
+
+  function updateResultItems() {
+    lastActiveIndex >= 0 && $resultItems.eq(lastActiveIndex).removeClass('active');
+    activeIndex >= 0 && $resultItems.eq(activeIndex).addClass('active');
+  }
+
+  function moveActiveIndex(direction) {
+    var itemsCount = $resultItems ? $resultItems.length : 0;
+    if (itemsCount > 1) {
+      lastActiveIndex = activeIndex;
+      if (direction === 'up') {
+        activeIndex = (activeIndex - 1 + itemsCount) % itemsCount;
+      } else if (direction === 'down') {
+        activeIndex = (activeIndex + 1 + itemsCount) % itemsCount;
+      }
+      updateResultItems();
+    }
+  }
+
+  // Char Code: 13  Enter, 37  ⬅, 38  ⬆, 39  ➡, 40  ⬇
+  $(window).on('keyup', function(e) {
+    var modalVisible = search.getModalVisible && search.getModalVisible();
+    if (modalVisible) {
+      if (e.which === 38) {
+        modalVisible && moveActiveIndex('up');
+      } else if (e.which === 40) {
+        modalVisible && moveActiveIndex('down');
+      } else if (e.which === 13) {
+        modalVisible && $resultItems && activeIndex >= 0 && $resultItems.eq(activeIndex).children('a')[0].click();
+      }
+    }
+  });
+
+  $result.on('mouseover', '.search-result__item > a', function() {
+    var itemIndex = $(this).parent().data('index');
+    itemIndex >= 0 && (lastActiveIndex = activeIndex, activeIndex = itemIndex, updateResultItems());
+  });
+});
+</script>
+</div></div>
+
+
+<script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function scrollToAnchor(anchor, duration, callback) {
+      var $root = this;
+      $root.animate({ scrollTop: $(anchor).position().top }, duration, function() {
+        window.history.replaceState(null, '', window.location.href.split('#')[0] + anchor);
+        callback && callback();
+      });
+    }
+    $.fn.scrollToAnchor = scrollToAnchor;
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function affix(options) {
+      var $root = this, $window = $(window), $scrollTarget, $scroll,
+        offsetBottom = 0, scrollTarget = window, scroll = window.document, disabled = false, isOverallScroller = true,
+        rootTop, rootLeft, rootHeight, scrollBottom, rootBottomTop,
+        hasInit = false, curState;
+
+      function setOptions(options) {
+        var _options = options || {};
+        _options.offsetBottom && (offsetBottom = _options.offsetBottom);
+        _options.scrollTarget && (scrollTarget = _options.scrollTarget);
+        _options.scroll && (scroll = _options.scroll);
+        _options.disabled !== undefined && (disabled = _options.disabled);
+        $scrollTarget = $(scrollTarget);
+        isOverallScroller = window.isOverallScroller($scrollTarget[0]);
+        $scroll = $(scroll);
+      }
+      function preCalc() {
+        top();
+        rootHeight = $root.outerHeight();
+        rootTop = $root.offset().top + (isOverallScroller ? 0 :  $scrollTarget.scrollTop());
+        rootLeft = $root.offset().left;
+      }
+      function calc(needPreCalc) {
+        needPreCalc && preCalc();
+        scrollBottom = $scroll.outerHeight() - offsetBottom - rootHeight;
+        rootBottomTop = scrollBottom - rootTop;
+      }
+      function top() {
+        if (curState !== 'top') {
+          $root.removeClass('fixed').css({
+            left: 0,
+            top: 0
+          });
+          curState = 'top';
+        }
+      }
+      function fixed() {
+        if (curState !== 'fixed') {
+          $root.addClass('fixed').css({
+            left: rootLeft + 'px',
+            top: 0
+          });
+          curState = 'fixed';
+        }
+      }
+      function bottom() {
+        if (curState !== 'bottom') {
+          $root.removeClass('fixed').css({
+            left: 0,
+            top: rootBottomTop + 'px'
+          });
+          curState = 'bottom';
+        }
+      }
+      function setState() {
+        var scrollTop = $scrollTarget.scrollTop();
+        if (scrollTop >= rootTop && scrollTop <= scrollBottom) {
+          fixed();
+        } else if (scrollTop < rootTop) {
+          top();
+        } else {
+          bottom();
+        }
+      }
+      function init() {
+        if(!hasInit) {
+          var interval, timeout;
+          calc(true); setState();
+          // run calc every 100 millisecond
+          interval = setInterval(function() {
+            calc();
+          }, 100);
+          timeout = setTimeout(function() {
+            clearInterval(interval);
+          }, 45000);
+          window.pageLoad.then(function() {
+            setTimeout(function() {
+              clearInterval(interval);
+              clearTimeout(timeout);
+            }, 3000);
+          });
+          $scrollTarget.on('scroll', function() {
+            disabled || setState();
+          });
+          $window.on('resize', function() {
+            disabled || (calc(true), setState());
+          });
+          hasInit = true;
+        }
+      }
+
+      setOptions(options);
+      if (!disabled) {
+        init();
+      }
+      $window.on('resize', window.throttle(function() {
+        init();
+      }, 200));
+      return {
+        setOptions: setOptions,
+        refresh: function() {
+          calc(true, { animation: false }); setState();
+        }
+      };
+    }
+    $.fn.affix = affix;
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function toc(options) {
+      var $root = this, $window = $(window), $scrollTarget, $scroller, $tocUl = $('<ul class="toc toc--ellipsis"></ul>'), $tocLi, $headings, $activeLast, $activeCur,
+        selectors = 'h1,h2,h3', container = 'body', scrollTarget = window, scroller = 'html, body', disabled = false,
+        headingsPos, scrolling = false, hasRendered = false, hasInit = false;
+
+      function setOptions(options) {
+        var _options = options || {};
+        _options.selectors && (selectors = _options.selectors);
+        _options.container && (container = _options.container);
+        _options.scrollTarget && (scrollTarget = _options.scrollTarget);
+        _options.scroller && (scroller = _options.scroller);
+        _options.disabled !== undefined && (disabled = _options.disabled);
+        $headings = $(container).find(selectors).filter('[id]');
+        $scrollTarget = $(scrollTarget);
+        $scroller = $(scroller);
+      }
+      function calc() {
+        headingsPos = [];
+        $headings.each(function() {
+          headingsPos.push(Math.floor($(this).position().top));
+        });
+      }
+      function setState(element, disabled) {
+        var scrollTop = $scrollTarget.scrollTop(), i;
+        if (disabled || !headingsPos || headingsPos.length < 1) { return; }
+        if (element) {
+          $activeCur = element;
+        } else {
+          for (i = 0; i < headingsPos.length; i++) {
+            if (scrollTop >= headingsPos[i]) {
+              $activeCur = $tocLi.eq(i);
+            } else {
+              $activeCur || ($activeCur = $tocLi.eq(i));
+              break;
+            }
+          }
+        }
+        $activeLast && $activeLast.removeClass('active');
+        ($activeLast = $activeCur).addClass('active');
+      }
+      function render() {
+        if(!hasRendered) {
+          $root.append($tocUl);
+          $headings.each(function() {
+            var $this = $(this);
+            $tocUl.append($('<li></li>').addClass('toc-' + $this.prop('tagName').toLowerCase())
+              .append($('<a></a>').text($this.text()).attr('href', '#' + $this.prop('id'))));
+          });
+          $tocLi = $tocUl.children('li');
+          $tocUl.on('click', 'a', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+            scrolling = true;
+            setState($this.parent());
+            $scroller.scrollToAnchor($this.attr('href'), 400, function() {
+              scrolling = false;
+            });
+          });
+        }
+        hasRendered = true;
+      }
+      function init() {
+        var interval, timeout;
+        if(!hasInit) {
+          render(); calc(); setState(null, scrolling);
+          // run calc every 100 millisecond
+          interval = setInterval(function() {
+            calc();
+          }, 100);
+          timeout = setTimeout(function() {
+            clearInterval(interval);
+          }, 45000);
+          window.pageLoad.then(function() {
+            setTimeout(function() {
+              clearInterval(interval);
+              clearTimeout(timeout);
+            }, 3000);
+          });
+          $scrollTarget.on('scroll', function() {
+            disabled || setState(null, scrolling);
+          });
+          $window.on('resize', window.throttle(function() {
+            if (!disabled) {
+              render(); calc(); setState(null, scrolling);
+            }
+          }, 100));
+        }
+        hasInit = true;
+      }
+
+      setOptions(options);
+      if (!disabled) {
+        init();
+      }
+      $window.on('resize', window.throttle(function() {
+        init();
+      }, 200));
+      return {
+        setOptions: setOptions
+      };
+    }
+    $.fn.toc = toc;
+  });
+})();
+/*(function () {
+
+})();*/
+</script><script>
+  /* toc must before affix, since affix need to konw toc' height. */(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  var TOC_SELECTOR = window.TEXT_VARIABLES.site.toc.selectors;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $window = $(window);
+    var $articleContent = $('.js-article-content');
+    var $tocRoot = $('.js-toc-root'), $col2 = $('.js-col-aside');
+    var toc;
+    var tocDisabled = false;
+    var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+    var hasToc = $articleContent.find(TOC_SELECTOR).length > 0;
+
+    function disabled() {
+      return $col2.css('display') === 'none' || !hasToc;
+    }
+
+    tocDisabled = disabled();
+
+    toc = $tocRoot.toc({
+      selectors: TOC_SELECTOR,
+      container: $articleContent,
+      scrollTarget: hasSidebar ? '.js-page-main' : null,
+      scroller: hasSidebar ? '.js-page-main' : null,
+      disabled: tocDisabled
+    });
+
+    $window.on('resize', window.throttle(function() {
+      tocDisabled = disabled();
+      toc && toc.setOptions({
+        disabled: tocDisabled
+      });
+    }, 100));
+
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $window = $(window), $pageFooter = $('.js-page-footer');
+    var $pageAside = $('.js-page-aside');
+    var affix;
+    var tocDisabled = false;
+    var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+
+    affix = $pageAside.affix({
+      offsetBottom: $pageFooter.outerHeight(),
+      scrollTarget: hasSidebar ? '.js-page-main' : null,
+      scroller: hasSidebar ? '.js-page-main' : null,
+      scroll: hasSidebar ? $('.js-page-main').children() : null,
+      disabled: tocDisabled
+    });
+
+    $window.on('resize', window.throttle(function() {
+      affix && affix.setOptions({
+        disabled: tocDisabled
+      });
+    }, 100));
+
+    window.pageAsideAffix = affix;
+  });
+})();
+</script><script type="text/x-mathjax-config">
+	var _config = { tex2jax: {
+		inlineMath: [['$','$'], ['\\(','\\)']]
+	}};MathJax.Hub.Config(_config);
+</script>
+<script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+    </div>
+    <script>(function () {
+  var $root = document.getElementsByClassName('root')[0];
+  if (window.hasEvent('touchstart')) {
+    $root.dataset.isTouch = true;
+    document.addEventListener('touchstart', function(){}, false);
+  }
+})();
+</script>
+  </body>
+</html>
+

@@ -1,0 +1,1387 @@
+<!DOCTYPE html><html lang="en">
+  <head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>Preknowledge - Theoyu</title>
+
+<meta name="description" content="Tomcat 的 4 类容器组件：Engine、Host 、Context 、 Wrapper：  Engine（org.apache.catalina.core.StandardEngine）：最大的容器组件，可以容纳多个 Host。  Host（org.apache.catalina.core.Standar...">
+<link rel="canonical" href="http://localhost:4000/java/Memory-Shell/PreKnowledge"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+
+<meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
+
+<meta name="theme-color" content="#ffffff">
+
+<link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+<!-- end favicons snippet --><link rel="stylesheet" href="/assets/css/main.css"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.1/css/all.css" ><!-- start custom head snippets -->
+
+<!-- end custom head snippets -->
+<script>(function() {
+  window.isArray = function(val) {
+    return Object.prototype.toString.call(val) === '[object Array]';
+  };
+  window.isString = function(val) {
+    return typeof val === 'string';
+  };
+
+  window.hasEvent = function(event) {
+    return 'on'.concat(event) in window.document;
+  };
+
+  window.isOverallScroller = function(node) {
+    return node === document.documentElement || node === document.body || node === window;
+  };
+
+  window.isFormElement = function(node) {
+    var tagName = node.tagName;
+    return tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA';
+  };
+
+  window.pageLoad = (function () {
+    var loaded = false, cbs = [];
+    window.addEventListener('load', function () {
+      var i;
+      loaded = true;
+      if (cbs.length > 0) {
+        for (i = 0; i < cbs.length; i++) {
+          cbs[i]();
+        }
+      }
+    });
+    return {
+      then: function(cb) {
+        cb && (loaded ? cb() : (cbs.push(cb)));
+      }
+    };
+  })();
+})();
+(function() {
+  window.throttle = function(func, wait) {
+    var args, result, thisArg, timeoutId, lastCalled = 0;
+
+    function trailingCall() {
+      lastCalled = new Date;
+      timeoutId = null;
+      result = func.apply(thisArg, args);
+    }
+    return function() {
+      var now = new Date,
+        remaining = wait - (now - lastCalled);
+
+      args = arguments;
+      thisArg = this;
+
+      if (remaining <= 0) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+        lastCalled = now;
+        result = func.apply(thisArg, args);
+      } else if (!timeoutId) {
+        timeoutId = setTimeout(trailingCall, remaining);
+      }
+      return result;
+    };
+  };
+})();
+(function() {
+  var Set = (function() {
+    var add = function(item) {
+      var i, data = this._data;
+      for (i = 0; i < data.length; i++) {
+        if (data[i] === item) {
+          return;
+        }
+      }
+      this.size ++;
+      data.push(item);
+      return data;
+    };
+
+    var Set = function(data) {
+      this.size = 0;
+      this._data = [];
+      var i;
+      if (data.length > 0) {
+        for (i = 0; i < data.length; i++) {
+          add.call(this, data[i]);
+        }
+      }
+    };
+    Set.prototype.add = add;
+    Set.prototype.get = function(index) { return this._data[index]; };
+    Set.prototype.has = function(item) {
+      var i, data = this._data;
+      for (i = 0; i < data.length; i++) {
+        if (this.get(i) === item) {
+          return true;
+        }
+      }
+      return false;
+    };
+    Set.prototype.is = function(map) {
+      if (map._data.length !== this._data.length) { return false; }
+      var i, j, flag, tData = this._data, mData = map._data;
+      for (i = 0; i < tData.length; i++) {
+        for (flag = false, j = 0; j < mData.length; j++) {
+          if (tData[i] === mData[j]) {
+            flag = true;
+            break;
+          }
+        }
+        if (!flag) { return false; }
+      }
+      return true;
+    };
+    Set.prototype.values = function() {
+      return this._data;
+    };
+    return Set;
+  })();
+
+  window.Lazyload = (function(doc) {
+    var queue = {js: [], css: []}, sources = {js: {}, css: {}}, context = this;
+    var createNode = function(name, attrs) {
+      var node = doc.createElement(name), attr;
+      for (attr in attrs) {
+        if (attrs.hasOwnProperty(attr)) {
+          node.setAttribute(attr, attrs[attr]);
+        }
+      }
+      return node;
+    };
+    var end = function(type, url) {
+      var s, q, qi, cbs, i, j, cur, val, flag;
+      if (type === 'js' || type ==='css') {
+        s = sources[type], q = queue[type];
+        s[url] = true;
+        for (i = 0; i < q.length; i++) {
+          cur = q[i];
+          if (cur.urls.has(url)) {
+            qi = cur, val = qi.urls.values();
+            qi && (cbs = qi.callbacks);
+            for (flag = true, j = 0; j < val.length; j++) {
+              cur = val[j];
+              if (!s[cur]) {
+                flag = false;
+              }
+            }
+            if (flag && cbs && cbs.length > 0) {
+              for (j = 0; j < cbs.length; j++) {
+                cbs[j].call(context);
+              }
+              qi.load = true;
+            }
+          }
+        }
+      }
+    };
+    var load = function(type, urls, callback) {
+      var s, q, qi, node, i, cur,
+        _urls = typeof urls === 'string' ? new Set([urls]) : new Set(urls), val, url;
+      if (type === 'js' || type ==='css') {
+        s = sources[type], q = queue[type];
+        for (i = 0; i < q.length; i++) {
+          cur = q[i];
+          if (_urls.is(cur.urls)) {
+            qi = cur;
+            break;
+          }
+        }
+        val = _urls.values();
+        if (qi) {
+          callback && (qi.load || qi.callbacks.push(callback));
+          callback && (qi.load && callback());
+        } else {
+          q.push({
+            urls: _urls,
+            callbacks: callback ? [callback] : [],
+            load: false
+          });
+          for (i = 0; i < val.length; i++) {
+            node = null, url = val[i];
+            if (s[url] === undefined) {
+              (type === 'js' ) && (node = createNode('script', { src: url }));
+              (type === 'css') && (node = createNode('link', { rel: 'stylesheet', href: url }));
+              if (node) {
+                node.onload = (function(type, url) {
+                  return function() {
+                    end(type, url);
+                  };
+                })(type, url);
+                (doc.head || doc.body).appendChild(node);
+                s[url] = false;
+              }
+            }
+          }
+        }
+      }
+    };
+    return {
+      js: function(url, callback) {
+        load('js', url, callback);
+      },
+      css: function(url, callback) {
+        load('css', url, callback);
+      }
+    };
+  })(this.document);
+})();
+</script><script>
+  (function() {
+    var TEXT_VARIABLES = {
+      version: '2.2.6',
+      sources: {
+        font_awesome: 'https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.1/css/all.css',
+        jquery: 'https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js',
+        leancloud_js_sdk: '//cdn.jsdelivr.net/npm/leancloud-storage@3.13.2/dist/av-min.js',
+        chart: 'https://cdn.bootcss.com/Chart.js/2.7.2/Chart.bundle.min.js',
+        gitalk: {
+          js: 'https://cdn.bootcss.com/gitalk/1.2.2/gitalk.min.js',
+          css: 'https://cdn.bootcss.com/gitalk/1.2.2/gitalk.min.css'
+        },
+        valine: 'https://unpkg.com/valine/dist/Valine.min.js',
+        mathjax: 'https://cdn.bootcss.com/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML',
+        mermaid: 'https://cdn.bootcss.com/mermaid/8.0.0-rc.8/mermaid.min.js'
+      },
+      site: {
+        toc: {
+          selectors: 'h1,h2,h3,h4'
+        }
+      },
+      paths: {
+        search_js: '/assets/search.js'
+      }
+    };
+    window.TEXT_VARIABLES = TEXT_VARIABLES;
+  })();
+</script>
+</head>
+  <body>
+    <div class="root" data-is-touch="false">
+      <div class="layout--page layout--page--sidebar clearfix js-page-root">
+  <div class="page__mask d-print-none js-page-mask js-sidebar-hide"></div>
+  <div class="page__viewport">
+    <div class="page__actions d-print-none">
+      <div class="button button--circle button--lg box-shadow-2 sidebar-button js-sidebar-show">
+        <i class="fas fa-bars icon--show"></i>
+      </div>
+    </div>
+
+    <div class="grid page__grid">
+
+      <div class="page__sidebar d-print-none"><div class="sidebar-toc"><ul class="toc toc--navigator"><li class="toc-h1">Foudation</li><li class="toc-h2"><a href="/java/fundation/Classloader">Classloader</a></li><li class="toc-h2"><a href="/java/fundation/DynamicProxy">DynamicProxy</a></li><li class="toc-h2"><a href="/java/fundation/Reflection">Reflection</a></li><li class="toc-h2"><a href="/java/fundation/CommandExec">CommandExec</a></li><li class="toc-h2"><a href="/java/fundation/Rmi">Rmi</a></li><li class="toc-h2"><a href="/java/fundation/Agent">Agent</a></li><li class="toc-h2"><a href="/java/fundation/CTFInJava">CTFInJava</a></li><li class="toc-h1">deserialize</li><li class="toc-h2"><a href="/java/deserialize/URLDNS">URLDNS</a></li><li class="toc-h2"><a href="/java/deserialize/CommonsCollections">CommonsCollections</a></li><li class="toc-h2"><a href="/java/deserialize/7u21">7u21</a></li><li class="toc-h2"><a href="/java/deserialize/8u20">8u20</a></li><li class="toc-h2"><a href="/java/deserialize/Shiro550">Shiro550</a></li><li class="toc-h2"><a href="/java/deserialize/Fastjson">Fastjson</a></li><li class="toc-h1">VUL-Reproduce</li><li class="toc-h2"><a href="/java/VUL-Reproduce/Rmi_Jndi_Attack">Rmi-JNDI-Attack</a></li><li class="toc-h2"><a href="/java/VUL-Reproduce/Spring">Spring</a></li><li class="toc-h2"><a href="/">Dubbo</a></li><li class="toc-h1">Memory Shell</li></ul></div></div><div class="page__main js-page-main has-aside cell cell--auto">
+
+      <div class="page__main-inner"><div class="page__header d-print-none"><header class="header"><div class="main">
+      <div class="header__title">
+        <div class="header__brand"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="152px" height="150px" viewBox="0 0 152 150" enable-background="new 0 0 152 150" xml:space="preserve">  <image id="image0" width="152" height="150" x="0" y="0"
+    href="data:image/png;base64,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" />
+</svg>
+<a title="Be cool,but also be warm.
+" href="/">Theoyu</a></div><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></div><nav class="navigation">
+        <ul><li class="navigation__item"><a href="/archive.html">Archive</a></li><li class="navigation__item"><a href="/about.html">About</a></li><li class="navigation__item"><a href="/cs">CS</a></li><li><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></li></ul>
+      </nav></div>
+  </header>
+</div><div class="page__content"><div class ="main"><div class="grid grid--reverse">
+
+              <div class="col-aside d-print-none js-col-aside"><aside class="page__aside js-page-aside"><div class="toc-aside js-toc-root"></div>
+</aside></div>
+
+              <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
+
+<!-- end custom main top snippet -->
+<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>Preknowledge</h1></header></div><meta itemprop="headline" content="Preknowledge"><div class="article__info clearfix"><ul class="right-col menu"><li><i class="far fa-eye"></i> <span class="js-pageview" data-page-key="">0</span> views</li></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-10-28T11:45:07+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
+
+<!-- end custom article top snippet -->
+<div class="article__content" itemprop="articleBody"><h2 id="tomcat-的-4-类容器组件">Tomcat 的 4 类容器组件：</h2>
+
+<p>Engine、Host 、Context 、 Wrapper：</p>
+
+<ul>
+  <li><strong>Engine</strong>（org.apache.catalina.core.StandardEngine）：最大的容器组件，可以容纳多个 Host。</li>
+  <li><strong>Host</strong>（org.apache.catalina.core.StandardHost）：一个 Host 代表一个虚拟主机，一个Host可以包含多个 Context。</li>
+  <li><strong>Context</strong>（org.apache.catalina.core.StandardContext）：一个 Context 代表一个 Web 应用，其下可以包含多个 Wrapper。</li>
+  <li><strong>Wrapper</strong>（org.apache.catalina.core.StandardWrapper）：一个 Wrapper 代表一个 Servlet（<strong>重点</strong> ：上文提到的动态注册Servlet组件的内存马技术，想要动态的去注册Servlet组件实现过程中的关键之一就是如何获取Wrapper对像，再往上也就是如何获取到Context对象，从而掌握整个Web应用）。</li>
+</ul>
+
+<h2 id="servlet的三大基础组件">Servlet的三大基础组件：</h2>
+
+<p>Servlet、Filter 、Listener ：</p>
+
+<p>请求 → Listener → Filter → Servlet</p>
+
+<ul>
+  <li><strong>Servlet</strong>: 最基础的控制层组件，用于动态处理前端传递过来的请求，每一个Servlet都可以理解成运行在服务器上的一个java程序；生命周期：从Tomcat的Web容器启动开始，到服务器停止调用其destroy()结束；驻留在内存里面</li>
+  <li><strong>Filter</strong>：过滤器，过滤一些非法请求或不当请求，一个Web应用中一般是一个filterChain链式调用其doFilter()方法，存在一个顺序问题。</li>
+  <li><strong>Listener</strong>：监听器，以ServletRequestListener为例，ServletRequestListener主要用于监听ServletRequest对象的创建和销毁,一个ServletRequest可以注册多个ServletRequestListener接口（都有request来都会触发这个）。</li>
+</ul>
+
+<h2 id="context对象获取">Context对象获取</h2>
+
+<blockquote>
+  <p>对于Tomcat来说，一个Web应用中的Context组件为org.apache.catalina.core.StandardContext对象，前文也有提到我们在实现<strong>通过动态注册Servlet组件的内存马技术</strong>的时候，其中一个关键点就是怎么获取器Context对象，而该对象就是StandContext对象。那么我们可以通过哪些途径得到StandContext对象那呢？</p>
+</blockquote>
+
+<h3 id="有requet对象的时候">有requet对象的时候</h3>
+
+<blockquote>
+  <p>Tomcat中Web应用中获取的request.getServletContext是ApplicationContextFacade对象。该对象对ApplicationContext进行了封装，而ApplicationContext实例中又包含了StandardContext实例，所以当request存在的时候我们可以通过反射来获取StandardContext对象</p>
+</blockquote>
+
+<h3 id="没有request对象的时候">没有request对象的时候</h3>
+
+<p>1、不存在request的时候从currentThread中的ContextClassLoader中获取（适用Tomcat 8，9）</p>
+
+<p>2、ThreadLocal中获取</p>
+
+<p>3、从MBean中获取</p>
+
+<h2 id="内存马的分类">内存马的分类</h2>
+
+<p>根据内存马的实现技术来分类将内存马分为三类：</p>
+
+<h3 id="基于动态添加servlet组件的内存马">基于动态添加Servlet组件的内存马</h3>
+
+<h4 id="servlet">servlet</h4>
+
+<blockquote>
+  <ul>
+    <li>1、首先通过反射，从request中获取Tomcat中控制Web应用的Context（StandardContext对象），上文中有提到获取StandardContext获取的方式，这里因为是jsp来实现的，所以可以直接拿到request，所以就利用上文提到的第一种方法，通过反射即可获取到Tomcat下的StrandardContext对象，下面也是同理。</li>
+    <li>2、注册一个Servlet对象并重写其Service方法，在其中实现命令执行并通过response返回</li>
+    <li>3、创建Wrapper对象并利用各个船舰的Servlet来初始化</li>
+    <li>4、为Wrapper添加路由映射</li>
+  </ul>
+</blockquote>
+
+<h4 id="filter">filter</h4>
+
+<blockquote>
+  <ul>
+    <li>1、首先通过反射，从request中获取Tomcat中控制Web应用的Context（StandardContext对象）</li>
+    <li>2、利用获取的上下文StandardContext对象获取filterconfigs对象</li>
+    <li>3、创建一个恶意Filter对象并重写其doFilter方法，在其中实现命令执行并通过response返回，最后filterChain传入后面的filter</li>
+    <li>4、创建FilterDef对象并利用刚刚创建的Filter对象来初始化，并新建一个FilterMap对象，为创建的FilterDef对象添加URL映射</li>
+    <li>5、利用创建FilterConfig对象并使用刚刚创建的FilterDef对象初始化，最后将其加入FilterConfigs里面，等待filterChain.dofilter调用</li>
+  </ul>
+</blockquote>
+
+<h4 id="listener">Listener</h4>
+
+<ol>
+  <li>首先通过反射，从request中获取Tomcat中控制Web应用的Context（StandardContext对象）</li>
+  <li>创建一个ServletRequestListener对象并重写其requestDestroyed方法，在其中实现命令执行并通过response回显.</li>
+  <li>将创建的ServletRequestListener对象通过StandardContext添加到事件监听中去</li>
+</ol>
+
+<h3 id="基于动态添加框架组件的内存马">基于动态添加框架组件的内存马</h3>
+
+<p>这里说到的框架有很多，spring、springboot、weblogic等</p>
+
+<h3 id="基于javaagent和javassist技术的内存马">基于Javaagent和Javassist技术的内存马</h3>
+</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-10-28T11:45:07+08:00"><!-- start custom article footer snippet -->
+
+<!-- end custom article footer snippet -->
+</footer>
+<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/">Dubbo</a></div></div></div>
+
+</div>
+
+<script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    $(function() {
+      var $this ,$scroll;
+      var $articleContent = $('.js-article-content');
+      var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+      var scroll = hasSidebar ? '.js-page-main' : 'html, body';
+      $scroll = $(scroll);
+
+      $articleContent.find('.highlight').each(function() {
+        $this = $(this);
+        $this.attr('data-lang', $this.find('code').attr('data-lang'));
+      });
+      $articleContent.find('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]').each(function() {
+        $this = $(this);
+        $this.append($('<a class="anchor d-print-none" aria-hidden="true"></a>').html('<i class="fas fa-anchor"></i>'));
+      });
+      $articleContent.on('click', '.anchor', function() {
+        $scroll.scrollToAnchor('#' + $(this).parent().attr('id'), 400);
+      });
+    });
+  });
+})();
+</script>
+</div><section class="page__comments d-print-none"></section></article><!-- start custom main bottom snippet -->
+
+<!-- end custom main bottom snippet -->
+</div>
+            </div></div></div><div class="page__footer d-print-none">
+<footer class="footer py-4 js-page-footer">
+  <div class="main"><div itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Theoyu"><meta itemprop="url" content="/"><meta itemprop="description" content="I am an amazing person."><div class="footer__author-links"><div class="author-links">
+  <ul class="menu menu--nowrap menu--inline"><li title="Send me an Email.">
+      <a class="button button--circle mail-button" itemprop="email" href="mailto:zeyu.ou@foxmail.com" target="_blank">
+        <i class="fas fa-envelope"></i>
+      </a><li title="Follow me on Github.">
+        <a class="button button--circle github-button" itemprop="sameAs" href="https://github.com/yuuuuu422" target="_blank">
+          <div class="icon"><svg fill="#000000" width="24px" height="24px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path class="svgpath" data-index="path_0" fill="#272636" d="M0 525.2c0 223.6 143.3 413.7 343 483.5 26.9 6.8 22.8-12.4 22.8-25.4l0-88.7c-155.3 18.2-161.5-84.6-172-101.7-21.1-36-70.8-45.2-56-62.3 35.4-18.2 71.4 4.6 113.1 66.3 30.2 44.7 89.1 37.2 119 29.7 6.5-26.9 20.5-50.9 39.7-69.6C248.8 728.2 181.7 630 181.7 513.2c0-56.6 18.7-108.7 55.3-150.7-23.3-69.3 2.2-128.5 5.6-137.3 66.5-6 135.5 47.6 140.9 51.8 37.8-10.2 80.9-15.6 129.1-15.6 48.5 0 91.8 5.6 129.8 15.9 12.9-9.8 77-55.8 138.8-50.2 3.3 8.8 28.2 66.7 6.3 135 37.1 42.1 56 94.6 56 151.4 0 117-67.5 215.3-228.8 243.7 26.9 26.6 43.6 63.4 43.6 104.2l0 128.8c0.9 10.3 0 20.5 17.2 20.5C878.1 942.4 1024 750.9 1024 525.3c0-282.9-229.3-512-512-512C229.1 13.2 0 242.3 0 525.2L0 525.2z" />
+</svg>
+</div>
+        </a>
+      </li></ul>
+</div>
+</div>
+    </div><div class="site-info mt-2">
+      <div>© Theoyu 2021,
+        Powered by <a title="Jekyll is a simple, blog-aware, static site generator." href="http://jekyllrb.com/">Jekyll</a> & <a
+        title="TeXt is a super customizable Jekyll theme." href="https://github.com/kitian616/jekyll-TeXt-theme">TeXt Theme</a>.
+      </div>
+    </div>
+  </div>
+</footer>
+</div></div>
+    </div></div></div><script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $body = $('body'), $window = $(window);
+    var $pageRoot = $('.js-page-root'), $pageMain = $('.js-page-main');
+    var activeCount = 0;
+    function modal(options) {
+      var $root = this, visible, onChange, hideWhenWindowScroll = false;
+      var scrollTop;
+      function setOptions(options) {
+        var _options = options || {};
+        visible = _options.initialVisible === undefined ? false : show;
+        onChange = _options.onChange;
+        hideWhenWindowScroll = _options.hideWhenWindowScroll;
+      }
+      function init() {
+        setState(visible);
+      }
+      function setState(isShow) {
+        if (isShow === visible) {
+          return;
+        }
+        visible = isShow;
+        if (visible) {
+          activeCount++;
+          scrollTop = $(window).scrollTop() || $pageMain.scrollTop();
+          $root.addClass('modal--show');
+          $pageMain.scrollTop(scrollTop);
+          activeCount === 1 && ($pageRoot.addClass('show-modal'), $body.addClass('of-hidden'));
+          hideWhenWindowScroll && window.hasEvent('touchstart') && $window.on('scroll', hide);
+          $window.on('keyup', handleKeyup);
+        } else {
+          activeCount > 0 && activeCount--;
+          $root.removeClass('modal--show');
+          $window.scrollTop(scrollTop);
+          activeCount === 0 && ($pageRoot.removeClass('show-modal'), $body.removeClass('of-hidden'));
+          hideWhenWindowScroll && window.hasEvent('touchstart') && $window.off('scroll', hide);
+          $window.off('keyup', handleKeyup);
+        }
+        onChange && onChange(visible);
+      }
+      function show() {
+        setState(true);
+      }
+      function hide() {
+        setState(false);
+      }
+      function handleKeyup(e) {
+        // Char Code: 27  ESC
+        if (e.which ===  27) {
+          hide();
+        }
+      }
+      setOptions(options);
+      init();
+      return {
+        show: show,
+        hide: hide,
+        $el: $root
+      };
+    }
+    $.fn.modal = modal;
+  });
+})();
+</script><div class="modal modal--overflow page__search-modal d-print-none js-page-search-modal"><script>
+(function () {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    // search panel
+    var search = (window.search || (window.search = {}));
+    var useDefaultSearchBox = window.useDefaultSearchBox === undefined ?
+      true : window.useDefaultSearchBox ;
+
+    var $searchModal = $('.js-page-search-modal');
+    var $searchToggle = $('.js-search-toggle');
+    var searchModal = $searchModal.modal({ onChange: handleModalChange, hideWhenWindowScroll: true });
+    var modalVisible = false;
+    search.searchModal = searchModal;
+
+    var $searchBox = null;
+    var $searchInput = null;
+    var $searchClear = null;
+
+    function getModalVisible() {
+      return modalVisible;
+    }
+    search.getModalVisible = getModalVisible;
+
+    function handleModalChange(visible) {
+      modalVisible = visible;
+      if (visible) {
+        search.onShow && search.onShow();
+        useDefaultSearchBox && $searchInput[0] && $searchInput[0].focus();
+      } else {
+        search.onShow && search.onHide();
+        useDefaultSearchBox && $searchInput[0] && $searchInput[0].blur();
+        setTimeout(function() {
+          useDefaultSearchBox && ($searchInput.val(''), $searchBox.removeClass('not-empty'));
+          search.clear && search.clear();
+          window.pageAsideAffix && window.pageAsideAffix.refresh();
+        }, 400);
+      }
+    }
+
+    $searchToggle.on('click', function() {
+      modalVisible ? searchModal.hide() : searchModal.show();
+    });
+    // Char Code: 83  S, 191 /
+    $(window).on('keyup', function(e) {
+      if (!modalVisible && !window.isFormElement(e.target || e.srcElement) && (e.which === 83 || e.which === 191)) {
+        modalVisible || searchModal.show();
+      }
+    });
+
+    if (useDefaultSearchBox) {
+      $searchBox = $('.js-search-box');
+      $searchInput = $searchBox.children('input');
+      $searchClear = $searchBox.children('.js-icon-clear');
+      search.getSearchInput = function() {
+        return $searchInput.get(0);
+      };
+      search.getVal = function() {
+        return $searchInput.val();
+      };
+      search.setVal = function(val) {
+        $searchInput.val(val);
+      };
+
+      $searchInput.on('focus', function() {
+        $(this).addClass('focus');
+      });
+      $searchInput.on('blur', function() {
+        $(this).removeClass('focus');
+      });
+      $searchInput.on('input', window.throttle(function() {
+        var val = $(this).val();
+        if (val === '' || typeof val !== 'string') {
+          search.clear && search.clear();
+        } else {
+          $searchBox.addClass('not-empty');
+          search.onInputNotEmpty && search.onInputNotEmpty(val);
+        }
+      }, 400));
+      $searchClear.on('click', function() {
+        $searchInput.val(''); $searchBox.removeClass('not-empty');
+        search.clear && search.clear();
+      });
+    }
+  });
+})();
+</script><div class="search search--dark">
+  <div class="main">
+    <div class="search__header">Search</div>
+    <div class="search-bar">
+      <div class="search-box js-search-box">
+        <div class="search-box__icon-search"><i class="fas fa-search"></i></div>
+        <input type="text" />
+        <div class="search-box__icon-clear js-icon-clear">
+          <a><i class="fas fa-times"></i></a>
+        </div>
+      </div>
+      <button class="button button--theme-dark button--pill search__cancel js-search-toggle">
+        Cancel</button>
+    </div>
+    <div class="search-result js-search-result"></div>
+  </div>
+</div>
+<script>var SOURCES = window.TEXT_VARIABLES.sources;
+var PAHTS = window.TEXT_VARIABLES.paths;
+window.Lazyload.js([SOURCES.jquery, PAHTS.search_js], function() {
+  var search = (window.search || (window.search = {}));
+  var searchData = window.TEXT_SEARCH_DATA || {};
+
+  function memorize(f) {
+    var cache = {};
+    return function () {
+      var key = Array.prototype.join.call(arguments, ',');
+      if (key in cache) return cache[key];
+      else return cache[key] = f.apply(this, arguments);
+    };
+  }
+
+  /// search
+  function searchByQuery(query) {
+    var i, j, key, keys, cur, _title, result = {};
+    keys = Object.keys(searchData);
+    for (i = 0; i < keys.length; i++) {
+      key = keys[i];
+      for (j = 0; j < searchData[key].length; j++) {
+        cur = searchData[key][j], _title = cur.title;
+        if ((result[key] === undefined || result[key] && result[key].length < 4 )
+          && _title.toLowerCase().indexOf(query.toLowerCase()) >= 0) {
+          if (result[key] === undefined) {
+            result[key] = [];
+          }
+          result[key].push(cur);
+        }
+      }
+    }
+    return result;
+  }
+
+  var renderHeader = memorize(function(header) {
+    return $('<p class="search-result__header">' + header + '</p>');
+  });
+
+  var renderItem = function(index, title, url) {
+    return $('<li class="search-result__item" data-index="' + index + '"><a class="button" href="' + url + '">' + title + '</a></li>');
+  };
+
+  function render(data) {
+    if (!data) { return null; }
+    var $root = $('<ul></ul>'), i, j, key, keys, cur, itemIndex = 0;
+    keys = Object.keys(data);
+    for (i = 0; i < keys.length; i++) {
+      key = keys[i];
+      $root.append(renderHeader(key));
+      for (j = 0; j < data[key].length; j++) {
+        cur = data[key][j];
+        $root.append(renderItem(itemIndex++, cur.title, cur.url));
+      }
+    }
+    return $root;
+  }
+
+  // search box
+  var $result = $('.js-search-result'), $resultItems;
+  var lastActiveIndex, activeIndex;
+
+  function clear() {
+    $result.html(null);
+    $resultItems = $('.search-result__item'); activeIndex = 0;
+  }
+  function onInputNotEmpty(val) {
+    $result.html(render(searchByQuery(val)));
+    $resultItems = $('.search-result__item'); activeIndex = 0;
+    $resultItems.eq(0).addClass('active');
+  }
+
+  search.clear = clear;
+  search.onInputNotEmpty = onInputNotEmpty;
+
+  function updateResultItems() {
+    lastActiveIndex >= 0 && $resultItems.eq(lastActiveIndex).removeClass('active');
+    activeIndex >= 0 && $resultItems.eq(activeIndex).addClass('active');
+  }
+
+  function moveActiveIndex(direction) {
+    var itemsCount = $resultItems ? $resultItems.length : 0;
+    if (itemsCount > 1) {
+      lastActiveIndex = activeIndex;
+      if (direction === 'up') {
+        activeIndex = (activeIndex - 1 + itemsCount) % itemsCount;
+      } else if (direction === 'down') {
+        activeIndex = (activeIndex + 1 + itemsCount) % itemsCount;
+      }
+      updateResultItems();
+    }
+  }
+
+  // Char Code: 13  Enter, 37  ⬅, 38  ⬆, 39  ➡, 40  ⬇
+  $(window).on('keyup', function(e) {
+    var modalVisible = search.getModalVisible && search.getModalVisible();
+    if (modalVisible) {
+      if (e.which === 38) {
+        modalVisible && moveActiveIndex('up');
+      } else if (e.which === 40) {
+        modalVisible && moveActiveIndex('down');
+      } else if (e.which === 13) {
+        modalVisible && $resultItems && activeIndex >= 0 && $resultItems.eq(activeIndex).children('a')[0].click();
+      }
+    }
+  });
+
+  $result.on('mouseover', '.search-result__item > a', function() {
+    var itemIndex = $(this).parent().data('index');
+    itemIndex >= 0 && (lastActiveIndex = activeIndex, activeIndex = itemIndex, updateResultItems());
+  });
+});
+</script>
+</div></div>
+
+
+<script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function scrollToAnchor(anchor, duration, callback) {
+      var $root = this;
+      $root.animate({ scrollTop: $(anchor).position().top }, duration, function() {
+        window.history.replaceState(null, '', window.location.href.split('#')[0] + anchor);
+        callback && callback();
+      });
+    }
+    $.fn.scrollToAnchor = scrollToAnchor;
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function affix(options) {
+      var $root = this, $window = $(window), $scrollTarget, $scroll,
+        offsetBottom = 0, scrollTarget = window, scroll = window.document, disabled = false, isOverallScroller = true,
+        rootTop, rootLeft, rootHeight, scrollBottom, rootBottomTop,
+        hasInit = false, curState;
+
+      function setOptions(options) {
+        var _options = options || {};
+        _options.offsetBottom && (offsetBottom = _options.offsetBottom);
+        _options.scrollTarget && (scrollTarget = _options.scrollTarget);
+        _options.scroll && (scroll = _options.scroll);
+        _options.disabled !== undefined && (disabled = _options.disabled);
+        $scrollTarget = $(scrollTarget);
+        isOverallScroller = window.isOverallScroller($scrollTarget[0]);
+        $scroll = $(scroll);
+      }
+      function preCalc() {
+        top();
+        rootHeight = $root.outerHeight();
+        rootTop = $root.offset().top + (isOverallScroller ? 0 :  $scrollTarget.scrollTop());
+        rootLeft = $root.offset().left;
+      }
+      function calc(needPreCalc) {
+        needPreCalc && preCalc();
+        scrollBottom = $scroll.outerHeight() - offsetBottom - rootHeight;
+        rootBottomTop = scrollBottom - rootTop;
+      }
+      function top() {
+        if (curState !== 'top') {
+          $root.removeClass('fixed').css({
+            left: 0,
+            top: 0
+          });
+          curState = 'top';
+        }
+      }
+      function fixed() {
+        if (curState !== 'fixed') {
+          $root.addClass('fixed').css({
+            left: rootLeft + 'px',
+            top: 0
+          });
+          curState = 'fixed';
+        }
+      }
+      function bottom() {
+        if (curState !== 'bottom') {
+          $root.removeClass('fixed').css({
+            left: 0,
+            top: rootBottomTop + 'px'
+          });
+          curState = 'bottom';
+        }
+      }
+      function setState() {
+        var scrollTop = $scrollTarget.scrollTop();
+        if (scrollTop >= rootTop && scrollTop <= scrollBottom) {
+          fixed();
+        } else if (scrollTop < rootTop) {
+          top();
+        } else {
+          bottom();
+        }
+      }
+      function init() {
+        if(!hasInit) {
+          var interval, timeout;
+          calc(true); setState();
+          // run calc every 100 millisecond
+          interval = setInterval(function() {
+            calc();
+          }, 100);
+          timeout = setTimeout(function() {
+            clearInterval(interval);
+          }, 45000);
+          window.pageLoad.then(function() {
+            setTimeout(function() {
+              clearInterval(interval);
+              clearTimeout(timeout);
+            }, 3000);
+          });
+          $scrollTarget.on('scroll', function() {
+            disabled || setState();
+          });
+          $window.on('resize', function() {
+            disabled || (calc(true), setState());
+          });
+          hasInit = true;
+        }
+      }
+
+      setOptions(options);
+      if (!disabled) {
+        init();
+      }
+      $window.on('resize', window.throttle(function() {
+        init();
+      }, 200));
+      return {
+        setOptions: setOptions,
+        refresh: function() {
+          calc(true, { animation: false }); setState();
+        }
+      };
+    }
+    $.fn.affix = affix;
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function toc(options) {
+      var $root = this, $window = $(window), $scrollTarget, $scroller, $tocUl = $('<ul class="toc toc--ellipsis"></ul>'), $tocLi, $headings, $activeLast, $activeCur,
+        selectors = 'h1,h2,h3', container = 'body', scrollTarget = window, scroller = 'html, body', disabled = false,
+        headingsPos, scrolling = false, hasRendered = false, hasInit = false;
+
+      function setOptions(options) {
+        var _options = options || {};
+        _options.selectors && (selectors = _options.selectors);
+        _options.container && (container = _options.container);
+        _options.scrollTarget && (scrollTarget = _options.scrollTarget);
+        _options.scroller && (scroller = _options.scroller);
+        _options.disabled !== undefined && (disabled = _options.disabled);
+        $headings = $(container).find(selectors).filter('[id]');
+        $scrollTarget = $(scrollTarget);
+        $scroller = $(scroller);
+      }
+      function calc() {
+        headingsPos = [];
+        $headings.each(function() {
+          headingsPos.push(Math.floor($(this).position().top));
+        });
+      }
+      function setState(element, disabled) {
+        var scrollTop = $scrollTarget.scrollTop(), i;
+        if (disabled || !headingsPos || headingsPos.length < 1) { return; }
+        if (element) {
+          $activeCur = element;
+        } else {
+          for (i = 0; i < headingsPos.length; i++) {
+            if (scrollTop >= headingsPos[i]) {
+              $activeCur = $tocLi.eq(i);
+            } else {
+              $activeCur || ($activeCur = $tocLi.eq(i));
+              break;
+            }
+          }
+        }
+        $activeLast && $activeLast.removeClass('active');
+        ($activeLast = $activeCur).addClass('active');
+      }
+      function render() {
+        if(!hasRendered) {
+          $root.append($tocUl);
+          $headings.each(function() {
+            var $this = $(this);
+            $tocUl.append($('<li></li>').addClass('toc-' + $this.prop('tagName').toLowerCase())
+              .append($('<a></a>').text($this.text()).attr('href', '#' + $this.prop('id'))));
+          });
+          $tocLi = $tocUl.children('li');
+          $tocUl.on('click', 'a', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+            scrolling = true;
+            setState($this.parent());
+            $scroller.scrollToAnchor($this.attr('href'), 400, function() {
+              scrolling = false;
+            });
+          });
+        }
+        hasRendered = true;
+      }
+      function init() {
+        var interval, timeout;
+        if(!hasInit) {
+          render(); calc(); setState(null, scrolling);
+          // run calc every 100 millisecond
+          interval = setInterval(function() {
+            calc();
+          }, 100);
+          timeout = setTimeout(function() {
+            clearInterval(interval);
+          }, 45000);
+          window.pageLoad.then(function() {
+            setTimeout(function() {
+              clearInterval(interval);
+              clearTimeout(timeout);
+            }, 3000);
+          });
+          $scrollTarget.on('scroll', function() {
+            disabled || setState(null, scrolling);
+          });
+          $window.on('resize', window.throttle(function() {
+            if (!disabled) {
+              render(); calc(); setState(null, scrolling);
+            }
+          }, 100));
+        }
+        hasInit = true;
+      }
+
+      setOptions(options);
+      if (!disabled) {
+        init();
+      }
+      $window.on('resize', window.throttle(function() {
+        init();
+      }, 200));
+      return {
+        setOptions: setOptions
+      };
+    }
+    $.fn.toc = toc;
+  });
+})();
+/*(function () {
+
+})();*/
+</script><script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $pageMask = $('.js-page-mask');
+    var $pageRoot = $('.js-page-root');
+    var $sidebarShow = $('.js-sidebar-show');
+    var $sidebarHide = $('.js-sidebar-hide');
+
+    function freeze(e) {
+      if (e.target === $pageMask[0]) {
+        e.preventDefault();
+      }
+    }
+    function stopBodyScrolling(bool) {
+      if (bool === true) {
+        window.addEventListener('touchmove', freeze, { passive: false });
+      } else {
+        window.removeEventListener('touchmove', freeze, { passive: false });
+      }
+    }
+
+    $sidebarShow.on('click', function() {
+      stopBodyScrolling(true); $pageRoot.addClass('show-sidebar');
+    });
+    $sidebarHide.on('click', function() {
+      stopBodyScrolling(false); $pageRoot.removeClass('show-sidebar');
+    });
+  });
+})();
+</script><script>
+  /* toc must before affix, since affix need to konw toc' height. */(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  var TOC_SELECTOR = window.TEXT_VARIABLES.site.toc.selectors;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $window = $(window);
+    var $articleContent = $('.js-article-content');
+    var $tocRoot = $('.js-toc-root'), $col2 = $('.js-col-aside');
+    var toc;
+    var tocDisabled = false;
+    var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+    var hasToc = $articleContent.find(TOC_SELECTOR).length > 0;
+
+    function disabled() {
+      return $col2.css('display') === 'none' || !hasToc;
+    }
+
+    tocDisabled = disabled();
+
+    toc = $tocRoot.toc({
+      selectors: TOC_SELECTOR,
+      container: $articleContent,
+      scrollTarget: hasSidebar ? '.js-page-main' : null,
+      scroller: hasSidebar ? '.js-page-main' : null,
+      disabled: tocDisabled
+    });
+
+    $window.on('resize', window.throttle(function() {
+      tocDisabled = disabled();
+      toc && toc.setOptions({
+        disabled: tocDisabled
+      });
+    }, 100));
+
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $window = $(window), $pageFooter = $('.js-page-footer');
+    var $pageAside = $('.js-page-aside');
+    var affix;
+    var tocDisabled = false;
+    var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+
+    affix = $pageAside.affix({
+      offsetBottom: $pageFooter.outerHeight(),
+      scrollTarget: hasSidebar ? '.js-page-main' : null,
+      scroller: hasSidebar ? '.js-page-main' : null,
+      scroll: hasSidebar ? $('.js-page-main').children() : null,
+      disabled: tocDisabled
+    });
+
+    $window.on('resize', window.throttle(function() {
+      affix && affix.setOptions({
+        disabled: tocDisabled
+      });
+    }, 100));
+
+    window.pageAsideAffix = affix;
+  });
+})();
+</script><script type="text/x-mathjax-config">
+	var _config = { tex2jax: {
+		inlineMath: [['$','$'], ['\\(','\\)']]
+	}};MathJax.Hub.Config(_config);
+</script>
+<script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+    </div>
+    <script>(function () {
+  var $root = document.getElementsByClassName('root')[0];
+  if (window.hasEvent('touchstart')) {
+    $root.dataset.isTouch = true;
+    document.addEventListener('touchstart', function(){}, false);
+  }
+})();
+</script>
+  </body>
+</html>
+
