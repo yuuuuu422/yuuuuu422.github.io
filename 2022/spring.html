@@ -1,10 +1,10 @@
 <!DOCTYPE html><html lang="en">
   <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>Spring - Theoyu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>水文 - Spring历史漏洞复现 - Theoyu</title>
 
-<meta name="description" content="SpEL  Spring Expression Language（简称SpEL）是一个支持查询和操作运行时对象导航图功能的强大的表达式语言. 它的语法类似于传统EL，但提供额外的功能，最出色的就是函数调用和简单字符串的模板函数。SpEL使用#{}作为定界符，所有在大括号中的字符都将被认为是SpEL表达式，在其中可...">
-<link rel="canonical" href="https://theoyu.top/java/VUL-Reproduce/Spring"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<meta name="description" content="">
+<link rel="canonical" href="https://theoyu.top/2022/spring"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -262,18 +262,7 @@
 </head>
   <body>
     <div class="root" data-is-touch="false">
-      <div class="layout--page layout--page--sidebar clearfix js-page-root">
-  <div class="page__mask d-print-none js-page-mask js-sidebar-hide"></div>
-  <div class="page__viewport">
-    <div class="page__actions d-print-none">
-      <div class="button button--circle button--lg box-shadow-2 sidebar-button js-sidebar-show">
-        <i class="fas fa-bars icon--show"></i>
-      </div>
-    </div>
-
-    <div class="grid page__grid">
-
-      <div class="page__sidebar d-print-none"><div class="sidebar-toc"><ul class="toc toc--navigator"><li class="toc-h1">Foudation</li><li class="toc-h2"><a href="/java/fundation/Classloader">Classloader</a></li><li class="toc-h2"><a href="/java/fundation/DynamicProxy">DynamicProxy</a></li><li class="toc-h2"><a href="/java/fundation/Reflection">Reflection</a></li><li class="toc-h2"><a href="/java/fundation/CommandExec">CommandExec</a></li><li class="toc-h2"><a href="/java/fundation/Rmi">Rmi</a></li><li class="toc-h2"><a href="/java/fundation/Agent">Agent</a></li><li class="toc-h2"><a href="/java/fundation/CTFInJava">CTFInJava</a></li><li class="toc-h1">deserialize</li><li class="toc-h2"><a href="/java/deserialize/URLDNS">URLDNS</a></li><li class="toc-h2"><a href="/java/deserialize/CommonsCollections">CommonsCollections</a></li><li class="toc-h2"><a href="/java/deserialize/7u21">7u21</a></li><li class="toc-h2"><a href="/java/deserialize/8u20">8u20</a></li><li class="toc-h2"><a href="/java/deserialize/Shiro550">Shiro550</a></li><li class="toc-h2"><a href="/java/deserialize/Fastjson">Fastjson</a></li><li class="toc-h1">VUL-Reproduce</li><li class="toc-h2"><a href="/java/VUL-Reproduce/Rmi_Jndi_Attack">Rmi-JNDI-Attack</a></li><li class="toc-h2 active"><a href="/java/VUL-Reproduce/Spring">Spring</a></li><li class="toc-h2"><a href="/">Dubbo</a></li><li class="toc-h1">Memory Shell</li></ul></div></div><div class="page__main js-page-main has-aside cell cell--auto">
+      <div class="layout--page js-page-root"><div class="page__main js-page-main page__viewport has-aside cell cell--auto">
 
       <div class="page__main-inner"><div class="page__header d-print-none"><header class="header"><div class="main">
       <div class="header__title">
@@ -606,10 +595,12 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
               <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
 
 <!-- end custom main top snippet -->
-<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>Spring</h1></header></div><meta itemprop="headline" content="Spring"><div class="article__info clearfix"><ul class="right-col menu"></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-10-29T14:09:54+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
+<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>水文 - Spring历史漏洞复现</h1></header></div><meta itemprop="headline" content="水文 - Spring历史漏洞复现"><div class="article__info clearfix"><ul class="right-col menu"><li><i class="fas fa-user"></i> <span>Theoyu</span></li><li><i class="far fa-calendar-alt"></i> <span>Feb 11, 2022</span>
+            </li></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-02-11T00:00:00+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
 <!-- end custom article top snippet -->
-<div class="article__content" itemprop="articleBody"><h2 id="spel">SpEL</h2>
+<div class="article__content" itemprop="articleBody"><!--more-->
+<h2 id="spel">SpEL</h2>
 
 <blockquote>
   <p><strong>Spring Expression Language</strong>（简称<strong>SpEL</strong>）是一个支持查询和操作运行时对象导航图功能的强大的表达式语言. 它的语法类似于传统EL，但提供额外的功能，最出色的就是函数调用和简单字符串的模板函数。</p>
@@ -1325,11 +1316,18 @@ xxx
 <p>在官方patch中，对从请求头获取的<code class="language-plaintext highlighter-rouge">spring.cloud.function.routing-expression</code>添加了<code class="language-plaintext highlighter-rouge">true</code>参数，在<code class="language-plaintext highlighter-rouge">functionFromExpression()</code>判断是否从请求头获取，是则使用<code class="language-plaintext highlighter-rouge">SimpleEvaluationContext</code>类型Contex处理。</p>
 
 <p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220327014659.png" alt="image-20220327014145343" /></p>
-</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-10-29T14:09:54+08:00"><!-- start custom article footer snippet -->
+</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-02-11T00:00:00+08:00"><!-- start custom article footer snippet -->
 
 <!-- end custom article footer snippet -->
-</footer>
-<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/java/VUL-Reproduce/Rmi_Jndi_Attack">Rmi-JNDI-Attack</a></div><div class="next"><span>NEXT</span><a href="/">Dubbo</a></div></div></div>
+<div class="article__subscribe"><div class="subscribe"><i class="fas fa-rss"></i> <a type="application/rss+xml" href="/feed.xml">Subscribe</a></div>
+</div><div class="article__license"><div class="license">
+    <p>This work is licensed under a <a itemprop="license" rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution-NonCommercial 4.0 International</a> license.
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">
+        <img alt="Attribution-NonCommercial 4.0 International" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" />
+      </a>
+    </p>
+  </div></div></footer>
+<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/2022/jvmANDbytecode">学习jvm和字节码</a></div><div class="next"><span>NEXT</span><a href="/2022/agentStudy">记一次Agent之旅</a></div></div></div>
 
 </div>
 
@@ -1364,7 +1362,7 @@ xxx
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'https://theoyu.top/java/VUL-Reproduce/Spring';
+    this.page.url = 'https://theoyu.top/2022/spring';
     this.page.identifier = 'Spring';
   };
   (function() { // DON'T EDIT BELOW THIS LINE
@@ -1404,7 +1402,7 @@ xxx
   </div>
 </footer>
 </div></div>
-    </div></div></div><script>(function() {
+    </div><script>(function() {
   var SOURCES = window.TEXT_VARIABLES.sources;
   window.Lazyload.js(SOURCES.jquery, function() {
     var $body = $('body'), $window = $(window);
@@ -1921,36 +1919,6 @@ window.Lazyload.js([SOURCES.jquery, PAHTS.search_js], function() {
 /*(function () {
 
 })();*/
-</script><script>(function() {
-  var SOURCES = window.TEXT_VARIABLES.sources;
-
-  window.Lazyload.js(SOURCES.jquery, function() {
-    var $pageMask = $('.js-page-mask');
-    var $pageRoot = $('.js-page-root');
-    var $sidebarShow = $('.js-sidebar-show');
-    var $sidebarHide = $('.js-sidebar-hide');
-
-    function freeze(e) {
-      if (e.target === $pageMask[0]) {
-        e.preventDefault();
-      }
-    }
-    function stopBodyScrolling(bool) {
-      if (bool === true) {
-        window.addEventListener('touchmove', freeze, { passive: false });
-      } else {
-        window.removeEventListener('touchmove', freeze, { passive: false });
-      }
-    }
-
-    $sidebarShow.on('click', function() {
-      stopBodyScrolling(true); $pageRoot.addClass('show-sidebar');
-    });
-    $sidebarHide.on('click', function() {
-      stopBodyScrolling(false); $pageRoot.removeClass('show-sidebar');
-    });
-  });
-})();
 </script><script>
   /* toc must before affix, since affix need to konw toc' height. */(function() {
   var SOURCES = window.TEXT_VARIABLES.sources;

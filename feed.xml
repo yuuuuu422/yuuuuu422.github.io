@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://theoyu.top/feed.xml" rel="self" type="application/atom+xml" /><link href="https://theoyu.top/" rel="alternate" type="text/html" /><updated>2022-10-28T20:03:12+08:00</updated><id>https://theoyu.top/feed.xml</id><title type="html">Theoyu</title><subtitle>Be cool,but also be warm.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://theoyu.top/feed.xml" rel="self" type="application/atom+xml" /><link href="https://theoyu.top/" rel="alternate" type="text/html" /><updated>2022-10-29T14:09:54+08:00</updated><id>https://theoyu.top/feed.xml</id><title type="html">Theoyu</title><subtitle>Be cool,but also be warm.
 </subtitle><author><name>Theoyu</name><email>zeyu.ou@foxmail.com</email></author><entry><title type="html">告别北京</title><link href="https://theoyu.top/2022/essay/leaveBJ" rel="alternate" type="text/html" title="告别北京" /><published>2022-07-29T00:00:00+08:00</published><updated>2022-07-29T00:00:00+08:00</updated><id>https://theoyu.top/2022/essay/leaveBJ</id><content type="html" xml:base="https://theoyu.top/2022/essay/leaveBJ"><![CDATA[<!--more-->
 
 <p>大一的时候，我最喜欢听的歌就是那吾克热的『 飘向北方 』。记得有一次被教官点上去表演才艺，我一时头热，就选择清唱了这首，那场面，你可以想想多尴尬。不过意外的是效果好像还行，至少我室友是这么说的。</p>
 
-<p>在这篇文章起笔时，我是不想去牵及太多工作相关的事情，但后来看到网上很多关于这家公司一票否决的负面评价，我还是想说公司的价值观也好，外面人的评价也好，但直接决定的还是你的部门，不同部门之间千差万别，有的部门用所谓的『 工时排名 』来恶性竞争，在我们部门只有到点下班后，Leader 催人回家。</p>
+<p>在这篇文章起笔时，我是不想去牵及太多工作相关的事情，但后来看到网上很多关于这家公司一票否决的负面评价，我还是想说公司的价值观也好，外面人的评价也好，但直接决定的还是你的部门，不同部门之间千差万别，有的部门用所谓的『 工时排名 』来恶性竞争，在在我们部门完全不存在这样的情况。</p>
 
 <p>我是在北京疫情最严重的时候来的西城（少数几个疫情不严重的区），并且在我来北京的前一天我租的房子的地区升级为高风险，住了几天宾馆后好在几个姐姐哥哥收留了我，一起合租。这里说一下短期租房的话最好不要找第三方中介（58同城、安居客、自如等等），因为这里大部分房子是不支持短租的，强行短租的话还要多支付一个月的违约费，并且服务费也很高。在学长的建议下我加了很多北京租房群、小程序等等找房子，最后我都没想到是在小红书找到了归宿 …</p>
 
@@ -11,7 +11,7 @@
 
 <p>Mentor <a href="https://github.com/Mochazz">Mochazz</a> 是一个非常温柔细心的师傅，对于技术上的问题我经常会死磕到底，但他都会不厌其烦的和我讲解。同时在隔壁工位还见到了偶像 <a href="https://github.com/c0ny1">C0ny1</a> ，也是十分平易近人。我意识到这些大哥其实和我们一样，无非是有自己的想法、在工作的时候更加专注认真，会在休闲的时间里健身、享受生活。显然我还没有学会这一点，或许这是未来长期的一个阶段我所需要去学习的。</p>
 
-<p>总的来说这是一份很棒的工作，无论是从工作内容和工作氛围上，还是从未来的成长上。在这里我没有看到所谓的 push 和压榨，只有友善和最纯粹和热爱。希望有一天我也能成为细心负责的 mentor，以温柔和善意对待每一位求学者。</p>
+<p>总的来说这是一份很棒的工作，无论是从工作内容和工作氛围上，还是从未来的成长上。在这里我没有看到所谓的 push 和压榨，只有友善和最纯粹的热爱。希望有一天我也能成为细心负责的 mentor，以温柔和善意对待每一位求学者。</p>
 
 <p>离开的前一天佳奕带我逛了逛北京，从天安门到海洋公园，从早上十点到晚上十一点，我真没想到两个男生可以聊这么久。关于工作，虽然我俩处于差别比较大的领域，但都可以通过彼此的专业知识去了解，理会相关的技术；关于生活，大多数观点我们都是相通的，基本上一个眼神就能明白彼此想要表达的意思；但是说到未来，我犹豫了。<del>以下删去无数我的无病呻吟</del>… 或许我能做到的就是在北京的日子里，尽可能去享受它所给我带来的便利，仅此而已。</p>
 
@@ -433,11 +433,7 @@ o.newInstance();
         <span class="n">o</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
 </code></pre></div></div>
 
-<p>只是单纯的回显shell，就不演示了，可以自己考虑做哥斯拉的内存shell</p>]]></content><author><name>Theoyu</name></author><category term="codeAudit" /><category term="VUL-Reproduce" /><category term="JAVA" /><summary type="html"><![CDATA[FROM CVE-2021-26084 TO CVE-2022-26134 ,Bypass Sandbox And Inject Memory Shell]]></summary></entry><entry><title type="html">SmartBi V10.5代码审计</title><link href="https://theoyu.top/2022/codeaudit/SmartBi-V10.5%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1" rel="alternate" type="text/html" title="SmartBi V10.5代码审计" /><published>2022-06-06T00:00:00+08:00</published><updated>2022-06-06T00:00:00+08:00</updated><id>https://theoyu.top/2022/codeaudit/SmartBi%20V10.5%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1</id><content type="html" xml:base="https://theoyu.top/2022/codeaudit/SmartBi-V10.5%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1"><![CDATA[<p>通往 Shell 灵魂的通道是 Pre-Auth RCE —— 张爱玲</p>
-
-<!--more-->
-
-<p>这种东西怎么能放出来🐶</p>]]></content><author><name>Theoyu</name></author><category term="codeAudit" /><category term="VUL-Reproduce" /><summary type="html"><![CDATA[通往 Shell 灵魂的通道是 Pre-Auth RCE —— 张爱玲]]></summary></entry><entry><title type="html">『区块链技术与应用』学习笔记</title><link href="https://theoyu.top/2022/cource/BitCoin" rel="alternate" type="text/html" title="『区块链技术与应用』学习笔记" /><published>2022-05-13T00:00:00+08:00</published><updated>2022-05-13T00:00:00+08:00</updated><id>https://theoyu.top/2022/cource/BitCoin</id><content type="html" xml:base="https://theoyu.top/2022/cource/BitCoin"><![CDATA[<!--more-->
+<p>上面只是单纯的回显shell，修改一下就可以做哥斯拉或者冰蝎的内存木马，这里不演示了。</p>]]></content><author><name>Theoyu</name></author><category term="codeAudit" /><category term="VUL-Reproduce" /><category term="JAVA" /><summary type="html"><![CDATA[FROM CVE-2021-26084 TO CVE-2022-26134 ,Bypass Sandbox And Inject Memory Shell]]></summary></entry><entry><title type="html">SmartBi V10.5 Pre-Auth RCE</title><link href="https://theoyu.top/2022/codeaudit/SmartBi-V10.5%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1" rel="alternate" type="text/html" title="SmartBi V10.5 Pre-Auth RCE" /><published>2022-06-06T00:00:00+08:00</published><updated>2022-06-06T00:00:00+08:00</updated><id>https://theoyu.top/2022/codeaudit/SmartBi%20V10.5%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1</id><content type="html" xml:base="https://theoyu.top/2022/codeaudit/SmartBi-V10.5%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1"><![CDATA[<p>🐶</p>]]></content><author><name>Theoyu</name></author><category term="codeAudit" /><category term="VUL-Reproduce" /><summary type="html"><![CDATA[🐶]]></summary></entry><entry><title type="html">『区块链技术与应用』学习笔记</title><link href="https://theoyu.top/2022/cource/BitCoin" rel="alternate" type="text/html" title="『区块链技术与应用』学习笔记" /><published>2022-05-13T00:00:00+08:00</published><updated>2022-05-13T00:00:00+08:00</updated><id>https://theoyu.top/2022/cource/BitCoin</id><content type="html" xml:base="https://theoyu.top/2022/cource/BitCoin"><![CDATA[<!--more-->
 
 <h1 id="比特币">比特币</h1>
 
@@ -534,7 +530,7 @@ o.newInstance();
 
 <p>通过上述实例，我们可以总结比特币采用的是『 交易追溯 』的方法检验是否满足交易条件。</p>
 
-<p>我们管『 记录账户模式 』的方法叫做 <strong>account-based ledger</strong>，现实世界以及以太坊，使用的就是这种模式；『 追溯交易模式 』的方法称为 **transaction-based ledger **。</p>
+<p>我们管『 记录账户模式 』的方法叫做 <strong>account-based ledger</strong>，现实世界以及以太坊，使用的就是这种模式；『 追溯交易模式 』的方法称为 <strong>transaction-based ledger</strong>。</p>
 
 <p>那么交易的过程，到底需要哪些信息呢？</p>
 
