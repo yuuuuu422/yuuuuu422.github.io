@@ -1,10 +1,10 @@
 <!DOCTYPE html><html lang="en">
   <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>深信服面试 - Theoyu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>『 CMU-15445 』Project 3 Query Execution - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="https://theoyu.top/2021/Sangfor_interview"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2022/cource/15445_proj3"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -594,96 +594,176 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
               <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
 
 <!-- end custom main top snippet -->
-<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>深信服面试</h1></header></div><meta itemprop="headline" content="深信服面试"><div class="article__info clearfix"><ul class="right-col menu"><li><i class="fas fa-user"></i> <span>Theoyu</span></li><li><i class="far fa-calendar-alt"></i> <span>Jun 23, 2021</span>
-            </li></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2021-06-23T11:30:20+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
+<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>『 CMU-15445 』Project 3 Query Execution</h1></header></div><meta itemprop="headline" content="『 CMU-15445 』Project 3 Query Execution"><div class="article__info clearfix"><ul class="left-col menu"><li>
+              <a class="button button--secondary button--pill button--sm"
+                href="/archive.html?tag=cource">cource</a>
+            </li><li>
+              <a class="button button--secondary button--pill button--sm"
+                href="/archive.html?tag=CMU-15445">CMU-15445</a>
+            </li></ul><ul class="right-col menu"><li><i class="fas fa-user"></i> <span>Theoyu</span></li><li><i class="far fa-calendar-alt"></i> <span>Aug 25, 2022</span>
+            </li></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-08-25T00:00:00+08:00">
+    <meta itemprop="keywords" content="cource,CMU-15445"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
 <!-- end custom article top snippet -->
 <div class="article__content" itemprop="articleBody"><!--more-->
 
-<h2 id="一面">一面</h2>
+<h2 id="前言">前言</h2>
 
-<p>一面是一位非常和蔼的师傅，整体属于自我驱动谈话，也就是简历上面写了什么问什么吧，40分钟基本上全是我在说，然后他提一些建议之类的。</p>
+<p>第三个实验需要我们实现一个执行器（并非解释器），我认为这个实验和 project2 来说各有各的难点。project2 难在即使非常清楚了可拓展哈希表的流程，在多线程、各种锁的折腾下还是很容易出错，每一个小 TASK 都需要debug很长时间。而这个 project 难在已经实现的类、及其成员变量非常繁杂，相互之间的调用很不清晰，完全不知道各个变量的具体含义。所以在做这个 project 之前，梳理已给代码非常重要。</p>
 
-<h3 id="自我介绍一下-3分钟">自我介绍一下 3分钟</h3>
+<h2 id="task-1---executors">TASK #1 - EXECUTORS</h2>
 
-<h3 id="聊一聊ssrf-8分钟左右-聊的比较深入">聊一聊SSRF 8分钟左右 聊的比较深入</h3>
+<p>整个 project 只有这一个 task，需要我们实现以下9个执行器：</p>
 
-<h3 id="聊一聊反序列化-5分钟">聊一聊反序列化 5分钟</h3>
+<ul>
+  <li>读取：Sequential Scan（顺序扫描）</li>
+  <li>增删改查： Insert, Update, Delete</li>
+  <li>其他：Nested Loop Join, Hash Join, Aggregation, Limit, Distinct</li>
+</ul>
 
-<p>最后师傅忽然提了一句java反序列化知道多少，尬住了，师傅语重心长的说web研究的话java很重要，得好好学…</p>
+<h3 id="思路">思路</h3>
 
-<h3 id="谈一谈徐州护网-3分钟">谈一谈徐州护网 3分钟</h3>
+<p>在前言中我们提到各种成员变量，包括</p>
 
-<h3 id="php源码分析过吗-8分钟左右">PHP源码分析过吗 8分钟左右</h3>
+<pre><code class="language-txt">Catalog、Tuple、Schema、TableHeap、TableHeapIterator、Value、Column...等待
+</code></pre>
 
-<p>聊到了一个php垃圾回收的pwn，奈何我二进制太弱，不过还好后来把话题聊到了<strong>disable_function</strong>的绕过，这一块还是谈了挺久的。师傅说二进制也很重要，给我推荐了一些二进制的书籍。</p>
+<p>其每个变量都在具体数据库中有一个对应，我是通过 debug 慢慢摸索出其含义，后来发现<a href="https://www.cnblogs.com/sun-lingyu/p/15316626.html"> 这篇文章 </a>总结非常好，在做第一个执行器（Sequential Scan）的时候强烈推荐结合文章理清楚各个类的交互关系。</p>
 
-<h3 id="谈一谈代码审计的流程-5分钟左右">谈一谈代码审计的流程 5分钟左右</h3>
+<h3 id="提示">提示</h3>
 
-<h3 id="你觉得seay好用吗你觉得理想的静态分析工具该满足怎样的功能">你觉得seay好用吗，你觉得理想的静态分析工具该满足怎样的功能。</h3>
+<p>说一下我踩的几个坑，应该是我对聚合算子本身不来熟悉，导致一些比较乌龙的错误。</p>
 
-<p>我说seay这种基于正则的不太行了，感觉师傅应该想聊聊AST，虽然接触过这一块不过我感觉没有具体实践的话很难交流，马马虎虎的过去了。</p>
+<p>一个是要注意 <code class="language-plaintext highlighter-rouge">group by</code> 是可以接多个列的，站在数据库层表示以 n 个完全相同的列进行分组，在代码中体现就是 <code class="language-plaintext highlighter-rouge">AggregateKey</code> 的成员变量 <code class="language-plaintext highlighter-rouge">group_bys_</code> 是一个 <code class="language-plaintext highlighter-rouge">vector</code>。</p>
 
-<h3 id="谈一谈内网渗透-3分钟">谈一谈内网渗透 3分钟</h3>
+<p>二是我在看聚合的测试文件时，发现 <code class="language-plaintext highlighter-rouge">ValueExpression</code> 必须指定输出列是否为 <code class="language-plaintext highlighter-rouge">is_group_by_term</code>。根据执行逻辑如果是则代表其为 <code class="language-plaintext highlighter-rouge">group by</code> 的字段，如果不是则代表其为聚合的字段。</p>
 
-<h3 id="聊一聊你写的一些小工具-5分钟">聊一聊你写的一些小工具 5分钟</h3>
+<p>比如这样的语句：<code class="language-plaintext highlighter-rouge">select count(Id),City from Employee group by City </code>，前者则为false，后者则为 true。</p>
 
-<p>谈的比较久的就是子域名爆破，其实不算爆破，利用浏览器api和dns协议而已，爆破这一块做的不好，但师傅对爆破的算法比较感兴趣，我也老实说了之前在一位蘑菇街师傅博客看到的自动生成字典思路以及泛解析对策。</p>
+<p>后来我突发奇想，如果是这样的语句<code class="language-plaintext highlighter-rouge">select count(Id),City,Address from Employee group by City </code>，其中 <code class="language-plaintext highlighter-rouge">Address</code> 既不是 <code class="language-plaintext highlighter-rouge">group by</code> 的字段，也不是聚合的字段，那该怎么支持呢？</p>
 
-<h3 id="你有什么想问我的">你有什么想问我的？</h3>
+<table>
+  <thead>
+    <tr>
+      <th>count(ID)</th>
+      <th>City</th>
+      <th>Address</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Kirkland</td>
+      <td>722 Moss Bay Blvd.</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>London</td>
+      <td>14 Garrett Hill</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>Redmond</td>
+      <td>4110 Old Redmond Rd.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Seattle</td>
+      <td>507 - 20th Ave. E. Apt. 2A</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>Tacoma</td>
+      <td>908 W. Capital Way</td>
+    </tr>
+  </tbody>
+</table>
 
-<p>这一块聊的挺舒服的，感觉师傅啥也会，我也没太多顾忌了就说我什么什么不会，师傅说咋学，最后问了下可能做什么，师傅说实习生不太确定，二面才可能清楚。</p>
+<p>后来想了想在聚合里这个字段也没有意义，如果一个组有多个数据，可能只会随机输出一个，真实情况下我们一般会考虑<code class="language-plaintext highlighter-rouge">group_concat</code>:</p>
 
-<h2 id="二面-30分钟">二面 30分钟</h2>
+<p><code class="language-plaintext highlighter-rouge">select count(Id),City,group_concat(Address,' ;') from Employee group by City</code></p>
 
-<h3 id="自我介绍一下-2分钟">自我介绍一下 2分钟</h3>
+<table>
+  <thead>
+    <tr>
+      <th>count(ID)</th>
+      <th>City</th>
+      <th>group_concat(Address,’ ;’)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Kirkland</td>
+      <td>722 Moss Bay Blvd.</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>London</td>
+      <td>14 Garrett Hill ;Coventry House Miner Rd. ;Edgeham Hollow Winchester Way ;7 Houndstooth Rd.</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>Redmond</td>
+      <td>4110 Old Redmond Rd.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Seattle</td>
+      <td>507 - 20th Ave. E. Apt. 2A ;4726 - 11th Ave. N.E.</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>Tacoma</td>
+      <td>908 W. Capital Way</td>
+    </tr>
+  </tbody>
+</table>
 
-<h3 id="学了哪些专业课-数据结构学的怎么样">学了哪些专业课 数据结构学的怎么样</h3>
+<p>那这样的话就又得支持新的算子了，虽然感觉上不难… 不过我暂时还没有实现 XD</p>
 
-<h3 id="怎么在代码层面防御ssrf-3分钟">怎么在代码层面防御SSRF 3分钟</h3>
+<h2 id="最后">最后</h2>
 
-<h3 id="如何检测webshell-5分钟">如何检测webshell 5分钟</h3>
+<p>最重要的一点，请不要使用官方的打包命令，gradescope 上莫名其妙把一堆自带的 GTEST 给检测，其 check-lint G了一大片，后来群里大哥说加上 <code class="language-plaintext highlighter-rouge">src/include/storage/page/tmp_tuple_page.h</code> 可以解决，原因位置：</p>
 
-<p>先谈了正则，聊了php5和php7特性这一块，然后就是特征流量，没有怎么接触过回答比较勉强。</p>
+<pre><code class="language-txt">zip project3-submission.zip \
+src/include/buffer/lru_replacer.h \
+src/buffer/lru_replacer.cpp \
+src/include/buffer/buffer_pool_manager_instance.h \
+src/buffer/buffer_pool_manager_instance.cpp \
+src/include/storage/page/hash_table_directory_page.h \
+src/storage/page/hash_table_directory_page.cpp \
+src/include/storage/page/hash_table_bucket_page.h \
+src/storage/page/hash_table_bucket_page.cpp \
+src/include/container/hash/extendible_hash_table.h \
+src/container/hash/extendible_hash_table.cpp \
+src/include/execution/execution_engine.h \
+src/include/execution/executors/seq_scan_executor.h \
+src/include/execution/executors/insert_executor.h \
+src/include/execution/executors/update_executor.h \
+src/include/execution/executors/delete_executor.h \
+src/include/execution/executors/nested_loop_join_executor.h \
+src/include/execution/executors/hash_join_executor.h \
+src/include/execution/executors/aggregation_executor.h \
+src/include/execution/executors/limit_executor.h \
+src/include/execution/executors/distinct_executor.h \
+src/execution/seq_scan_executor.cpp \
+src/execution/insert_executor.cpp \
+src/execution/update_executor.cpp \
+src/execution/delete_executor.cpp \
+src/execution/nested_loop_join_executor.cpp \
+src/execution/hash_join_executor.cpp \
+src/execution/aggregation_executor.cpp \
+src/execution/limit_executor.cpp \
+src/execution/distinct_executor.cpp \
+src/include/storage/page/tmp_tuple_page.h
+</code></pre>
 
-<h3 id="谈一谈你用过的webshell-分析过流量特征吗如何进行数据交互的-8分钟">谈一谈你用过的webshell ，分析过流量特征吗？如何进行数据交互的？ 8分钟</h3>
+<p><img src="../../assets/images/image-20220828085926610.png" alt="image-20220828085926610" /></p>
 
-<h3 id="正向shell反向shell为什么正向shell容易被检测-3分钟">正向shell反向shell，为什么正向shell容易被检测 3分钟</h3>
+<p><img src="../../assets/images/image-20220828090016838.png" alt="image-20220828090016838" /></p>
 
-<h3 id="端口转发和端口映射的区别内网怎么进行流量转发3分钟">端口转发和端口映射的区别，内网怎么进行流量转发？3分钟</h3>
-
-<h3 id="谈一谈内存马">谈一谈内存马</h3>
-
-<p>不会java真的很尴尬，不过师傅也没说什么。</p>
-
-<h3 id="如何实时检测反弹shell-5分钟">如何实时检测反弹shell 5分钟</h3>
-
-<h3 id="你有什么想问我的-1">你有什么想问我的？</h3>
-
-<p>问了如果去大概是做什么方向，师傅说和他今天问的差不多，入侵检测这一块，偏研发。</p>
-
-<h2 id="hr面">hr面</h2>
-
-<p>等了差不多一个多星期，本来觉得应该差不多无了。</p>
-
-<h3 id="自我介绍一下">自我介绍一下</h3>
-
-<h3 id="你们大二还没有开信安专业课吧平时怎么自学的">你们大二还没有开信安专业课吧。平时怎么自学的？</h3>
-
-<h3 id="平时在社团负责什么方面的工作">平时在社团负责什么方面的工作</h3>
-
-<h3 id="平时关注了哪些论坛或者公众号">平时关注了哪些论坛或者公众号？</h3>
-
-<h3 id="家庭情况">家庭情况</h3>
-
-<h3 id="平时喜欢玩什么游戏">平时喜欢玩什么游戏</h3>
-
-<h3 id="未来方向">未来方向</h3>
-
-<h2 id="总结">总结</h2>
-
-<p>hr面完后过了一天就发了offer，感觉安全这一块，首先当然得追求广度，不然面试说一个知识点你直接说没听过很尴尬。但又不能在你不熟悉的领域说太多，自己有几斤几两大师傅一追问就能听出来，这样就需要深度了。平时遇到的一些零碎知识多总结，多实践。可能我是大二的原因所以在项目这一块没有追问太多，记得hr和二面的师傅介绍我就一句:”他简历比较简单，你看一看就能开始了”。我们最后所学的，所分析的，还是得落实到代码上去。<code class="language-plaintext highlighter-rouge">talk is cheap,show me the code.</code></p>
-</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2021-06-23T11:30:20+08:00"><!-- start custom article footer snippet -->
+</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-08-25T00:00:00+08:00"><!-- start custom article footer snippet -->
 
 <!-- end custom article footer snippet -->
 <div class="article__subscribe"><div class="subscribe"><i class="fas fa-rss"></i> <a type="application/rss+xml" href="/feed.xml">Subscribe</a></div>
@@ -694,7 +774,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
       </a>
     </p>
   </div></div></footer>
-<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/2021/essay/%E9%9A%8F%E7%AC%940x01">something0x01</a></div><div class="next"><span>NEXT</span><a href="/2021/codeaudit/s_cms">闪灵cms前台注入+后台getshell</a></div></div></div>
+<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/2022/cource/15445_proj2">『 CMU-15445 』Project 2 哈希索引</a></div><div class="next"><span>NEXT</span><a href="/2022/cource/15445_proj4">『 CMU-15445 』Project 4 并发控制</a></div></div></div>
 
 </div>
 
@@ -729,8 +809,8 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'https://theoyu.top/2021/Sangfor_interview';
-    this.page.identifier = '深信服面试';
+    this.page.url = 'https://theoyu.top/2022/cource/15445_proj3';
+    this.page.identifier = 'CMU-15445Project 3';
   };
   (function() { // DON'T EDIT BELOW THIS LINE
     var d = document, s = d.createElement('script');

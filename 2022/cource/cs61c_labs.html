@@ -1,10 +1,10 @@
 <!DOCTYPE html><html lang="en">
   <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>Project 2 Classify - Theoyu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>『 CS61C 』 Labs - Theoyu</title>
 
-<meta name="description" content="Part ATask 2: ReLUConcept这一节需要我们实现 relu 函数，该函数输入一个数组和数组长度，需要把数组内的负数元素置为 0。Codeloop_start:	addi sp,sp,-4	sw s0,0(sp)	li t0,0loop:	beq t0,a1,loop_end      # if...">
-<link rel="canonical" href="https://theoyu.top/cs/cs61c/project2"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<meta name="description" content="">
+<link rel="canonical" href="https://theoyu.top/2022/cource/cs61c_labs"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -262,18 +262,7 @@
 </head>
   <body>
     <div class="root" data-is-touch="false">
-      <div class="layout--page layout--page--sidebar clearfix js-page-root">
-  <div class="page__mask d-print-none js-page-mask js-sidebar-hide"></div>
-  <div class="page__viewport">
-    <div class="page__actions d-print-none">
-      <div class="button button--circle button--lg box-shadow-2 sidebar-button js-sidebar-show">
-        <i class="fas fa-bars icon--show"></i>
-      </div>
-    </div>
-
-    <div class="grid page__grid">
-
-      <div class="page__sidebar d-print-none"><div class="sidebar-toc"><ul class="toc toc--navigator"><li class="toc-h1">『 CS106L 』</li><li class="toc-h2"><a href="/cs/cs106l/cs106l">『 CS106L 』- Summery</a></li><li class="toc-h1">『 CS61C 』</li><li class="toc-h2"><a href="/cs/cs61c/cs61c">『 CS61C 』- Summery</a></li><li class="toc-h2"><a href="/cs/cs61c/cs61c_labs">『 CS61C 』- Labs</a></li><li class="toc-h2 active"><a href="/cs/cs61c/project2">Project 2 Classify</a></li><li class="toc-h2"><a href="/">Project 3 CPU</a></li><li class="toc-h1">『 CS110L 』</li><li class="toc-h2"><a href="/">『 CS110L 』- Summery</a></li><li class="toc-h2"><a href="/">『 CS110L 』- Labs</a></li><li class="toc-h1">『 CMU15445 』</li><li class="toc-h2"><a href="/cs/cmu15445/notes">『 CMU15445 』- Notes</a></li><li class="toc-h2"><a href="/cs/cmu15445/proj1">Project 1 缓冲池管理器</a></li><li class="toc-h2"><a href="/cs/cmu15445/proj2">Project 2 哈希索引</a></li><li class="toc-h2"><a href="/cs/cmu15445/proj3">Project 3 Query Execution</a></li><li class="toc-h1">『 NJU-ICS-PA 』</li><li class="toc-h2"><a href="/">PA 1</a></li><li class="toc-h2"><a href="/">PA 2</a></li><li class="toc-h2"><a href="/">PA 3</a></li><li class="toc-h2"><a href="/">PA 4</a></li><li class="toc-h1">『 6.S081 』</li><li class="toc-h2"><a href="/">Lab1 Unix utilities</a></li><li class="toc-h1">『 CMU15445 』</li><li class="toc-h2"><a href="/">『 CMU15445 』- Notes</a></li><li class="toc-h2"><a href="/">Project 1 缓冲池管理器</a></li><li class="toc-h2"><a href="/">Project 2 哈希索引</a></li><li class="toc-h2"><a href="/">Project 3 Query Execution</a></li></ul></div></div><div class="page__main js-page-main has-aside cell cell--auto">
+      <div class="layout--page js-page-root"><div class="page__main js-page-main page__viewport has-aside cell cell--auto">
 
       <div class="page__main-inner"><div class="page__header d-print-none"><header class="header"><div class="main">
       <div class="header__title">
@@ -606,538 +595,350 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
               <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
 
 <!-- end custom main top snippet -->
-<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>Project 2 Classify</h1></header></div><meta itemprop="headline" content="Project 2 Classify"><div class="article__info clearfix"><ul class="right-col menu"></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-10-29T14:09:54+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
+<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>『 CS61C 』 Labs</h1></header></div><meta itemprop="headline" content="『 CS61C 』 Labs"><div class="article__info clearfix"><ul class="left-col menu"><li>
+              <a class="button button--secondary button--pill button--sm"
+                href="/archive.html?tag=cource">cource</a>
+            </li><li>
+              <a class="button button--secondary button--pill button--sm"
+                href="/archive.html?tag=CS61C">CS61C</a>
+            </li></ul><ul class="right-col menu"><li><i class="fas fa-user"></i> <span>Theoyu</span></li><li><i class="far fa-calendar-alt"></i> <span>Sep 10, 2022</span>
+            </li></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-09-10T00:00:00+08:00">
+    <meta itemprop="keywords" content="cource,CS61C"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
 <!-- end custom article top snippet -->
-<div class="article__content" itemprop="articleBody"><h2 id="part-a">Part A</h2>
+<div class="article__content" itemprop="articleBody"><!--more-->
 
-<h3 id="task-2-relu">Task 2: ReLU</h3>
+<h2 id="lab-1-c--cgdb">Lab 1: C &amp; CGDB</h2>
 
-<h4 id="concept">Concept</h4>
+<h3 id="learning-goals">Learning Goals</h3>
 
-<p>这一节需要我们实现 <code class="language-plaintext highlighter-rouge">relu</code> 函数，该函数输入一个数组和数组长度，需要把数组内的负数元素置为 0。</p>
+<ol>
+  <li>练习使用指针、字符串和结构体。</li>
+  <li>学会基础的调试技巧：编译警告消除、断言以及 GDB 。</li>
+</ol>
 
-<p><img src="../../assets/images/image-20221007122605265.png" alt="image-20221007122605265" /></p>
+<p>Exercise 1 是一个 C 语言的 Warm Up，实现几个简易函数即可。</p>
 
-<h4 id="code">Code</h4>
+<p>Exercise 2 需要我们使用 GDB，发现并修改程序中的一些逻辑 BUG，这里我使用的是 CGDB，相比于 GDB 来说可以更加方便的在源码上下断点跟进。</p>
 
-<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">loop_start</span><span class="o">:</span>
-	<span class="n">addi</span> <span class="n">sp</span><span class="p">,</span><span class="n">sp</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span>
-	<span class="n">sw</span> <span class="n">s0</span><span class="p">,</span><span class="mi">0</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-	<span class="n">li</span> <span class="n">t0</span><span class="p">,</span><span class="mi">0</span>
+<p><img src="../../assets/images/image-20220926083553611.png" alt="image-20220926083553611" /></p>
 
-<span class="n">loop</span><span class="o">:</span>
-	<span class="n">beq</span> <span class="n">t0</span><span class="p">,</span><span class="n">a1</span><span class="p">,</span><span class="n">loop_end</span>      <span class="c1"># if  t0 == length go</span>
-	<span class="n">slli</span> <span class="n">t1</span> <span class="p">,</span> <span class="n">t0</span><span class="p">,</span> <span class="mi">2</span>	        <span class="c1"># offset, t1 = t0 * 4</span>
-	<span class="n">add</span> <span class="n">s0</span><span class="p">,</span><span class="n">a0</span><span class="p">,</span><span class="n">t1</span>            <span class="c1"># s0 = &amp;a0[t0]</span>
-	<span class="n">lw</span> <span class="n">t2</span><span class="p">,</span><span class="mi">0</span><span class="p">(</span><span class="n">s0</span><span class="p">)</span>	            <span class="c1"># t2 = a0[t0]</span>
-	<span class="n">bge</span> <span class="n">t2</span><span class="p">,</span><span class="n">x0</span><span class="p">,</span><span class="n">loop_continue</span> <span class="c1"># if t2 &gt;= 0 go</span>
-	<span class="n">sw</span> <span class="n">x0</span><span class="p">,</span><span class="mi">0</span><span class="p">(</span><span class="n">s0</span><span class="p">)</span>             <span class="c1"># else a0[t0] = 0</span>
-<span class="n">loop_continue</span><span class="o">:</span>
-	<span class="n">addi</span> <span class="n">t0</span><span class="p">,</span><span class="n">t0</span><span class="p">,</span><span class="mi">1</span>            <span class="c1"># t0 = t0 + 1</span>
-	<span class="n">j</span> <span class="n">loop</span>
-<span class="n">loop_end</span><span class="o">:</span>
-	<span class="c1"># Epilogue</span>
-	<span class="n">lw</span> <span class="n">s0</span><span class="p">,</span><span class="mi">0</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-	<span class="n">addi</span> <span class="n">sp</span><span class="p">,</span><span class="n">sp</span><span class="p">,</span><span class="mi">4</span>
-	<span class="n">ret</span>
-<span class="n">error</span><span class="o">:</span>
-	<span class="n">li</span> <span class="n">a0</span><span class="p">,</span><span class="mi">36</span>
-	<span class="n">j</span> <span class="k">exit</span>
+<p>注意，如果我们需要用 CGDB 在源码层面上进行调试，需要在编译时指定 -g 参数，gcc 会在编译时做以下额外操作：</p>
+
+<ol>
+  <li>创建调试符号表，符号表包含了程序中使用的变量名称等信息。</li>
+  <li>关闭所有的优化机制，以便程序严格按照源码流程执行。</li>
+</ol>
+
+<p>下面是CGDB的一些常用指令</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>空格      断点
+run r    运行
+start    从第一行开始单步运行
+next n   单步调试 F8
+step s   进入内部 F10
+until u  快速运行完循环、until localtion 运行到目的行
+continue 运行到下一个断点 F6
+finish   跳出当前栈帧 F7
+info locals 打印本地变量
+print p  显示变量
+display  持续打印某个变量
+watch 
+o        打开文件列表
 </code></pre></div></div>
 
-<h3 id="task-3-argmax">Task 3: Argmax</h3>
+<p>Exercise 3 还是对 CGDB 的练习，需要我们通过调试，找到并修改链表中的一个 segfaults （段错误）。</p>
 
-<h4 id="concept-1">Concept</h4>
+<p>Exercise 4 需要我们实现一个链表有环的判断，用双指针即可。</p>
 
-<p><code class="language-plaintext highlighter-rouge">argmax</code> 需要我们输入一个数组和数组长度，返回该数组中最大元素的下标。</p>
-
-<h4 id="code-1">Code</h4>
-
-<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mf">.</span><span class="n">globl</span> <span class="n">argmax</span>
-
-<span class="mf">.</span><span class="n">text</span>
-<span class="c1"># =================================================================</span>
-<span class="c1"># FUNCTION: Given a int array, return the index of the largest</span>
-<span class="c1">#   element. If there are multiple, return the one</span>
-<span class="c1">#   with the smallest index.</span>
-<span class="c1"># Arguments:</span>
-<span class="c1">#   a0 (int*) is the pointer to the start of the array</span>
-<span class="c1">#   a1 (int)  is the # of elements in the array</span>
-<span class="c1"># Returns:</span>
-<span class="c1">#   a0 (int)  is the first index of the largest element</span>
-<span class="c1"># Exceptions:</span>
-<span class="c1">#   - If the length of the array is less than 1,</span>
-<span class="c1">#     this function terminates the program with error code 36</span>
-<span class="c1"># =================================================================</span>
-<span class="n">argmax</span><span class="o">:</span>
-	<span class="c1"># Prologue</span>
-	<span class="n">li</span> <span class="n">t0</span><span class="p">,</span><span class="mi">1</span>
-	<span class="n">blt</span> <span class="n">a1</span><span class="p">,</span><span class="n">t0</span><span class="p">,</span><span class="n">error</span>
-
-<span class="n">loop_start</span><span class="o">:</span>
-	<span class="n">addi</span> <span class="n">sp</span><span class="p">,</span><span class="n">sp</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span>
-	<span class="n">sw</span> <span class="n">s0</span><span class="p">,</span><span class="mi">0</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-	<span class="n">li</span> <span class="n">t0</span><span class="p">,</span><span class="mi">1</span>
-	<span class="n">li</span> <span class="n">t3</span><span class="p">,</span><span class="mi">0</span>	                <span class="c1"># max_index = 0</span>
-	<span class="n">lw</span> <span class="n">t4</span><span class="p">,</span><span class="mi">0</span><span class="p">(</span><span class="n">a0</span><span class="p">)</span>             <span class="c1"># max_value = num[0]</span>
-
-<span class="n">loop</span><span class="o">:</span>
-	<span class="n">beq</span> <span class="n">t0</span><span class="p">,</span><span class="n">a1</span><span class="p">,</span><span class="n">loop_end</span>      <span class="c1"># if  t0 == length go</span>
-	<span class="n">slli</span> <span class="n">t1</span> <span class="p">,</span> <span class="n">t0</span><span class="p">,</span> <span class="mi">2</span>	        <span class="c1"># offset, t1 = t0 * 4</span>
-	<span class="n">add</span> <span class="n">s0</span><span class="p">,</span><span class="n">a0</span><span class="p">,</span><span class="n">t1</span>            <span class="c1"># s0 = &amp;num[t0]</span>
-	<span class="n">lw</span> <span class="n">t2</span><span class="p">,</span><span class="mi">0</span><span class="p">(</span><span class="n">s0</span><span class="p">)</span>	            <span class="c1"># t2 = num[t0]</span>
-	<span class="n">blt</span> <span class="n">t2</span><span class="p">,</span><span class="n">t4</span><span class="p">,</span><span class="n">loop_continue</span> <span class="c1"># if t2 &lt; max_value  go</span>
-	<span class="n">mv</span> <span class="n">t3</span><span class="p">,</span><span class="n">t0</span>                <span class="c1"># else max_index = t0</span>
-	<span class="n">mv</span> <span class="n">t4</span><span class="p">,</span><span class="n">t2</span>                <span class="c1">#      max_value = t4</span>
-<span class="n">loop_continue</span><span class="o">:</span>
-	<span class="n">addi</span><span class="p">,</span><span class="n">t0</span><span class="p">,</span><span class="n">t0</span><span class="p">,</span><span class="mi">1</span>
-	<span class="n">j</span> <span class="n">loop</span>
-<span class="n">loop_end</span><span class="o">:</span>
-	<span class="c1"># Epilogue</span>
-	<span class="n">mv</span> <span class="n">a0</span><span class="p">,</span><span class="n">t3</span>
-	<span class="n">lw</span> <span class="n">s0</span><span class="p">,</span><span class="mi">0</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-	<span class="n">addi</span> <span class="n">sp</span><span class="p">,</span><span class="n">sp</span><span class="p">,</span><span class="mi">4</span>
-	<span class="n">ret</span>
-
-<span class="n">error</span><span class="o">:</span>
-	<span class="n">li</span> <span class="n">a0</span><span class="p">,</span><span class="mi">36</span>
-	<span class="n">j</span> <span class="k">exit</span>
-
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">ll_has_cycle</span><span class="p">(</span><span class="n">node</span> <span class="o">*</span><span class="n">head</span><span class="p">)</span> <span class="p">{</span>
+    <span class="cm">/* TODO: Implement ll_has_cycle */</span>
+    <span class="n">node</span> <span class="o">*</span> <span class="n">fast</span> <span class="o">=</span> <span class="n">head</span><span class="p">;</span>
+    <span class="n">node</span> <span class="o">*</span> <span class="n">slow</span> <span class="o">=</span> <span class="n">head</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">fast</span> <span class="o">&amp;&amp;</span> <span class="n">fast</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">){</span>
+        <span class="n">slow</span> <span class="o">=</span> <span class="n">slow</span> <span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+        <span class="n">fast</span> <span class="o">=</span> <span class="n">fast</span><span class="o">-&gt;</span><span class="n">next</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">fast</span> <span class="o">==</span> <span class="n">slow</span><span class="p">){</span>
+            <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre></div></div>
 
-<h3 id="task-4-dot-product">Task 4: Dot Product</h3>
+<h2 id="lab-2-c-memory-management-valgrind">Lab 2: C Memory Management, Valgrind</h2>
 
-<h4 id="concept-2">Concept</h4>
+<h3 id="learning-goals-1">Learning Goals</h3>
 
-<p>这一节将输入两个数组，每个数组以输入的 stride 遍历 n 个元素，把每轮的两个元素相乘的结果最后相加返回。</p>
+<ol>
+  <li>练习简单的位操作。</li>
+  <li>学会使用 Valgrind 进行内存泄漏检查。</li>
+  <li>练习编写安全的程序。</li>
+</ol>
 
-<p><img src="../../assets/images/image-20221007125341085.png" alt="image-20221007125341085" /></p>
+<h3 id="exercise-1-bit-operations">Exercise 1: Bit Operations</h3>
 
-<h4 id="code-2">Code</h4>
+<p>需要我们只通过简单的位运算符实现以下三个函数：</p>
 
-<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mf">.</span><span class="n">globl</span> <span class="n">dot</span>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/* Returns the Nth bit of X. Assumes 0 &lt;= N &lt;= 31. */</span>
+<span class="kt">unsigned</span> <span class="nf">get_bit</span><span class="p">(</span><span class="kt">unsigned</span> <span class="n">x</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="cm">/* YOUR CODE HERE */</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="cm">/* UPDATE WITH THE CORRECT RETURN VALUE*/</span>
+<span class="p">}</span>
 
-<span class="mf">.</span><span class="n">text</span>
-<span class="c1"># =======================================================</span>
-<span class="c1"># FUNCTION: Dot product of 2 int arrays</span>
-<span class="c1"># Arguments:</span>
-<span class="c1">#   a0 (int*) is the pointer to the start of arr0</span>
-<span class="c1">#   a1 (int*) is the pointer to the start of arr1</span>
-<span class="c1">#   a2 (int)  is the number of elements to use</span>
-<span class="c1">#   a3 (int)  is the stride of arr0</span>
-<span class="c1">#   a4 (int)  is the stride of arr1</span>
-<span class="c1"># Returns:</span>
-<span class="c1">#   a0 (int)  is the dot product of arr0 and arr1</span>
-<span class="c1"># Exceptions:</span>
-<span class="c1">#   - If the length of the array is less than 1,</span>
-<span class="c1">#     this function terminates the program with error code 36</span>
-<span class="c1">#   - If the stride of either array is less than 1,</span>
-<span class="c1">#     this function terminates the program with error code 37</span>
-<span class="c1"># =======================================================</span>
-<span class="n">dot</span><span class="o">:</span>
-    <span class="n">li</span> <span class="n">t0</span><span class="p">,</span><span class="mi">1</span>
-    <span class="n">blt</span> <span class="n">a2</span><span class="p">,</span><span class="n">t0</span><span class="p">,</span><span class="n">error1</span>
-    <span class="n">blt</span> <span class="n">a3</span><span class="p">,</span><span class="n">t0</span><span class="p">,</span><span class="n">error2</span>
-    <span class="n">blt</span> <span class="n">a4</span><span class="p">,</span><span class="n">t0</span><span class="p">,</span><span class="n">error2</span>
+<span class="cm">/* Set the nth bit of the value of x to v. Assumes 0 &lt;= N &lt;= 31, and V is 0 or 1 */</span>
+<span class="kt">void</span> <span class="nf">set_bit</span><span class="p">(</span><span class="kt">unsigned</span> <span class="o">*</span><span class="n">x</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="n">n</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="cm">/* YOUR CODE HERE */</span>
+<span class="p">}</span>
 
-
-<span class="n">loop_start</span><span class="o">:</span>
-    <span class="n">addi</span> <span class="n">sp</span><span class="p">,</span><span class="n">sp</span><span class="p">,</span><span class="o">-</span><span class="mi">8</span>
-    <span class="n">sw</span> <span class="n">s0</span><span class="p">,</span><span class="mi">0</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>     
-    <span class="n">sw</span> <span class="n">s1</span><span class="p">,</span><span class="mi">4</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">mv</span> <span class="n">s0</span><span class="p">,</span><span class="n">a0</span>
-    <span class="n">mv</span> <span class="n">s1</span><span class="p">,</span><span class="n">a1</span>
-    <span class="n">li</span> <span class="n">t0</span><span class="p">,</span><span class="mi">0</span>           <span class="c1"># for loop</span>
-    <span class="n">li</span> <span class="n">t1</span><span class="p">,</span><span class="mi">4</span>
-    <span class="n">mul</span> <span class="n">t1</span><span class="p">,</span><span class="n">t1</span><span class="p">,</span><span class="n">a3</span>      <span class="c1"># offset for a0</span>
-    <span class="n">li</span> <span class="n">t2</span> <span class="mi">4</span>
-    <span class="n">mul</span> <span class="n">t2</span><span class="p">,</span><span class="n">t2</span><span class="p">,</span><span class="n">a4</span>      <span class="c1"># offset for a1</span>
-    <span class="n">li</span> <span class="n">t6</span><span class="p">,</span><span class="mi">0</span>           <span class="c1"># sum</span>
-<span class="n">loop</span><span class="o">:</span>
-    <span class="n">beq</span> <span class="n">t0</span><span class="p">,</span><span class="n">a2</span><span class="p">,</span><span class="n">loop_end</span> 
-    <span class="n">lw</span> <span class="n">t3</span><span class="p">,</span><span class="mi">0</span><span class="p">(</span><span class="n">s0</span><span class="p">)</span>
-    <span class="n">add</span> <span class="n">s0</span><span class="p">,</span><span class="n">s0</span><span class="p">,</span><span class="n">t1</span>      <span class="c1"># s0 = &amp;a0[t0]</span>
-    <span class="n">lw</span> <span class="n">t4</span><span class="p">,</span><span class="mi">0</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
-    <span class="n">add</span> <span class="n">s1</span><span class="p">,</span><span class="n">s1</span><span class="p">,</span><span class="n">t2</span>      <span class="c1"># s1 = &amp;a1[t0]</span>
-    <span class="n">mul</span> <span class="n">t5</span><span class="p">,</span><span class="n">t3</span><span class="p">,</span><span class="n">t4</span>
-    <span class="n">add</span> <span class="n">t6</span><span class="p">,</span><span class="n">t6</span><span class="p">,</span><span class="n">t5</span>
-    <span class="n">addi</span> <span class="n">t0</span><span class="p">,</span><span class="n">t0</span><span class="p">,</span><span class="mi">1</span>
-    <span class="n">j</span> <span class="n">loop</span> 
-<span class="n">loop_end</span><span class="o">:</span>
-    <span class="n">mv</span> <span class="n">a0</span><span class="p">,</span><span class="n">t6</span>
-    <span class="n">lw</span> <span class="n">s0</span><span class="p">,</span><span class="mi">0</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">lw</span> <span class="n">s1</span><span class="p">,</span><span class="mi">4</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">addi</span> <span class="n">sp</span><span class="p">,</span><span class="n">sp</span><span class="p">,</span><span class="mi">8</span>
-    <span class="n">ret</span>
-<span class="n">error1</span><span class="o">:</span>
-	<span class="n">li</span> <span class="n">a0</span><span class="p">,</span><span class="mi">36</span>
-	<span class="n">j</span> <span class="k">exit</span>
-<span class="n">error2</span><span class="o">:</span>
-	<span class="n">li</span> <span class="n">a0</span><span class="p">,</span><span class="mi">37</span>
-	<span class="n">j</span> <span class="k">exit</span>
-    
-
+<span class="cm">/* Flips the Nth bit in X. Assumes 0 &lt;= N &lt;= 31.*/</span>
+<span class="kt">void</span> <span class="nf">flip_bit</span><span class="p">(</span><span class="kt">unsigned</span> <span class="o">*</span><span class="n">x</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="cm">/* YOUR CODE HERE */</span>
+<span class="p">}</span>
 </code></pre></div></div>
 
-<h3 id="task-5-matrix-multiplication">Task 5: Matrix Multiplication</h3>
-<h4 id="concept-3">Concept</h4>
+<p>这一关和 CSAPP 里位运算的那一个 lab 很类似，算是简化版，稍微想一下就能很快写出来。</p>
 
-<p>这一节需要我们用汇编实现矩阵乘法。</p>
+<h3 id="exercise-2-valgrind">Exercise 2: Valgrind</h3>
 
-<p>对于一个矩阵而言，我们完全可以把它看作一个数组，只不过是会根据横向和纵向决定其排列顺序。</p>
+<p>Valgrind 是一款用于程序调试和分析的开源工具，可以用于检测和追溯内存泄漏。</p>
 
-<p><img src="../../assets/images/image-20221013155628163.png" alt="image-20221013155628163" /></p>
+<p>在编译时，指定 -g 参数，可有助于调试时定位到具体代码行，这里我们以一个创建链表为例：</p>
 
-<p><img src="../../assets/images/image-20221007211215736.png" alt="image-20221007211215736" /></p>
-
-<p>如上图，我们把矩阵看作一个数组，每轮矩阵相乘可以看作一次 dot 运算（见上一节），其中 a2 为 a0 的列和 a1 的行，a3 为 1，a4 为 a1 的行（说起来有些抽象，画个图能很好理解）。</p>
-
-<p>这样我们可以通过两层循环来进行计算，每轮调用一次 <code class="language-plaintext highlighter-rouge">dot</code> 函数，再根据具体情况对数组进行偏移。</p>
-
-<p>需要注意的是在调用外部函数之前，我们需要保存 temp 寄存器和 a 寄存器的一些值以防。</p>
-
-<h4 id="code-3">Code</h4>
-
-<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mf">.</span><span class="n">globl</span> <span class="n">matmul</span>
-<span class="mf">.</span><span class="n">text</span>
-<span class="c1"># =======================================================</span>
-<span class="c1"># FUNCTION: Matrix Multiplication of 2 integer matrices</span>
-<span class="c1">#   d = matmul(m0, m1)</span>
-<span class="c1"># Arguments:</span>
-<span class="c1">#   a0 (int*)  is the pointer to the start of m0</span>
-<span class="c1">#   a1 (int)   is the # of rows (height) of m0</span>
-<span class="c1">#   a2 (int)   is the # of columns (width) of m0</span>
-<span class="c1">#   a3 (int*)  is the pointer to the start of m1</span>
-<span class="c1">#   a4 (int)   is the # of rows (height) of m1</span>
-<span class="c1">#   a5 (int)   is the # of columns (width) of m1</span>
-<span class="c1">#   a6 (int*)  is the pointer to the the start of d</span>
-<span class="c1"># Returns:</span>
-<span class="c1">#   None (void), sets d = matmul(m0, m1)</span>
-<span class="c1"># Exceptions:</span>
-<span class="c1">#   Make sure to check in top to bottom order!</span>
-<span class="c1">#   - If the dimensions of m0 do not make sense,</span>
-<span class="c1">#     this function terminates the program with exit code 38</span>
-<span class="c1">#   - If the dimensions of m1 do not make sense,</span>
-<span class="c1">#     this function terminates the program with exit code 38</span>
-<span class="c1">#   - If the dimensions of m0 and m1 don't match,</span>
-<span class="c1">#     this function terminates the program with exit code 38</span>
-<span class="c1"># =======================================================</span>
-<span class="n">matmul</span><span class="o">:</span>
-
-	<span class="c1"># Error checks</span>
-   <span class="n">li</span> <span class="n">t0</span><span class="p">,</span><span class="mi">1</span>
-   <span class="n">blt</span> <span class="n">a1</span><span class="p">,</span><span class="n">t0</span><span class="p">,</span><span class="n">error</span>
-   <span class="n">blt</span> <span class="n">a2</span><span class="p">,</span><span class="n">t0</span><span class="p">,</span><span class="n">error</span>
-   <span class="n">blt</span> <span class="n">a4</span><span class="p">,</span><span class="n">t0</span><span class="p">,</span><span class="n">error</span>
-   <span class="n">blt</span> <span class="n">a5</span><span class="p">,</span><span class="n">t0</span><span class="p">,</span><span class="n">error</span>
-   <span class="n">bne</span> <span class="n">a2</span><span class="p">,</span><span class="n">a4</span><span class="p">,</span><span class="n">error</span>
-
-	<span class="c1"># Prologue</span>
-    <span class="n">li</span> <span class="n">t0</span><span class="p">,</span><span class="mi">0</span>       <span class="c1"># t0 for all loop count </span>
-
-<span class="n">outer_loop_start</span><span class="o">:</span>
-    <span class="c1">#init</span>
-    <span class="n">li</span> <span class="n">t1</span><span class="p">,</span><span class="mi">0</span>       <span class="c1"># t1 for outer_loop count</span>
-
-<span class="n">outer_loop</span><span class="o">:</span>
-    <span class="n">beq</span> <span class="n">t1</span><span class="p">,</span><span class="n">a1</span><span class="p">,</span><span class="n">outer_loop_end</span>
-
-<span class="n">inner_loop_start</span><span class="o">:</span>
-    <span class="c1">#init </span>
-    <span class="n">li</span> <span class="n">t2</span><span class="p">,</span><span class="mi">0</span>       <span class="c1"># t2 for inner_loop count </span>
-    <span class="n">mv</span> <span class="n">t4</span><span class="p">,</span><span class="n">a3</span>      <span class="c1"># t4 = &amp;a3</span>
-<span class="n">inner_loop</span><span class="o">:</span>
-    <span class="n">beq</span> <span class="n">t2</span><span class="p">,</span><span class="n">a5</span><span class="p">,</span><span class="n">inner_loop_end</span>
-    <span class="n">addi</span> <span class="n">sp</span><span class="p">,</span><span class="n">sp</span><span class="p">,</span><span class="o">-</span><span class="mi">52</span>
-    <span class="n">sw</span> <span class="n">ra</span><span class="p">,</span><span class="mi">0</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">sw</span> <span class="n">a0</span><span class="p">,</span><span class="mi">4</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">sw</span> <span class="n">a1</span><span class="p">,</span><span class="mi">8</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">sw</span> <span class="n">a2</span><span class="p">,</span><span class="mi">12</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">sw</span> <span class="n">a3</span><span class="p">,</span><span class="mi">16</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">sw</span> <span class="n">a4</span><span class="p">,</span><span class="mi">20</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">sw</span> <span class="n">a5</span><span class="p">,</span><span class="mi">24</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">sw</span> <span class="n">t0</span><span class="p">,</span><span class="mi">28</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">sw</span> <span class="n">t1</span><span class="p">,</span><span class="mi">32</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">sw</span> <span class="n">t2</span><span class="p">,</span><span class="mi">36</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">sw</span> <span class="n">t3</span><span class="p">,</span><span class="mi">40</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">sw</span> <span class="n">t4</span><span class="p">,</span><span class="mi">44</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">sw</span> <span class="n">a6</span><span class="p">,</span><span class="mi">48</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">mv</span> <span class="n">a1</span><span class="p">,</span><span class="n">t4</span>
-    <span class="n">li</span> <span class="n">a3</span><span class="p">,</span><span class="mi">1</span>
-    <span class="n">mv</span> <span class="n">a4</span><span class="p">,</span><span class="n">a5</span>
-    <span class="n">jal</span> <span class="n">ra</span><span class="p">,</span><span class="n">dot</span>    <span class="c1"># dot(a0,a3,a2,1,a5) </span>
-    <span class="n">lw</span> <span class="n">t0</span><span class="p">,</span><span class="mi">28</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">lw</span> <span class="n">a6</span><span class="p">,</span><span class="mi">48</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">slli</span> <span class="n">t0</span><span class="p">,</span><span class="n">t0</span><span class="p">,</span><span class="mi">2</span>
-    <span class="n">add</span> <span class="n">t3</span><span class="p">,</span><span class="n">a6</span><span class="p">,</span><span class="n">t0</span>  <span class="c1"># t3 = &amp;a6[t0]</span>
-    <span class="n">sw</span> <span class="n">a0</span><span class="p">,</span><span class="mi">0</span><span class="p">(</span><span class="n">t3</span><span class="p">)</span>   <span class="c1"># a6[t0] = sum</span>
-    <span class="n">srli</span> <span class="n">t0</span><span class="p">,</span><span class="n">t0</span><span class="p">,</span><span class="mi">2</span>
-    <span class="n">lw</span> <span class="n">ra</span><span class="p">,</span><span class="mi">0</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">lw</span> <span class="n">a0</span><span class="p">,</span><span class="mi">4</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">lw</span> <span class="n">a1</span><span class="p">,</span><span class="mi">8</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">lw</span> <span class="n">a2</span><span class="p">,</span><span class="mi">12</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">lw</span> <span class="n">a3</span><span class="p">,</span><span class="mi">16</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">lw</span> <span class="n">a4</span><span class="p">,</span><span class="mi">20</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">lw</span> <span class="n">a5</span><span class="p">,</span><span class="mi">24</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">lw</span> <span class="n">t1</span><span class="p">,</span><span class="mi">32</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">lw</span> <span class="n">t2</span><span class="p">,</span><span class="mi">36</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">lw</span> <span class="n">t3</span><span class="p">,</span><span class="mi">40</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">lw</span> <span class="n">t4</span><span class="p">,</span><span class="mi">44</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">addi</span> <span class="n">sp</span><span class="p">,</span><span class="n">sp</span><span class="p">,</span><span class="mi">52</span>
-    <span class="n">addi</span> <span class="n">t0</span><span class="p">,</span><span class="n">t0</span><span class="p">,</span><span class="mi">1</span>
-    <span class="n">addi</span> <span class="n">t2</span><span class="p">,</span><span class="n">t2</span><span class="p">,</span><span class="mi">1</span> 
-    <span class="n">addi</span> <span class="n">t4</span><span class="p">,</span><span class="n">t4</span><span class="p">,</span><span class="mi">4</span>
-    <span class="n">j</span> <span class="n">inner_loop</span> 
-<span class="n">inner_loop_end</span><span class="o">:</span>
-    <span class="n">slli</span> <span class="n">a2</span><span class="p">,</span><span class="n">a2</span><span class="p">,</span><span class="mi">2</span>
-    <span class="n">add</span> <span class="n">a0</span><span class="p">,</span><span class="n">a0</span><span class="p">,</span><span class="n">a2</span>
-    <span class="n">srli</span> <span class="n">a2</span><span class="p">,</span><span class="n">a2</span><span class="p">,</span><span class="mi">2</span>
-    <span class="n">addi</span> <span class="n">t1</span><span class="p">,</span><span class="n">t1</span><span class="p">,</span><span class="mi">1</span>
-    <span class="n">j</span> <span class="n">outer_loop</span> 
-
-<span class="n">outer_loop_end</span><span class="o">:</span>
-	<span class="n">ret</span>
-<span class="n">error</span><span class="o">:</span>
-    <span class="n">li</span> <span class="n">a0</span><span class="p">,</span><span class="mi">38</span>
-    <span class="n">j</span> <span class="k">exit</span>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">add_to_front</span><span class="p">(</span><span class="o">&amp;</span><span class="n">head</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div></div>
 
-<h3 id="task-6-testing">Task 6: Testing</h3>
+<p>运行 <code class="language-plaintext highlighter-rouge">valgrind --leak-check=full ./linked_list</code></p>
 
-<p>这一节和之前相反，是给出了我们汇编代码，需要我们阅读之前的 test framework 来编写 python 调用 asm 的测试用例。</p>
+<p>输出：</p>
 
-<h2 id="part-b">Part B</h2>
-
-<p>Part B 主要设计一些对文件读写的操作，</p>
-
-<h3 id="task-7-read-matrix">Task 7: Read Matrix</h3>
-
-<p>​	从前面几个小节我们知道，矩阵可以用数组的形式存储，只是我们需要提前给出行列值。下图为一个矩阵在文件中以16进制打开的形式，其中第一个字节为行数，第二个字节为列数：</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>🌀  read-matrix-1 <span class="o">[</span>main] ⚡  xxd <span class="nt">-e</span> input.bin 
-00000000: 00000003 00000003 00000001 00000002  ................
-00000010: 00000003 00000004 00000005 00000006  ................
-00000020: 00000007 00000008 00000009           ............
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Congrats! All of the test cases passed!
+==58781== 
+==58781== HEAP SUMMARY:
+==58781==     in use at exit: 80 bytes in 5 blocks
+==58781==   total heap usage: 6 allocs, 1 frees, 1,104 bytes allocated
+==58781== 
+==58781== 80 (16 direct, 64 indirect) bytes in 1 blocks are definitely lost in loss record 2 of 2
+==58781==    at 0x4849D8C: malloc (in /usr/lib/aarch64-linux-gnu/valgrind/vgpreload_memcheck-arm64-linux.so)
+==58781==    by 0x1089BF: create_node (linked_list.c:8)
+==58781==    by 0x108A67: add_to_front (linked_list.c:35)
+==58781==    by 0x108C77: main (test_linked_list.c:14)
+==58781== 
+==58781== LEAK SUMMARY:
+==58781==    definitely lost: 16 bytes in 1 blocks
+==58781==    indirectly lost: 64 bytes in 4 blocks
+==58781==      possibly lost: 0 bytes in 0 blocks
+==58781==    still reachable: 0 bytes in 0 blocks
+==58781==         suppressed: 0 bytes in 0 blocks
+==58781== 
+==58781== For lists of detected and suppressed errors, rerun with: -s
+==58781== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
 </code></pre></div></div>
 
-<p><a href="https://inst.eecs.berkeley.edu/~cs61c/sp22/projects/proj2/function-definitions/">Appendix</a> 里有我们可能需要调用函数的全部 api ，对着写即可：</p>
+<p>从上面信息可以定位到一共有 5 个内存泄漏点，其中 1 个为直接泄漏，即 head 指向的那一个节点；4 个为间接泄漏，即之后四个节点。</p>
 
-<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mf">.</span><span class="n">globl</span> <span class="n">read_matrix</span>
+<p>下面通过几个案例进一步学习 Valgrind的使用。</p>
 
-<span class="mf">.</span><span class="n">text</span>
-<span class="c1"># ==============================================================================</span>
-<span class="c1"># FUNCTION: Allocates memory and reads in a binary file as a matrix of integers</span>
-<span class="c1">#</span>
-<span class="c1"># FILE FORMAT:</span>
-<span class="c1">#   The first 8 bytes are two 4 byte ints representing the # of rows and columns</span>
-<span class="c1">#   in the matrix. Every 4 bytes afterwards is an element of the matrix in</span>
-<span class="c1">#   row-major order.</span>
-<span class="c1"># Arguments:</span>
-<span class="c1">#   a0 (char*) is the pointer to string representing the filename</span>
-<span class="c1">#   a1 (int*)  is a pointer to an integer, we will set it to the number of rows</span>
-<span class="c1">#   a2 (int*)  is a pointer to an integer, we will set it to the number of columns</span>
-<span class="c1"># Returns:</span>
-<span class="c1">#   a0 (int*)  is the pointer to the matrix in memory</span>
-<span class="c1"># Exceptions:</span>
-<span class="c1">#   - If malloc returns an error,</span>
-<span class="c1">#     this function terminates the program with error code 26</span>
-<span class="c1">#   - If you receive an fopen error or eof,</span>
-<span class="c1">#     this function terminates the program with error code 27</span>
-<span class="c1">#   - If you receive an fclose error or eof,</span>
-<span class="c1">#     this function terminates the program with error code 28</span>
-<span class="c1">#   - If you receive an fread error or eof,</span>
-<span class="c1">#     this function terminates the program with error code 29</span>
-<span class="c1"># ==============================================================================</span>
-<span class="n">read_matrix</span><span class="o">:</span>
+<h4 id="访问未初始化的内存"><strong>访问未初始化的内存</strong>：</h4>
 
-	<span class="c1"># Prologue</span>
-	<span class="n">addi</span> <span class="n">sp</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span>
-	<span class="n">sw</span> <span class="n">ra</span><span class="p">,</span> <span class="mi">0</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span> 
-	<span class="n">sw</span> <span class="n">s0</span><span class="p">,</span> <span class="mi">4</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-	<span class="n">sw</span> <span class="n">s1</span><span class="p">,</span> <span class="mi">8</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>  <span class="c1"># store the rows</span>
-	<span class="n">sw</span> <span class="n">s2</span><span class="p">,</span><span class="mi">12</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>  <span class="c1"># store the columns</span>
-	<span class="n">sw</span> <span class="n">s3</span><span class="p">,</span><span class="mi">16</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-		
-	<span class="c1"># Epilogue</span>
-	<span class="n">mv</span> <span class="n">s1</span><span class="p">,</span><span class="n">a1</span>
-	<span class="n">mv</span> <span class="n">s2</span><span class="p">,</span><span class="n">a2</span>
-	<span class="n">li</span> <span class="n">a1</span><span class="p">,</span><span class="mi">0</span>    <span class="c1">#only-read</span>
-	<span class="n">jal</span> <span class="n">ra</span><span class="p">,</span><span class="n">fopen</span>
-	<span class="n">li</span> <span class="n">t0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span>
-	<span class="n">beq</span> <span class="n">a0</span><span class="p">,</span> <span class="n">t0</span><span class="p">,</span> <span class="n">fopen_error</span> <span class="c1"># if a0 == t0 then fopen_error</span>
-	
-	<span class="c1">#read the rows</span>
-	<span class="n">mv</span> <span class="n">s0</span><span class="p">,</span><span class="n">a0</span>   <span class="c1">#store the file descriptor </span>
-	<span class="n">mv</span> <span class="n">a1</span><span class="p">,</span><span class="n">s1</span>
-	<span class="n">li</span> <span class="n">a2</span><span class="p">,</span><span class="mi">4</span>
-	<span class="n">mv</span> <span class="n">s3</span><span class="p">,</span><span class="n">a2</span>
-	<span class="n">jal</span> <span class="n">ra</span><span class="p">,</span><span class="n">fread</span>
-	<span class="n">bne</span> <span class="n">s3</span><span class="p">,</span> <span class="n">a0</span><span class="p">,</span> <span class="n">fread_error</span> <span class="c1"># if a2 != t0 then fread_error</span>
-
-	<span class="c1">#read the columns</span>
-	<span class="n">mv</span> <span class="n">a0</span><span class="p">,</span><span class="n">s0</span>   <span class="c1">#restore the file descriptor </span>
-	<span class="n">mv</span> <span class="n">a1</span><span class="p">,</span><span class="n">s2</span>
-	<span class="n">li</span> <span class="n">a2</span><span class="p">,</span><span class="mi">4</span>
-	<span class="n">mv</span> <span class="n">s3</span><span class="p">,</span><span class="n">a2</span> 
-	<span class="n">jal</span> <span class="n">ra</span><span class="p">,</span><span class="n">fread</span>
-	<span class="n">bne</span> <span class="n">s3</span><span class="p">,</span><span class="n">a0</span><span class="p">,</span> <span class="n">fread_error</span> <span class="c1"># if a2 != t0 then fread_error</span>
-
-	<span class="n">lw</span> <span class="n">t1</span><span class="p">,</span><span class="mi">0</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>   <span class="c1"># rows</span>
-	<span class="n">lw</span> <span class="n">t2</span><span class="p">,</span><span class="mi">0</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span>   <span class="c1"># columns</span>
-	<span class="n">mul</span> <span class="n">s1</span><span class="p">,</span><span class="n">t1</span><span class="p">,</span><span class="n">t2</span> 
-	<span class="n">slli</span> <span class="n">s1</span><span class="p">,</span><span class="n">s1</span><span class="p">,</span><span class="mi">2</span>  <span class="c1"># the size of the memory to be allocated </span>
-
-	<span class="n">mv</span> <span class="n">a0</span><span class="p">,</span><span class="n">s1</span>
-	<span class="n">jal</span> <span class="n">ra</span><span class="p">,</span><span class="n">malloc</span>
-	<span class="n">li</span> <span class="n">t0</span><span class="p">,</span><span class="mi">0</span>
-	<span class="n">beq</span> <span class="n">a0</span><span class="p">,</span><span class="n">t0</span><span class="p">,</span><span class="n">malloc_error</span>
-
-	<span class="n">mv</span> <span class="n">s2</span><span class="p">,</span><span class="n">a0</span>
-	<span class="n">mv</span> <span class="n">a1</span><span class="p">,</span><span class="n">s2</span>
-	<span class="n">mv</span> <span class="n">a0</span><span class="p">,</span><span class="n">s0</span>
-	<span class="n">mv</span> <span class="n">a2</span><span class="p">,</span><span class="n">s1</span>
-	<span class="n">jal</span> <span class="n">ra</span><span class="p">,</span><span class="n">fread</span>
-	<span class="n">bne</span> <span class="n">s1</span><span class="p">,</span><span class="n">a0</span><span class="p">,</span><span class="n">fread_error</span>
-
-	<span class="n">mv</span> <span class="n">a0</span><span class="p">,</span><span class="n">s0</span>
-	<span class="n">jal</span> <span class="n">ra</span><span class="p">,</span><span class="n">fclose</span>
-	<span class="n">bnez</span> <span class="n">a0</span><span class="p">,</span><span class="n">fclose_error</span>
-	<span class="n">mv</span> <span class="n">a0</span><span class="p">,</span><span class="n">s2</span>
-
-	<span class="n">lw</span> <span class="n">ra</span><span class="p">,</span> <span class="mi">0</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span> 
-	<span class="n">lw</span> <span class="n">s0</span><span class="p">,</span> <span class="mi">4</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-	<span class="n">lw</span> <span class="n">s1</span><span class="p">,</span> <span class="mi">8</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>  
-	<span class="n">lw</span> <span class="n">s2</span><span class="p">,</span><span class="mi">12</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span> 
-	<span class="n">lw</span> <span class="n">s3</span><span class="p">,</span><span class="mi">16</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-	<span class="n">addi</span> <span class="n">sp</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="mi">20</span>
-
-	<span class="n">ret</span>
-
-<span class="n">fopen_error</span><span class="o">:</span>
-	<span class="n">li</span> <span class="n">a0</span><span class="p">,</span> <span class="mi">27</span>
-	<span class="n">j</span> <span class="k">exit</span>
-
-<span class="n">fread_error</span><span class="o">:</span>
-	<span class="n">li</span> <span class="n">a0</span><span class="p">,</span> <span class="mi">29</span>
-	<span class="n">j</span> <span class="k">exit</span>
-
-<span class="n">malloc_error</span><span class="o">:</span>
-	<span class="n">li</span> <span class="n">a0</span><span class="p">,</span> <span class="mi">26</span>
-	<span class="n">j</span> <span class="k">exit</span>
-
-<span class="n">fclose_error</span><span class="o">:</span>
-	<span class="n">li</span> <span class="n">a0</span><span class="p">,</span> <span class="mi">28</span>
-	<span class="n">j</span> <span class="k">exit</span>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">p</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="o">*</span><span class="n">p</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre></div></div>
 
-<h3 id="task-8-write-matrix">Task 8: Write Matrix</h3>
+<p><img src="../../assets/images/image-20220927182400743.png" alt="image-20220927182400743" /></p>
 
-<p>这一节和上节差不多，只是从读变成了写</p>
+<h4 id="内存释放后读写"><strong>内存释放后读写</strong></h4>
 
-<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mf">.</span><span class="n">globl</span> <span class="n">write_matrix</span>
-
-<span class="mf">.</span><span class="n">text</span>
-<span class="c1"># ==============================================================================</span>
-<span class="c1"># FUNCTION: Writes a matrix of integers into a binary file</span>
-<span class="c1"># FILE FORMAT:</span>
-<span class="c1">#   The first 8 bytes of the file will be two 4 byte ints representing the</span>
-<span class="c1">#   numbers of rows and columns respectively. Every 4 bytes thereafter is an</span>
-<span class="c1">#   element of the matrix in row-major order.</span>
-<span class="c1"># Arguments:</span>
-<span class="c1">#   a0 (char*) is the pointer to string representing the filename</span>
-<span class="c1">#   a1 (int*)  is the pointer to the start of the matrix in memory</span>
-<span class="c1">#   a2 (int)   is the number of rows in the matrix</span>
-<span class="c1">#   a3 (int)   is the number of columns in the matrix</span>
-<span class="c1"># Returns:</span>
-<span class="c1">#   None</span>
-<span class="c1"># Exceptions:</span>
-<span class="c1">#   - If you receive an fopen error or eof,</span>
-<span class="c1">#     this function terminates the program with error code 27</span>
-<span class="c1">#   - If you receive an fclose error or eof,</span>
-<span class="c1">#     this function terminates the program with error code 28</span>
-<span class="c1">#   - If you receive an fwrite error or eof,</span>
-<span class="c1">#     this function terminates the program with error code 30</span>
-<span class="c1"># ==============================================================================</span>
-<span class="n">write_matrix</span><span class="o">:</span>
-
-	<span class="c1"># Prologue</span>
-	<span class="n">addi</span> <span class="n">sp</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="o">-</span><span class="mi">24</span>
-	<span class="n">sw</span> <span class="n">ra</span><span class="p">,</span> <span class="mi">0</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span> 
-	<span class="n">sw</span> <span class="n">s0</span><span class="p">,</span> <span class="mi">4</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-	<span class="n">sw</span> <span class="n">s1</span><span class="p">,</span> <span class="mi">8</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span> 
-	<span class="n">sw</span> <span class="n">s2</span><span class="p">,</span><span class="mi">12</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>  
-	<span class="n">sw</span> <span class="n">s3</span><span class="p">,</span><span class="mi">16</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-	<span class="n">sw</span> <span class="n">s4</span><span class="p">,</span><span class="mi">20</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-
-	<span class="c1"># Epilogue</span>
-	<span class="n">mv</span> <span class="n">s1</span><span class="p">,</span><span class="n">a1</span>    <span class="c1">#pointer to matrix</span>
-	<span class="n">mv</span> <span class="n">s2</span><span class="p">,</span><span class="n">a2</span>    <span class="c1">#rows</span>
-	<span class="n">mv</span> <span class="n">s3</span><span class="p">,</span><span class="n">a3</span>    <span class="c1">#columns</span>
-	<span class="n">li</span> <span class="n">a1</span><span class="p">,</span><span class="mi">1</span>     <span class="c1">#write</span>
-	<span class="n">jal</span> <span class="n">ra</span><span class="p">,</span><span class="n">fopen</span>
-	<span class="n">li</span> <span class="n">t0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span>
-	<span class="n">beq</span> <span class="n">a0</span><span class="p">,</span> <span class="n">t0</span><span class="p">,</span> <span class="n">fopen_error</span>
-	<span class="n">mv</span> <span class="n">s0</span><span class="p">,</span><span class="n">a0</span>
-
-	<span class="n">li</span> <span class="n">a0</span><span class="p">,</span><span class="mi">8</span>
-	<span class="n">jal</span> <span class="n">ra</span><span class="p">,</span><span class="n">malloc</span>
-	<span class="n">beqz</span> <span class="n">a0</span><span class="p">,</span><span class="n">malloc_error</span>
-
-	<span class="c1">#write the rows and columns</span>
-	<span class="n">mv</span> <span class="n">s4</span><span class="p">,</span><span class="n">a0</span>
-	<span class="n">sw</span> <span class="n">s2</span><span class="p">,</span><span class="mi">0</span><span class="p">(</span><span class="n">s4</span><span class="p">)</span>
-	<span class="n">sw</span> <span class="n">s3</span><span class="p">,</span><span class="mi">4</span><span class="p">(</span><span class="n">s4</span><span class="p">)</span>
-	<span class="n">mv</span> <span class="n">a1</span><span class="p">,</span><span class="n">s4</span>
-	<span class="n">mv</span> <span class="n">a0</span><span class="p">,</span><span class="n">s0</span>
-	<span class="n">li</span> <span class="n">a2</span><span class="p">,</span><span class="mi">2</span>
-	<span class="n">mv</span> <span class="n">s4</span><span class="p">,</span><span class="n">a2</span>
-	<span class="n">li</span> <span class="n">a3</span><span class="p">,</span><span class="mi">4</span>
-	<span class="n">jal</span> <span class="n">ra</span><span class="p">,</span><span class="n">fwrite</span>
-	<span class="n">bne</span> <span class="n">a0</span><span class="p">,</span><span class="n">s4</span><span class="p">,</span><span class="n">fwrite_error</span>
-
-	<span class="n">mv</span> <span class="n">a0</span><span class="p">,</span><span class="n">s0</span>
-	<span class="n">mv</span> <span class="n">a1</span><span class="p">,</span><span class="n">s1</span>
-	<span class="n">mul</span> <span class="n">a2</span><span class="p">,</span><span class="n">s2</span><span class="p">,</span><span class="n">s3</span>
-	<span class="n">mv</span> <span class="n">s4</span><span class="p">,</span><span class="n">a2</span>
-	<span class="n">li</span> <span class="n">a3</span><span class="p">,</span><span class="mi">4</span>
-	<span class="n">jal</span> <span class="n">ra</span><span class="p">,</span><span class="n">fwrite</span>
-	<span class="n">bne</span> <span class="n">a0</span><span class="p">,</span><span class="n">s4</span><span class="p">,</span><span class="n">fwrite_error</span>
-
-	<span class="n">mv</span> <span class="n">a0</span><span class="p">,</span><span class="n">s0</span>
-	<span class="n">jal</span> <span class="n">ra</span><span class="p">,</span><span class="n">fclose</span>
-	<span class="n">bnez</span> <span class="n">a0</span><span class="p">,</span><span class="n">fclose_error</span>
-
-	<span class="n">lw</span> <span class="n">ra</span><span class="p">,</span> <span class="mi">0</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span> 
-	<span class="n">lw</span> <span class="n">s0</span><span class="p">,</span> <span class="mi">4</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-	<span class="n">lw</span> <span class="n">s1</span><span class="p">,</span> <span class="mi">8</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>  
-	<span class="n">lw</span> <span class="n">s2</span><span class="p">,</span><span class="mi">12</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span> 
-	<span class="n">lw</span> <span class="n">s3</span><span class="p">,</span><span class="mi">16</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-	<span class="n">lw</span> <span class="n">s4</span><span class="p">,</span><span class="mi">20</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-	<span class="n">addi</span> <span class="n">sp</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="mi">24</span>
-	<span class="n">ret</span>
-
-<span class="n">malloc_error</span><span class="o">:</span>
-	<span class="n">li</span> <span class="n">a0</span><span class="p">,</span> <span class="mi">26</span>
-	<span class="n">j</span> <span class="k">exit</span>
-<span class="n">fopen_error</span><span class="o">:</span>
-	<span class="n">li</span> <span class="n">a0</span><span class="p">,</span> <span class="mi">27</span>
-	<span class="n">j</span> <span class="k">exit</span>
-
-<span class="n">fclose_error</span><span class="o">:</span>
-	<span class="n">li</span> <span class="n">a0</span><span class="p">,</span> <span class="mi">28</span>
-	<span class="n">j</span> <span class="k">exit</span>
-
-<span class="n">fwrite_error</span><span class="o">:</span>
-	<span class="n">li</span> <span class="n">a0</span><span class="p">,</span> <span class="mi">30</span>
-	<span class="n">j</span> <span class="k">exit</span>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">"malloc.h"</span><span class="cp">
+</span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">a</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">));</span>
+    <span class="o">*</span><span class="n">a</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+    <span class="n">free</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">b</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">));</span>
+    <span class="o">*</span><span class="n">a</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre></div></div>
 
-</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-10-29T14:09:54+08:00"><!-- start custom article footer snippet -->
+<p><img src="../../assets/images/image-20220927195638840.png" alt="image-20220927195638840" /></p>
+
+<h4 id="动态内存越界读写">动态内存越界读写</h4>
+
+<p><img src="../../assets/images/image-20220927201108831.png" alt="image-20220927201108831" /></p>
+
+<h4 id="double-free">double free</h4>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">"malloc.h"</span><span class="cp">
+</span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="mh">0x4</span><span class="p">);</span>
+    <span class="n">free</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+    <span class="n">free</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><img src="../../assets/images/image-20220927202554310.png" alt="image-20220927202554310" /></p>
+
+<h3 id="exercise-3-memory-management">Exercise 3: Memory Management</h3>
+
+<p>这部分需要我们补充一个缺陷的 vector，非常的基础，可以结合之前所学的 CGDB 调试以及 Valgrind 检测内存情况。</p>
+
+<h2 id="lab-3-risc-v-assembly">Lab 3: RISC-V Assembly</h2>
+
+<h3 id="learning-goals-2">Learning Goals</h3>
+
+<ol>
+  <li>熟悉使用 Venus 模拟 RISC-V 的运行。</li>
+  <li>了解 C 代码和 RISC -V 之间的相互转化。</li>
+  <li>编写正确的 RISC -V 函数调用。</li>
+</ol>
+
+<p>Exercise 1 需要我们配置好 venus 的环境，简单来说就是把虚拟机或者 docker 里的 lab 文件夹映射到某个 web 路径下，然后通过 <a href="https://venus.cs61c.org/">venus 的网站</a> 进行访问，从而对本地文件进行调试分析。</p>
+
+<p>但是后来发现 vscode 自身就有相关的插件，也还不错，效果如下：</p>
+
+<p><img src="../../assets/images/image-20220929222126647.png" alt="image-20220929222126647" /></p>
+
+<p>Exercise 2 通过一个斐波那契的例子，熟悉 Venus 对 RISC-V 调试分析。</p>
+
+<p>Exercise 3 还是一个阅读理解，通过给出的 c 和 RISC-V 代码，找到两者的联系。</p>
+
+<p>Exercise 4 需要我们使用 RISC-V  来实现阶乘，算是对之前所学的函数调用以及循环控制的一个练习。</p>
+
+<h3 id="exercise-5-risc-v-function-calling-with-map">Exercise 5: RISC-V function calling with <code class="language-plaintext highlighter-rouge">map</code></h3>
+
+<p>这一小节需要我们完善一个链表以及 <code class="language-plaintext highlighter-rouge">map</code> 函数，该函数可以穿入一个链表以及函数指针来修改链表的内容。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">node</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">value</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">node</span> <span class="o">*</span><span class="n">next</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kt">void</span> <span class="nf">map</span><span class="p">(</span><span class="k">struct</span> <span class="n">node</span> <span class="o">*</span><span class="n">head</span><span class="p">,</span> <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">f</span><span class="p">)(</span><span class="kt">int</span><span class="p">))</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">head</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">head</span><span class="o">-&gt;</span><span class="n">value</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">head</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">);</span>
+    <span class="n">map</span><span class="p">(</span><span class="n">head</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">,</span><span class="n">f</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>这里提一下链表，我们在 C 语言中如果想创建一个<code class="language-plaintext highlighter-rouge">9-&gt;8-&gt;7...-&gt;2-&gt;1</code> 的链表，一般是按顺序创建结点和修改指向</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>node_9-&gt;data=9;
+node_9-&gt;next=node_8;
+node_8-&gt;data=8;
+node_8-&gt;next=node_7...
+node_1-&gt;data=1;
+node_1-&gt;next=NULL;
+</code></pre></div></div>
+
+<p>按照这个思路，我们需要把头节点暂存，然后每次把尾节点指向一个 malloc 分配的空间，重复操作，再返回头节点，这些许有些麻烦。</p>
+
+<p>代码框架是从用从 1 到 9 的创建顺序，这样可以省去很多寄存器的使用，并且最后返回的就是头节点。</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="n">li</span> <span class="n">a0</span><span class="p">,</span> <span class="mi">8</span>            <span class="c1">#     molloc 8 bytes on heap</span>
+    <span class="n">jal</span> <span class="n">ra</span><span class="p">,</span> <span class="n">malloc</span>      <span class="c1">#     Allocate memory for the next node</span>
+    <span class="n">sw</span> <span class="n">s1</span><span class="p">,</span> <span class="mi">0</span><span class="p">(</span><span class="n">a0</span><span class="p">)</span>        <span class="c1">#     node-&gt;value = i</span>
+    <span class="n">sw</span> <span class="n">s0</span><span class="p">,</span> <span class="mi">4</span><span class="p">(</span><span class="n">a0</span><span class="p">)</span>        <span class="c1">#     node-&gt;next = last</span>
+    <span class="n">add</span> <span class="n">s0</span><span class="p">,</span> <span class="n">a0</span><span class="p">,</span> <span class="n">x0</span>      <span class="c1">#     last = node</span>
+    <span class="n">addi</span> <span class="n">s1</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="mi">1</span>      <span class="c1">#     i++</span>
+    <span class="n">addi</span> <span class="n">t0</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="mi">10</span>
+    <span class="n">bne</span> <span class="n">s1</span><span class="p">,</span> <span class="n">t0</span><span class="p">,</span> <span class="n">loop</span>    <span class="c1"># ... while i!= 10  </span>
+</code></pre></div></div>
+
+<h2 id="lab-4-risc-v-functions-pointers">Lab 4: RISC-V Functions, Pointers</h2>
+
+<p>Exercise 1 需要我们补充 <code class="language-plaintext highlighter-rouge">f</code> 函数，使得调用传入数组和不同的 key ，输出不同的 value。</p>
+
+<p>Exercise 2 需要我们修复  <code class="language-plaintext highlighter-rouge">cc_test.s</code> 中的访问错误，主要涉及到 s 寄存器的保存。</p>
+
+<p>Exercise 3 要去我们使用规定的寄存器完成对以下 node 的遍历以及修改。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">node</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">arr</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">size</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">node</span> <span class="o">*</span><span class="n">next</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>这一节的坑点还是挺多的，主要是需要灵活的在不同场景使用不同寄存器。</p>
+
+<h2 id="lab-5-logisim">Lab 5: Logisim</h2>
+
+<p>这一节算是给 project3 去做一个铺垫，也是终于进入了硬件部分，实验采用了  logisim 软件模拟和仿真数字电路。</p>
+
+<h3 id="exercise-2-sub-circuits">Exercise 2: Sub-Circuits</h3>
+
+<p>需要我们只用 <code class="language-plaintext highlighter-rouge">AND</code>, <code class="language-plaintext highlighter-rouge">OR</code>,<code class="language-plaintext highlighter-rouge">NOT </code>三种门电路实现NAND、NOR、XOR、MUX，前面几个比较简单，最后一个需要我们实现 4-to-1 Multiplexor，需要我们复用用上一个实现的 2-to-1 Multiplexor。</p>
+
+<p><img src="../../assets/images/image-20221017181928848.png" alt="image-20221017181928848" /></p>
+
+<p>Exercise 3: Storing State 这一节照着示意图做就可以，让我们用寄存器和加法器去理解存储的这个中间状态。</p>
+
+<h3 id="exercise-4-rotate-right">Exercise 4: Rotate Right</h3>
+
+<p>这一节需要我们实现算术右移 <code class="language-plaintext highlighter-rouge">RotRight</code>，根据输入的 INPUT0 ，将其整体右移 AMOUNT 位。</p>
+
+<p>这里我们可以先分别实现右移1位、2位、4位、8位，再用 MUX 组合起来。</p>
+
+<p>单个的 rot 可以利用 Splitters 组件简单实现 bit 交换。</p>
+
+<p><img src="../../assets/images/image-20221019220418880.png" alt="image-20221019220418880" /></p>
+
+<h2 id="lab-6-cpu-pipelining">Lab 6: CPU, Pipelining</h2>
+
+<h3 id="exercise-1---constructing-immediates">Exercise 1 - Constructing Immediates</h3>
+
+<p>这一节需要我们生成 S型指令中的立即数，S型指令结构如下图：</p>
+
+<p><img src="../../assets/images/image-20221113133558814.png" alt="image-20221113133558814" /></p>
+
+<p>最后还需要进行一个 12 位到 32 位的符号拓展：</p>
+
+<p><img src="../../assets/images/image-20221113142854106.png" alt="image-20221113142854106" /></p>
+
+<h3 id="exercise-2---constructing-the-brun-control-signal">Exercise 2 - Constructing the BrUn Control Signal</h3>
+
+<p>这一节需要我们根据 B型指令中的 <strong>funct3</strong> 属性判断 branch 的跳转比较是有符号还是无符号，如下图：</p>
+
+<p><img src="../../assets/images/image-20221113145135873.png" alt="image-20221113145135873" /></p>
+
+<p>如果是无符号 BrUn 输出1，有符号则输出0，这里直接拿第13位进行：</p>
+
+<p><img src="../../assets/images/image-20221113150537288.png" alt="image-20221113150537288" /></p>
+
+<p>官网的提示想让我们用比较器，去综合比较 funct3 的值，如下也可以：</p>
+
+<p><img src="../../assets/images/image-20221113150853508.png" alt="image-20221113150853508" /></p>
+
+<p>Exercise 4 初步引入了 pipeline 的概念，如果一条指令依赖于前一条指令的输出，可以采用流水线的理念分层进行。</p>
+
+<p><img src="../../assets/images/image-20221113153900852.png" alt="image-20221113153900852" /></p>
+
+<h2 id="lab-7-caches">Lab 7: Caches</h2>
+
+<h2 id="lab-8-simd-instructions">Lab 8: SIMD Instructions</h2>
+
+<h2 id="lab-9-thread-level-parallelism">Lab 9: Thread-Level Parallelism</h2>
+
+<h2 id="lab-10-virtual-memory">Lab 10: Virtual Memory</h2>
+
+</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-09-10T00:00:00+08:00"><!-- start custom article footer snippet -->
 
 <!-- end custom article footer snippet -->
-</footer>
-<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/cs/cs61c/cs61c_labs">『 CS61C 』- Labs</a></div><div class="next"><span>NEXT</span><a href="/">Project 3 CPU</a></div></div></div>
+<div class="article__subscribe"><div class="subscribe"><i class="fas fa-rss"></i> <a type="application/rss+xml" href="/feed.xml">Subscribe</a></div>
+</div><div class="article__license"><div class="license">
+    <p>This work is licensed under a <a itemprop="license" rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution-NonCommercial 4.0 International</a> license.
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">
+        <img alt="Attribution-NonCommercial 4.0 International" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" />
+      </a>
+    </p>
+  </div></div></footer>
+<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/2022/cource/cs61c_project2">『 CS61C 』Project 2 Classify</a></div><div class="next"><span>NEXT</span><a href="/2022/essay/SecInterview">网络安全秋招之路</a></div></div></div>
 
 </div>
 
@@ -1172,8 +973,8 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'https://theoyu.top/cs/cs61c/project2';
-    this.page.identifier = 'cs61cProject2';
+    this.page.url = 'https://theoyu.top/2022/cource/cs61c_labs';
+    this.page.identifier = 'cs61c_labs';
   };
   (function() { // DON'T EDIT BELOW THIS LINE
     var d = document, s = d.createElement('script');
@@ -1212,7 +1013,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
   </div>
 </footer>
 </div></div>
-    </div></div></div><script>(function() {
+    </div><script>(function() {
   var SOURCES = window.TEXT_VARIABLES.sources;
   window.Lazyload.js(SOURCES.jquery, function() {
     var $body = $('body'), $window = $(window);
@@ -1729,36 +1530,6 @@ window.Lazyload.js([SOURCES.jquery, PAHTS.search_js], function() {
 /*(function () {
 
 })();*/
-</script><script>(function() {
-  var SOURCES = window.TEXT_VARIABLES.sources;
-
-  window.Lazyload.js(SOURCES.jquery, function() {
-    var $pageMask = $('.js-page-mask');
-    var $pageRoot = $('.js-page-root');
-    var $sidebarShow = $('.js-sidebar-show');
-    var $sidebarHide = $('.js-sidebar-hide');
-
-    function freeze(e) {
-      if (e.target === $pageMask[0]) {
-        e.preventDefault();
-      }
-    }
-    function stopBodyScrolling(bool) {
-      if (bool === true) {
-        window.addEventListener('touchmove', freeze, { passive: false });
-      } else {
-        window.removeEventListener('touchmove', freeze, { passive: false });
-      }
-    }
-
-    $sidebarShow.on('click', function() {
-      stopBodyScrolling(true); $pageRoot.addClass('show-sidebar');
-    });
-    $sidebarHide.on('click', function() {
-      stopBodyScrolling(false); $pageRoot.removeClass('show-sidebar');
-    });
-  });
-})();
 </script><script>
   /* toc must before affix, since affix need to konw toc' height. */(function() {
   var SOURCES = window.TEXT_VARIABLES.sources;

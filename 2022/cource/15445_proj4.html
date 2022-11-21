@@ -1,10 +1,10 @@
 <!DOCTYPE html><html lang="en">
   <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>『 CMU-15445 』Project 2 哈希索引 - Theoyu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>『 CMU-15445 』Project 4 并发控制 - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="https://theoyu.top/cs/cmu15445/proj2"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2022/cource/15445_proj4"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -262,18 +262,7 @@
 </head>
   <body>
     <div class="root" data-is-touch="false">
-      <div class="layout--page layout--page--sidebar clearfix js-page-root">
-  <div class="page__mask d-print-none js-page-mask js-sidebar-hide"></div>
-  <div class="page__viewport">
-    <div class="page__actions d-print-none">
-      <div class="button button--circle button--lg box-shadow-2 sidebar-button js-sidebar-show">
-        <i class="fas fa-bars icon--show"></i>
-      </div>
-    </div>
-
-    <div class="grid page__grid">
-
-      <div class="page__sidebar d-print-none"><div class="sidebar-toc"><ul class="toc toc--navigator"><li class="toc-h1">『 CS106L 』</li><li class="toc-h2"><a href="/cs/cs106l/cs106l">『 CS106L 』- Summery</a></li><li class="toc-h1">『 CS61C 』</li><li class="toc-h2"><a href="/cs/cs61c/cs61c">『 CS61C 』- Summery</a></li><li class="toc-h2"><a href="/cs/cs61c/cs61c_labs">『 CS61C 』- Labs</a></li><li class="toc-h2"><a href="/cs/cs61c/project2">Project 2 Classify</a></li><li class="toc-h2"><a href="/">Project 3 CPU</a></li><li class="toc-h1">『 CS110L 』</li><li class="toc-h2"><a href="/">『 CS110L 』- Summery</a></li><li class="toc-h2"><a href="/">『 CS110L 』- Labs</a></li><li class="toc-h1">『 CMU15445 』</li><li class="toc-h2"><a href="/cs/cmu15445/notes">『 CMU15445 』- Notes</a></li><li class="toc-h2"><a href="/cs/cmu15445/proj1">Project 1 缓冲池管理器</a></li><li class="toc-h2 active"><a href="/cs/cmu15445/proj2">Project 2 哈希索引</a></li><li class="toc-h2"><a href="/cs/cmu15445/proj3">Project 3 Query Execution</a></li><li class="toc-h1">『 NJU-ICS-PA 』</li><li class="toc-h2"><a href="/">PA 1</a></li><li class="toc-h2"><a href="/">PA 2</a></li><li class="toc-h2"><a href="/">PA 3</a></li><li class="toc-h2"><a href="/">PA 4</a></li><li class="toc-h1">『 6.S081 』</li><li class="toc-h2"><a href="/">Lab1 Unix utilities</a></li><li class="toc-h1">『 CMU15445 』</li><li class="toc-h2"><a href="/">『 CMU15445 』- Notes</a></li><li class="toc-h2"><a href="/">Project 1 缓冲池管理器</a></li><li class="toc-h2"><a href="/">Project 2 哈希索引</a></li><li class="toc-h2"><a href="/">Project 3 Query Execution</a></li></ul></div></div><div class="page__main js-page-main cell cell--auto">
+      <div class="layout--page js-page-root"><div class="page__main js-page-main page__viewport cell cell--auto">
 
       <div class="page__main-inner"><div class="page__header d-print-none"><header class="header"><div class="main">
       <div class="header__title">
@@ -605,204 +594,32 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
               <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
 
 <!-- end custom main top snippet -->
-<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>『 CMU-15445 』Project 2 哈希索引</h1></header></div><meta itemprop="headline" content="『 CMU-15445 』Project 2 哈希索引"><div class="article__info clearfix"><ul class="right-col menu"></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-10-29T14:09:54+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
+<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>『 CMU-15445 』Project 4 并发控制</h1></header></div><meta itemprop="headline" content="『 CMU-15445 』Project 4 并发控制"><div class="article__info clearfix"><ul class="left-col menu"><li>
+              <a class="button button--secondary button--pill button--sm"
+                href="/archive.html?tag=cource">cource</a>
+            </li><li>
+              <a class="button button--secondary button--pill button--sm"
+                href="/archive.html?tag=CMU-15445">CMU-15445</a>
+            </li></ul><ul class="right-col menu"><li><i class="fas fa-user"></i> <span>Theoyu</span></li><li><i class="far fa-calendar-alt"></i> <span>Aug 26, 2022</span>
+            </li></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-08-26T00:00:00+08:00">
+    <meta itemprop="keywords" content="cource,CMU-15445"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
 <!-- end custom article top snippet -->
 <div class="article__content" itemprop="articleBody"><!--more-->
 
-<h2 id="前言">前言</h2>
-
-<p>第二个实验需要我们实现一个磁盘支持的可拓展哈希表，哈希表只负责快速搜索，不必大规模遍历表内的每一条记录。（后者用 B+ Tree 索引更加合适，20 年的实验实现的就是这个，感兴趣也可以做一做）。</p>
-
-<p>我们先跟着 <a href="https://www.geeksforgeeks.org/extendible-hashing-dynamic-approach-to-dbms/">geeksforgeeks</a> 这个网址，快速过一遍可拓展哈希表的实现。</p>
-
-<p><img src="../../assets/images/Basic-Structure-of-Extendible-Hashing.png" alt="img" /></p>
-
-<p>在上述示意图中，一共设计以下 4 种属性：</p>
-
-<ol>
-  <li><strong>Directories</strong>：目录，你可以理解为一个数组，其中每一个元素存储一个指向 bucket 的指针，bucket 本身也是一个页，所以只需要存储 <code class="language-plaintext highlighter-rouge">page_id</code>即可。</li>
-  <li><strong>Buckets</strong>：存取 key 和 value ，一个 bucket 可以存取多个键值对。</li>
-  <li><strong>Global Depth</strong>：整个 directories 维护了一个全局的 <strong>global depth</strong>，针对一个被 hash 后的 key，比如 <code class="language-plaintext highlighter-rouge">5 = 00...00101 </code>,意味着这个结果的后 <strong>global depth</strong> 位有效（我们默认使用 <strong>LSB</strong> Least Significant Bit：最低有效位），在上图中 <strong>global depth</strong> = 2 表示 5 将落在 01 所对应的 bucket 上。你也可以发现任意时刻 directory 的数目 = <code class="language-plaintext highlighter-rouge">2^global_depth</code>，但这并不意味着 bucket 的数目，因为还有一个 <strong>Local Depth</strong>。</li>
-  <li><strong>Local Depth</strong> 是针对每一个 bucket 而言，自身维护的深度，任何时刻 <strong>Local Depth</strong>  的大小总 ≤  <strong>Global Depth</strong> ，这个我们会在后面提到。</li>
-</ol>
-
-<p>一个 bucket 可以维护的数据大小由具体情况而定，这里我们假定为 3 ，然后 hash 算法就用 int 的二进制表示，我们通过以下的例子理解：</p>
-
-<p>假设初始的 directories 和 buckets 状态如下，</p>
-
-<p><img src="../../assets/images/hash11.png" alt="img" /></p>
-
-<p>这时候插入数据 16（1000<strong>0</strong>），global_depth 为 1，所以它会落在 bucket_index = 0 的 bucket 上。</p>
-
-<p><img src="../../assets/images/hash23.png" alt="img" /></p>
-
-<p>后续同理插入 4(10<strong>0</strong>) 和 6(11<strong>0</strong>) ：</p>
-
-<p><img src="../../assets/images/hash32.png" alt="img" /></p>
-
-<p>我们再插入22 (1011<strong>0</strong>)，这时候 bucket 容量已满，我们需要对 0 号 bucket 进行分裂，但是此时 0号 bucket 的local_depth = global_depth，所以我们需要先对 global_depth 也就是 directories 进行扩容：</p>
-
-<p><img src="../../assets/images/hash42.png" alt="img" /></p>
-
-<p>扩容第一步也就是 <code class="language-plaintext highlighter-rouge">global_depth++</code>，这时候上述 directories 包含 <code class="language-plaintext highlighter-rouge">00、01、10、11</code>，然后需要进行一步 <strong>rehash</strong>：每一个扩容前的 bucket 都需要找到它的 <strong>brother_bucket</strong>（即不算新的一位后续完全一致），然后重新排列内部的数据</p>
-
-<p><img src="../../assets/images/image-20220817003332686.png" alt="image-20220817003332686" /></p>
-
-<p>之后再选择插入 22(101<strong>10</strong>)</p>
-
-<p><img src="../../assets/images/hash52.png" alt="img" /></p>
-
-<p>针对以上的例子，我们有三个需要注意的地方：</p>
-
-<ol>
-  <li>
-    <p>任何时刻，所有的 local_depth ≤ global_depth</p>
-  </li>
-  <li>
-    <p>每个 bucket 有 <code class="language-plaintext highlighter-rouge">2^(global_depth-local_depth)</code> 数目个索引指向它：</p>
-
-    <p>这个其实比较好理解，因为目录扩容时，没有发生 split 的 bucket 将保持不变，索引也会翻倍，split 时索引会减半，这会导致不同local_depth 的 bucket 索引不同 。</p>
-  </li>
-  <li>
-    <p>指向同一个 bucket 的 local_depth 相同：</p>
-
-    <p>local_depth 并不是 bucket 自身的成员属性，而是在 directories 内的一个 <code class="language-plaintext highlighter-rouge">local_depths_[bucket_index]</code> 数组，所以我们在 split 和 merge 操作时需要注意。</p>
-  </li>
-</ol>
-
-<p>在这个教程中没有介绍 remove 和 merge，我也就随便画个草图：</p>
-
-<p>同样是上述例子，假设我们 把 6、22 都删除后，变为：</p>
-
-<p><img src="../../assets/images/image-20220817170615637.png" alt="image-20220817170615637" /></p>
-
-<p>此时 01 所对应的 bucket 为空，我们需要进行 merge 操作。</p>
-
-<p>merge 其实很简单，就是当 remove 之后，发现该 bucket 为空，则删除这个 bucket 页，并在 directories 中把所有指向该 bucket 的 索引 指向它的 brother_bucket ，并修改 local_depth 。</p>
-
-<p><img src="../../assets/images/image-20220817171206185.png" alt="image-20220817171206185" /></p>
-
-<p>这里我们发现所有的 local_depth &lt; global_depth ，换句话来说就是每一个 bucket 都至少有两个索引指向它，并且这多个索引对是 互为 brother 的关系，我们就可以直接 <code class="language-plaintext highlighter-rouge">global_depth--</code>，全局收缩 directories 。</p>
-
-<p><img src="../../assets/images/image-20220817175036981.png" alt="image-20220817175036981" /></p>
-
-<p>相当于回到了扩容前的状态。</p>
-
-<p>有了以上基础，我们完成 project 就会简单很多。</p>
-
-<h2 id="task-1---page-layouts">TASK #1 - PAGE LAYOUTS</h2>
-
-<p>这一部分，需要我们完成 directories 和 bucket 的内部实现。</p>
-
-<h3 id="思路">思路</h3>
-
-<p>我们先看看 directories 的内部成员变量：</p>
-
-<ul>
-  <li>page_id_ ：directories 的页 id</li>
-  <li>lsn_：暂时还没能用上</li>
-  <li>global_depth_：全局 bucket 深度</li>
-  <li>local_depths_[bucket_index]：每个 bucket 的深度</li>
-  <li>bucket_page_ids_[bucket_index]：每个 bucket 的page_id</li>
-</ul>
-
-<p>directories 需要实现的方法没什么好说的，根据注释一步一步写就行了，如果你对 split 不太了解可能会对 <code class="language-plaintext highlighter-rouge">GetSplitImageIndex</code> 这个方法感到奇怪，这个其实就是上面我们所说的去一个 bucket 的 <strong>brother_bucket</strong>，也可以先空着，后面具体实现再补上。</p>
-
-<p>再来看看 bucket 的成员变量：</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>char occupied_[(BUCKET_ARRAY_SIZE - 1) / 8 + 1];
-char readable_[(BUCKET_ARRAY_SIZE - 1) / 8 + 1];
-
-MappingType array_[1];
-</code></pre></div></div>
-
-<p>occupied_ 和 readable_ 都是 char 数组，一个 char类型占一个字节，也就是8位，从<code class="language-plaintext highlighter-rouge">00000000-&gt;11111111</code>，所以对于任何一个 bucket_index，我们只需要用 <code class="language-plaintext highlighter-rouge">bucket_index / 8</code> 判断在哪一个数组内，再用 <code class="language-plaintext highlighter-rouge">bucket_index % 8</code> 判断在8位中的哪一位即可。</p>
-
-<p>其中 readable_ 表示某一位是否有元素占用，occupied_ 表示某一位是否有过元素占用，简单来说就是经过 remove，前者将变为 0 而后者仍为 1，知乎上有讨论 occupied_ 的实际作用，其实在 bucket 有一个 <code class="language-plaintext highlighter-rouge">PrintBucket()</code> 用于打印当前 bucket 的状态，里面就用到了 occupied_ ，所以我能给出的唯一解释可能也只是用作调试分析吧。</p>
-
-<p>最后的 <code class="language-plaintext highlighter-rouge">array_[1]</code> 是一个变长数组，用于存储真正的 kv。</p>
-
-<h3 id="提示">提示</h3>
-
-<p>在 directories 中有一个 <code class="language-plaintext highlighter-rouge">VerifyIntegrity()</code>方法，用于检测 所有 bucket 的状态是否正确，其注释为：</p>
-
-<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
- * (1) All LD &lt;= GD.
- * (2) Each bucket has precisely 2^(GD - LD) pointers pointing to it.
- * (3) The LD is the same at each index with the same bucket_page_id
- */</span>
-</code></pre></div></div>
-
-<p>这三点我在前言中提到过，这个非常重要，我的大多半 bug 都是产生于此 XD。</p>
-
-<h2 id="task-2---hash-table-implementation">TASK #2 - HASH TABLE IMPLEMENTATION</h2>
-
-<h2 id="task-3---concurrency-control">TASK #3 - CONCURRENCY CONTROL</h2>
-
-<p>TASK 2 是具体实现我们的可拓展哈希表，TASK 3是在 TASK 2 的基础上加锁，实现线程安全。我个人建议这两个 TASK 一起完成，因为重新 review 代码很容易漏掉一些考虑不全的点。</p>
-
-<h3 id="思路-1">思路</h3>
-
-<p>首先确定一下，无论是 insert、remove 还是 getValue，步骤应该都是：</p>
-
-<ol>
-  <li>拿到 directory 的目录页。</li>
-  <li>通过 key 的 hash，找到具体的 bucket 页</li>
-  <li>对 bucket 进行操作。</li>
-</ol>
-
-<p>怎么拿到页呢？其实就是通过我们 Project1 所实现的 <code class="language-plaintext highlighter-rouge">buffer_pool_manager_</code> ，extend_hash_table 自身维护了一个 BufferPoolManager 私有成员，可通过 <code class="language-plaintext highlighter-rouge">FetchPage</code> 或 <code class="language-plaintext highlighter-rouge">NewPage</code>  拿到 Page。</p>
-
-<p>拿到 Page 我们还需要进行一次类型转换，这里我们用 <code class="language-plaintext highlighter-rouge">reinterpret_cast</code> 强制类型转换，把 Page 转换为我们所需的 directory 或者 bucket 。注意每次我们使用完 directory 或者 bucket之后，记得 <code class="language-plaintext highlighter-rouge">UnpinPage</code> 。</p>
-
-<p>剩下的内容其实就是对我们前言部分对完善，所以接下来着重说一下并发控制。</p>
-
-<p>对可拓展哈希表而言，其私有成员<code class="language-plaintext highlighter-rouge">ReaderWriterLatch table_latch_</code>是一把读写锁，用于控制 directory 的线程安全；对于每一个 bucket 而言，其本身也是一个 Page （从获取来看我们也是先拿到 Page 再通过强制类型转换得到 bucket ），在 <code class="language-plaintext highlighter-rouge">page.h</code>  中我们可以看到每个 Page 也维护了一把读写锁 <code class="language-plaintext highlighter-rouge">ReaderWriterLatch rwlatch_</code>，所以我们所有并发控制都是通过这两把锁来考虑的。</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">Insert</code> : directory 读锁、bucket 写锁。</li>
-  <li><code class="language-plaintext highlighter-rouge">SplitInsert</code> : directory 写锁、两个 bucket 都上写锁。（<code class="language-plaintext highlighter-rouge">SplitInsert</code>会设计 bucket 和 brother_bucket 两个桶）</li>
-  <li><code class="language-plaintext highlighter-rouge">Remove</code>： directory 读锁、bucket 写锁。</li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">Merge</code>：directory 读锁、bucket 读锁</p>
-  </li>
-  <li><code class="language-plaintext highlighter-rouge">FetchDirectoryPage</code>：这里我在 extend_hash_table 中加了一个锁成员，在 <code class="language-plaintext highlighter-rouge">directory_page_id_ == INVALID_PAGE_ID</code> 之前锁住，防止并发时 INVALID_PAGE_ID 的判断错误。</li>
-</ul>
-
-<h3 id="提示-1">提示</h3>
-
-<p>在 merge 的官方注释上，有三点：</p>
-
-<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="cm">/**
-   * Optionally merges an empty bucket into it's pair.  This is called by Remove,
-   * if Remove makes a bucket empty.
-   *
-   * There are three conditions under which we skip the merge:
-   * 1. The bucket is no longer empty.
-   * 2. The bucket has local depth 0.
-   * 3. The bucket's local depth doesn't match its split image's local depth.
-   */</span>
-</code></pre></div></div>
-
-<p>这个第一点很有意思，我们是在 bucket 为空的时候进入 merge ，然后在 merge 的同时还需要判断一次 bucket 是否为空，因为这里的锁并不是一直关上，两个方法调度时是有一个空档让其他线程执行的。</p>
-
-<p>我在 debug 的时候发现多线程重复插入 500 个key，经常会出现多次 split 的情况（int 类型一个 bucket默认大小为496，按道理只会 split 一次），就是因为在进入 <code class="language-plaintext highlighter-rouge">SplitInsert</code> 我没有重新判断 <code class="language-plaintext highlighter-rouge">bucket-&gt;IsFull()</code>，当然这个由美每个人具体的写法而定，我也只是说一下我踩的坑hh。</p>
-
-<h2 id="最后">最后</h2>
-
-<p>这个 project 最主要还是提高了我多线程并发的调试能力，合理运用 Log 定位到出问题的点。</p>
-
-<p><img src="../../assets/images/image-20220815194028040.png" alt="image-20220815194028040" /></p>
-
-<p><img src="../../assets/images/image-20220816163255496.png" alt="image-20220816163255496" /></p>
-
-<p>排名感觉还不错，另外前 20 名时间都在 1s 内，估计是把 test 给 bypass 了，面向测试用例编程  💤。</p>
-</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-10-29T14:09:54+08:00"><!-- start custom article footer snippet -->
+<p>这一部分主要是涉及到数据库并发控制，这是一个很大并且很有意思的领域，光是课程上的理论知识就足够消化很长一段时间。包括后面还有一些分布式数据库的知识，因为时间关系先暂时搁置，以后有机会再结合 6.824 一起学习。</p>
+</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-08-26T00:00:00+08:00"><!-- start custom article footer snippet -->
 
 <!-- end custom article footer snippet -->
-</footer>
-<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/cs/cmu15445/proj1">Project 1 缓冲池管理器</a></div><div class="next"><span>NEXT</span><a href="/cs/cmu15445/proj3">Project 3 Query Execution</a></div></div></div>
+<div class="article__subscribe"><div class="subscribe"><i class="fas fa-rss"></i> <a type="application/rss+xml" href="/feed.xml">Subscribe</a></div>
+</div><div class="article__license"><div class="license">
+    <p>This work is licensed under a <a itemprop="license" rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution-NonCommercial 4.0 International</a> license.
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">
+        <img alt="Attribution-NonCommercial 4.0 International" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" />
+      </a>
+    </p>
+  </div></div></footer>
+<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/2022/cource/15445_proj3">『 CMU-15445 』Project 3 Query Execution</a></div><div class="next"><span>NEXT</span><a href="/2022/cource/15445_notes">『 CMU-15445 』课程小结</a></div></div></div>
 
 </div>
 
@@ -837,8 +654,8 @@ MappingType array_[1];
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'https://theoyu.top/cs/cmu15445/proj2';
-    this.page.identifier = 'CMU-15445Project 2';
+    this.page.url = 'https://theoyu.top/2022/cource/15445_proj4';
+    this.page.identifier = 'CMU-15445Project 4';
   };
   (function() { // DON'T EDIT BELOW THIS LINE
     var d = document, s = d.createElement('script');
@@ -877,7 +694,7 @@ MappingType array_[1];
   </div>
 </footer>
 </div></div>
-    </div></div></div><script>(function() {
+    </div><script>(function() {
   var SOURCES = window.TEXT_VARIABLES.sources;
   window.Lazyload.js(SOURCES.jquery, function() {
     var $body = $('body'), $window = $(window);
@@ -1394,36 +1211,6 @@ window.Lazyload.js([SOURCES.jquery, PAHTS.search_js], function() {
 /*(function () {
 
 })();*/
-</script><script>(function() {
-  var SOURCES = window.TEXT_VARIABLES.sources;
-
-  window.Lazyload.js(SOURCES.jquery, function() {
-    var $pageMask = $('.js-page-mask');
-    var $pageRoot = $('.js-page-root');
-    var $sidebarShow = $('.js-sidebar-show');
-    var $sidebarHide = $('.js-sidebar-hide');
-
-    function freeze(e) {
-      if (e.target === $pageMask[0]) {
-        e.preventDefault();
-      }
-    }
-    function stopBodyScrolling(bool) {
-      if (bool === true) {
-        window.addEventListener('touchmove', freeze, { passive: false });
-      } else {
-        window.removeEventListener('touchmove', freeze, { passive: false });
-      }
-    }
-
-    $sidebarShow.on('click', function() {
-      stopBodyScrolling(true); $pageRoot.addClass('show-sidebar');
-    });
-    $sidebarHide.on('click', function() {
-      stopBodyScrolling(false); $pageRoot.removeClass('show-sidebar');
-    });
-  });
-})();
 </script><script type="text/x-mathjax-config">
 	var _config = { tex2jax: {
 		inlineMath: [['$','$'], ['\\(','\\)']]

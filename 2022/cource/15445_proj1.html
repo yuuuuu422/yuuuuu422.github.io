@@ -1,10 +1,10 @@
 <!DOCTYPE html><html lang="en">
   <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>『 CMU-15445 』Project 3 Query Execution - Theoyu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>『 CMU-15445 』Project 1 缓冲池管理器 - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="https://theoyu.top/cs/cmu15445/proj3"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2022/cource/15445_proj1"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -262,18 +262,7 @@
 </head>
   <body>
     <div class="root" data-is-touch="false">
-      <div class="layout--page layout--page--sidebar clearfix js-page-root">
-  <div class="page__mask d-print-none js-page-mask js-sidebar-hide"></div>
-  <div class="page__viewport">
-    <div class="page__actions d-print-none">
-      <div class="button button--circle button--lg box-shadow-2 sidebar-button js-sidebar-show">
-        <i class="fas fa-bars icon--show"></i>
-      </div>
-    </div>
-
-    <div class="grid page__grid">
-
-      <div class="page__sidebar d-print-none"><div class="sidebar-toc"><ul class="toc toc--navigator"><li class="toc-h1">『 CS106L 』</li><li class="toc-h2"><a href="/cs/cs106l/cs106l">『 CS106L 』- Summery</a></li><li class="toc-h1">『 CS61C 』</li><li class="toc-h2"><a href="/cs/cs61c/cs61c">『 CS61C 』- Summery</a></li><li class="toc-h2"><a href="/cs/cs61c/cs61c_labs">『 CS61C 』- Labs</a></li><li class="toc-h2"><a href="/cs/cs61c/project2">Project 2 Classify</a></li><li class="toc-h2"><a href="/">Project 3 CPU</a></li><li class="toc-h1">『 CS110L 』</li><li class="toc-h2"><a href="/">『 CS110L 』- Summery</a></li><li class="toc-h2"><a href="/">『 CS110L 』- Labs</a></li><li class="toc-h1">『 CMU15445 』</li><li class="toc-h2"><a href="/cs/cmu15445/notes">『 CMU15445 』- Notes</a></li><li class="toc-h2"><a href="/cs/cmu15445/proj1">Project 1 缓冲池管理器</a></li><li class="toc-h2"><a href="/cs/cmu15445/proj2">Project 2 哈希索引</a></li><li class="toc-h2 active"><a href="/cs/cmu15445/proj3">Project 3 Query Execution</a></li><li class="toc-h1">『 NJU-ICS-PA 』</li><li class="toc-h2"><a href="/">PA 1</a></li><li class="toc-h2"><a href="/">PA 2</a></li><li class="toc-h2"><a href="/">PA 3</a></li><li class="toc-h2"><a href="/">PA 4</a></li><li class="toc-h1">『 6.S081 』</li><li class="toc-h2"><a href="/">Lab1 Unix utilities</a></li><li class="toc-h1">『 CMU15445 』</li><li class="toc-h2"><a href="/">『 CMU15445 』- Notes</a></li><li class="toc-h2"><a href="/">Project 1 缓冲池管理器</a></li><li class="toc-h2"><a href="/">Project 2 哈希索引</a></li><li class="toc-h2"><a href="/">Project 3 Query Execution</a></li></ul></div></div><div class="page__main js-page-main cell cell--auto">
+      <div class="layout--page js-page-root"><div class="page__main js-page-main page__viewport cell cell--auto">
 
       <div class="page__main-inner"><div class="page__header d-print-none"><header class="header"><div class="main">
       <div class="header__title">
@@ -605,172 +594,149 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
               <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
 
 <!-- end custom main top snippet -->
-<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>『 CMU-15445 』Project 3 Query Execution</h1></header></div><meta itemprop="headline" content="『 CMU-15445 』Project 3 Query Execution"><div class="article__info clearfix"><ul class="right-col menu"></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-10-29T14:09:54+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
+<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>『 CMU-15445 』Project 1 缓冲池管理器</h1></header></div><meta itemprop="headline" content="『 CMU-15445 』Project 1 缓冲池管理器"><div class="article__info clearfix"><ul class="left-col menu"><li>
+              <a class="button button--secondary button--pill button--sm"
+                href="/archive.html?tag=cource">cource</a>
+            </li><li>
+              <a class="button button--secondary button--pill button--sm"
+                href="/archive.html?tag=CMU-15445">CMU-15445</a>
+            </li></ul><ul class="right-col menu"><li><i class="fas fa-user"></i> <span>Theoyu</span></li><li><i class="far fa-calendar-alt"></i> <span>Aug 05, 2022</span>
+            </li></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-08-05T00:00:00+08:00">
+    <meta itemprop="keywords" content="cource,CMU-15445"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
 <!-- end custom article top snippet -->
 <div class="article__content" itemprop="articleBody"><!--more-->
 
-<h2 id="前言">前言</h2>
+<p>总完成时长  11小时。</p>
 
-<p>第三个实验需要我们实现一个执行器（并非解释器），我认为这个实验和 project2 来说各有各的难点。project2 难在即使非常清楚了可拓展哈希表的流程，在多线程、各种锁的折腾下还是很容易出错，每一个小 TASK 都需要debug很长时间。而这个 project 难在已经实现的类、及其成员变量非常繁杂，相互之间的调用很不清晰，完全不知道各个变量的具体含义。所以在做这个 project 之前，梳理已给代码非常重要。</p>
+<h2 id="task-1---lru-replacement-policy">TASK #1 - LRU REPLACEMENT POLICY</h2>
 
-<h2 id="task-1---executors">TASK #1 - EXECUTORS</h2>
-
-<p>整个 project 只有这一个 task，需要我们实现以下9个执行器：</p>
-
-<ul>
-  <li>读取：Sequential Scan（顺序扫描）</li>
-  <li>增删改查： Insert, Update, Delete</li>
-  <li>其他：Nested Loop Join, Hash Join, Aggregation, Limit, Distinct</li>
-</ul>
+<p>实现 LRU页面替换策略。</p>
 
 <h3 id="思路">思路</h3>
 
-<p>在前言中我们提到各种成员变量，包括</p>
+<p>如果之前对 LRU 没有怎么接触，推荐可以先去 LeetCode 上做一下这道题：<a href="https://leetcode.cn/problems/lru-cache/">146. LRU 缓存</a></p>
 
-<pre><code class="language-txt">Catalog、Tuple、Schema、TableHeap、TableHeapIterator、Value、Column...等待
-</code></pre>
+<p>数据结构选取双向链表 + 哈希表，双向链表有助于我们在移动节点时更方便的找到某个节点的前节点。</p>
 
-<p>其每个变量都在具体数据库中有一个对应，我是通过 debug 慢慢摸索出其含义，后来发现<a href="https://www.cnblogs.com/sun-lingyu/p/15316626.html"> 这篇文章 </a>总结非常好，在做第一个执行器（Sequential Scan）的时候强烈推荐结合文章理清楚各个类的交互关系。</p>
+<p>同时设置 <code class="language-plaintext highlighter-rouge">dummy_tail</code> ，因为在置换时我们总是需要移除最后一个节点。</p>
 
 <h3 id="提示">提示</h3>
 
-<p>说一下我踩的几个坑，应该是我对聚合算子本身不来熟悉，导致一些比较乌龙的错误。</p>
+<p>理清 <code class="language-plaintext highlighter-rouge">Pin</code> 和 <code class="language-plaintext highlighter-rouge">Unpin</code> 的含义，注意我们需要实现的只是一个 <code class="language-plaintext highlighter-rouge">POLICY</code> ，具体的实现是在下一个 TASK，如果直接当 buffer pool 处理很多含义都是相反的。</p>
 
-<p>一个是要注意 <code class="language-plaintext highlighter-rouge">group by</code> 是可以接多个列的，站在数据库层表示以 n 个完全相同的列进行分组，在代码中体现就是 <code class="language-plaintext highlighter-rouge">AggregateKey</code> 的成员变量 <code class="language-plaintext highlighter-rouge">group_bys_</code> 是一个 <code class="language-plaintext highlighter-rouge">vector</code>。</p>
+<p><code class="language-plaintext highlighter-rouge">Pin</code>：代表有线程正在占用这个 frame，所以需要从 <code class="language-plaintext highlighter-rouge">cache_</code> 和 <code class="language-plaintext highlighter-rouge">DLinkedNode</code> 中删除，防止被替换。</p>
 
-<p>二是我在看聚合的测试文件时，发现 <code class="language-plaintext highlighter-rouge">ValueExpression</code> 必须指定输出列是否为 <code class="language-plaintext highlighter-rouge">is_group_by_term</code>。根据执行逻辑如果是则代表其为 <code class="language-plaintext highlighter-rouge">group by</code> 的字段，如果不是则代表其为聚合的字段。</p>
+<p><code class="language-plaintext highlighter-rouge">Unpin</code>：占用结束，重新把 frame 加入  <code class="language-plaintext highlighter-rouge">cache_</code> 和 <code class="language-plaintext highlighter-rouge">DLinkedNode</code> ，<strong>重复 Unpin 不会影响节点的位置</strong>。</p>
 
-<p>比如这样的语句：<code class="language-plaintext highlighter-rouge">select count(Id),City from Employee group by City </code>，前者则为false，后者则为 true。</p>
+<p>另外，如果你和我一样是自己实现的双向链表而不是用 STL 中的 list，一定要记住在 remove(node)后将 node 给 delete（我直接搬运了 leetcode 代码没考虑太多…），我这一节是满分过了，但是 project2 的内存检测后来死活过不了，才意识到问题…</p>
 
-<p>后来我突发奇想，如果是这样的语句<code class="language-plaintext highlighter-rouge">select count(Id),City,Address from Employee group by City </code>，其中 <code class="language-plaintext highlighter-rouge">Address</code> 既不是 <code class="language-plaintext highlighter-rouge">group by</code> 的字段，也不是聚合的字段，那该怎么支持呢？</p>
+<h2 id="task-2---buffer-pool-manager-instance">TASK #2 - BUFFER POOL MANAGER INSTANCE</h2>
 
-<table>
-  <thead>
-    <tr>
-      <th>count(ID)</th>
-      <th>City</th>
-      <th>Address</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>1</td>
-      <td>Kirkland</td>
-      <td>722 Moss Bay Blvd.</td>
-    </tr>
-    <tr>
-      <td>4</td>
-      <td>London</td>
-      <td>14 Garrett Hill</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>Redmond</td>
-      <td>4110 Old Redmond Rd.</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>Seattle</td>
-      <td>507 - 20th Ave. E. Apt. 2A</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>Tacoma</td>
-      <td>908 W. Capital Way</td>
-    </tr>
-  </tbody>
-</table>
+<p>实现缓冲器管理器实例。</p>
 
-<p>后来想了想在聚合里这个字段也没有意义，如果一个组有多个数据，可能只会随机输出一个，真实情况下我们一般会考虑<code class="language-plaintext highlighter-rouge">group_concat</code>:</p>
+<h3 id="思路-1">思路</h3>
 
-<p><code class="language-plaintext highlighter-rouge">select count(Id),City,group_concat(Address,' ;') from Employee group by City</code></p>
+<p>首先明确一下 <code class="language-plaintext highlighter-rouge">BufferPoolManagerInstance</code>  中几个成员变量的含义：</p>
 
-<table>
-  <thead>
-    <tr>
-      <th>count(ID)</th>
-      <th>City</th>
-      <th>group_concat(Address,’ ;’)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>1</td>
-      <td>Kirkland</td>
-      <td>722 Moss Bay Blvd.</td>
-    </tr>
-    <tr>
-      <td>4</td>
-      <td>London</td>
-      <td>14 Garrett Hill ;Coventry House Miner Rd. ;Edgeham Hollow Winchester Way ;7 Houndstooth Rd.</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>Redmond</td>
-      <td>4110 Old Redmond Rd.</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>Seattle</td>
-      <td>507 - 20th Ave. E. Apt. 2A ;4726 - 11th Ave. N.E.</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>Tacoma</td>
-      <td>908 W. Capital Way</td>
-    </tr>
-  </tbody>
-</table>
+<ol>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">std::list&lt;frame_id_t&gt; free_list_;	</code></p>
 
-<p>那这样的话就又得支持新的算子了，虽然感觉上不难… 不过我暂时还没有实现 XD</p>
+    <p>缓冲池剩余空间的 frames 用<code class="language-plaintext highlighter-rouge">free_list_</code> 表示，初始大小为 <code class="language-plaintext highlighter-rouge">pool_size_</code> 的大小，<code class="language-plaintext highlighter-rouge">free_list_</code> 为空，则说明此时 buffer pool已满，需要用上一个 TASK 完成的 LRU 获取新的 frame 。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">std::unordered_map&lt;page_id_t, frame_id_t&gt; page_table_</code></p>
 
-<h2 id="最后">最后</h2>
+    <p><code class="language-plaintext highlighter-rouge">frame_id</code> 是 缓冲池中的帧序号。</p>
 
-<p>最重要的一点，请不要使用官方的打包命令，gradescope 上莫名其妙把一堆自带的 GTEST 给检测，其 check-lint G了一大片，后来群里大哥说加上 <code class="language-plaintext highlighter-rouge">src/include/storage/page/tmp_tuple_page.h</code> 可以解决，原因位置：</p>
+    <p><code class="language-plaintext highlighter-rouge">page_id</code> 是页的标识符。</p>
 
-<pre><code class="language-txt">zip project3-submission.zip \
-src/include/buffer/lru_replacer.h \
-src/buffer/lru_replacer.cpp \
-src/include/buffer/buffer_pool_manager_instance.h \
-src/buffer/buffer_pool_manager_instance.cpp \
-src/include/storage/page/hash_table_directory_page.h \
-src/storage/page/hash_table_directory_page.cpp \
-src/include/storage/page/hash_table_bucket_page.h \
-src/storage/page/hash_table_bucket_page.cpp \
-src/include/container/hash/extendible_hash_table.h \
-src/container/hash/extendible_hash_table.cpp \
-src/include/execution/execution_engine.h \
-src/include/execution/executors/seq_scan_executor.h \
-src/include/execution/executors/insert_executor.h \
-src/include/execution/executors/update_executor.h \
-src/include/execution/executors/delete_executor.h \
-src/include/execution/executors/nested_loop_join_executor.h \
-src/include/execution/executors/hash_join_executor.h \
-src/include/execution/executors/aggregation_executor.h \
-src/include/execution/executors/limit_executor.h \
-src/include/execution/executors/distinct_executor.h \
-src/execution/seq_scan_executor.cpp \
-src/execution/insert_executor.cpp \
-src/execution/update_executor.cpp \
-src/execution/delete_executor.cpp \
-src/execution/nested_loop_join_executor.cpp \
-src/execution/hash_join_executor.cpp \
-src/execution/aggregation_executor.cpp \
-src/execution/limit_executor.cpp \
-src/execution/distinct_executor.cpp \
-src/include/storage/page/tmp_tuple_page.h
-</code></pre>
+    <p>每当把 page 放入缓冲池，相当于在 <code class="language-plaintext highlighter-rouge">page_table_</code> 对两者做一个映射。</p>
 
-<p><img src="../../assets/images/image-20220828085926610.png" alt="image-20220828085926610" /></p>
+    <p><img src="../../assets/images/image-20220724191830647.png" alt="image-20220724191830647" /></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Page *pages_;</code></p>
 
-<p><img src="../../assets/images/image-20220828090016838.png" alt="image-20220828090016838" /></p>
+    <p>缓冲池 page 的数组，以 frame_id 为索引。</p>
+  </li>
+</ol>
 
-</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-10-29T14:09:54+08:00"><!-- start custom article footer snippet -->
+<p>根据 <code class="language-plaintext highlighter-rouge">page_table_</code>  和  <code class="language-plaintext highlighter-rouge">pages_</code>  ，如果给定一个 <code class="language-plaintext highlighter-rouge">page_id</code> ，我们可以通过 <code class="language-plaintext highlighter-rouge">page_table_.find(page_id)</code>，去获取这个<code class="language-plaintext highlighter-rouge">page_id</code> 所对应在内存中的 <code class="language-plaintext highlighter-rouge">frame_id</code>，再通过 <code class="language-plaintext highlighter-rouge">Page* page = pages_[framge_id]</code> 即获取到了这个 <code class="language-plaintext highlighter-rouge">page</code>.</p>
+
+<p>注意，在 Page 类中已经把 BufferPoolManagerInstance 设置为友元，所以我们可以直接访问 Page 对象中的私有成员进行修改。</p>
+
+<p>需要实现的方法注释已经非常详细</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">auto</span> <span class="n">FetchPgImp</span><span class="p">(</span><span class="n">page_id_t</span> <span class="n">page_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Page</span> <span class="o">*</span> <span class="k">override</span><span class="p">;</span>
+<span class="k">auto</span> <span class="n">NewPgImp</span><span class="p">(</span><span class="n">page_id_t</span> <span class="o">*</span><span class="n">page_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Page</span> <span class="o">*</span> <span class="k">override</span><span class="p">;</span>
+<span class="k">auto</span> <span class="n">UnpinPgImp</span><span class="p">(</span><span class="n">page_id_t</span> <span class="n">page_id</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">is_dirty</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="k">override</span><span class="p">;</span>
+<span class="k">auto</span> <span class="n">FlushPgImp</span><span class="p">(</span><span class="n">page_id_t</span> <span class="n">page_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="k">override</span><span class="p">;</span>
+<span class="k">auto</span> <span class="n">DeletePgImp</span><span class="p">(</span><span class="n">page_id_t</span> <span class="n">page_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="k">override</span><span class="p">;</span>
+<span class="kt">void</span> <span class="n">FlushAllPgsImp</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>不过其实很多代码都是可以重用的，比如 <code class="language-plaintext highlighter-rouge">NewPgImp</code> 和 <code class="language-plaintext highlighter-rouge">FetchPgImp</code> 都会涉及到从<code class="language-plaintext highlighter-rouge">free_list </code>和<code class="language-plaintext highlighter-rouge">lru</code> 中获取一个新的<code class="language-plaintext highlighter-rouge">frame</code>，我们可以将其包装为<code class="language-plaintext highlighter-rouge">auto GetFreeFrame() -&gt; frame_id_t;</code>，还有比如脏页我们需要重新写回磁盘、涉及到对 <code class="language-plaintext highlighter-rouge">page</code> 的 Reset ，如果追求代码简约的话都可以封装一下。</p>
+
+<h3 id="坑点">坑点</h3>
+
+<p>记录一个我犯的挺蠢的错误…</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">auto</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">page_table_</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">page_id</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">iter</span> <span class="o">!=</span> <span class="n">page_table</span><span class="p">.</span><span class="n">end</span><span class="p">()){</span>
+  <span class="n">xxxx</span><span class="p">...</span>
+  <span class="n">page_table_</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">page_id</span><span class="p">);</span>
+  <span class="n">free_list_</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">iter</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">);</span>
+  <span class="n">xxxx</span><span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>原因在于我把 <code class="language-plaintext highlighter-rouge">page_table_.erase(page_id); </code>写在了前面，而 <code class="language-plaintext highlighter-rouge">iterator</code> 只是 STL 中指针的封装，erase 之后这片地址空间发生了改变，再去调用<code class="language-plaintext highlighter-rouge">iter-&gt;second </code>就发生了错误。</p>
+
+<p><img src="../../assets/images/DEAF2FE06B66BDE82A6C793AC9A0B978.jpg" alt="DEAF2FE06B66BDE82A6C793AC9A0B978" /></p>
+
+<p>还有可能是我自作聪明，过多封装了一些方法，导致锁处理有一些麻烦 .. gradescope 上跑出了几个timeout（死锁），如果和我一样写单元测试不太熟练，可以尝试把测试文件输出出来：</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">ifstream</span> <span class="nf">file</span><span class="p">(</span><span class="s">"/autograder/bustub/test/buffer/grading_buffer_pool_manager_instance_test.cpp"</span><span class="p">);</span>
+<span class="n">string</span> <span class="n">line</span><span class="p">;</span>
+<span class="k">while</span> <span class="p">(</span><span class="n">file</span><span class="p">.</span><span class="n">good</span><span class="p">()){</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">getline</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="n">line</span><span class="p">);</span>
+    <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">line</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>把上述代码放在一个会涉及到的方法里即可，不过还是推荐自己写单元测试 debug 。</p>
+
+<h2 id="task-3---parallel-buffer-pool-manager">TASK #3 - PARALLEL BUFFER POOL MANAGER</h2>
+
+<p>实现并行缓冲池管理器。</p>
+
+<h3 id="思路-2">思路</h3>
+
+<p>因为缓冲池实例的操作必须上锁，随着缓冲池数据规模的增大锁的开销也增大了。这一个 TASK 就是让我们实现一个缓冲池管理器，其内部维护了一个 vector 容器。</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BufferPoolManagerInstance</span> <span class="o">*&gt;</span> <span class="n">buffer_pool_manager_</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>这样我们可以根据 <code class="language-plaintext highlighter-rouge">page_id % num_instances_</code>的值，均匀分配给不同的缓冲池实例。</p>
+
+<h2 id="最后">最后：</h2>
+
+<p><img src="../../assets/images/image-20220725234228930.png" alt="image-20220725234228930" /></p>
+
+</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-08-05T00:00:00+08:00"><!-- start custom article footer snippet -->
 
 <!-- end custom article footer snippet -->
-</footer>
-<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/cs/cmu15445/proj2">Project 2 哈希索引</a></div><div class="next"><span>NEXT</span><a href="/">PA 1</a></div></div></div>
+<div class="article__subscribe"><div class="subscribe"><i class="fas fa-rss"></i> <a type="application/rss+xml" href="/feed.xml">Subscribe</a></div>
+</div><div class="article__license"><div class="license">
+    <p>This work is licensed under a <a itemprop="license" rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution-NonCommercial 4.0 International</a> license.
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">
+        <img alt="Attribution-NonCommercial 4.0 International" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" />
+      </a>
+    </p>
+  </div></div></footer>
+<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/2022/cource/cs106l">『 CS106L 』课程笔记</a></div><div class="next"><span>NEXT</span><a href="/2022/cource/15445_proj2">『 CMU-15445 』Project 2 哈希索引</a></div></div></div>
 
 </div>
 
@@ -805,8 +771,8 @@ src/include/storage/page/tmp_tuple_page.h
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'https://theoyu.top/cs/cmu15445/proj3';
-    this.page.identifier = 'CMU-15445Project 3';
+    this.page.url = 'https://theoyu.top/2022/cource/15445_proj1';
+    this.page.identifier = 'CMU-15445Project 1';
   };
   (function() { // DON'T EDIT BELOW THIS LINE
     var d = document, s = d.createElement('script');
@@ -845,7 +811,7 @@ src/include/storage/page/tmp_tuple_page.h
   </div>
 </footer>
 </div></div>
-    </div></div></div><script>(function() {
+    </div><script>(function() {
   var SOURCES = window.TEXT_VARIABLES.sources;
   window.Lazyload.js(SOURCES.jquery, function() {
     var $body = $('body'), $window = $(window);
@@ -1362,36 +1328,6 @@ window.Lazyload.js([SOURCES.jquery, PAHTS.search_js], function() {
 /*(function () {
 
 })();*/
-</script><script>(function() {
-  var SOURCES = window.TEXT_VARIABLES.sources;
-
-  window.Lazyload.js(SOURCES.jquery, function() {
-    var $pageMask = $('.js-page-mask');
-    var $pageRoot = $('.js-page-root');
-    var $sidebarShow = $('.js-sidebar-show');
-    var $sidebarHide = $('.js-sidebar-hide');
-
-    function freeze(e) {
-      if (e.target === $pageMask[0]) {
-        e.preventDefault();
-      }
-    }
-    function stopBodyScrolling(bool) {
-      if (bool === true) {
-        window.addEventListener('touchmove', freeze, { passive: false });
-      } else {
-        window.removeEventListener('touchmove', freeze, { passive: false });
-      }
-    }
-
-    $sidebarShow.on('click', function() {
-      stopBodyScrolling(true); $pageRoot.addClass('show-sidebar');
-    });
-    $sidebarHide.on('click', function() {
-      stopBodyScrolling(false); $pageRoot.removeClass('show-sidebar');
-    });
-  });
-})();
 </script><script type="text/x-mathjax-config">
 	var _config = { tex2jax: {
 		inlineMath: [['$','$'], ['\\(','\\)']]
