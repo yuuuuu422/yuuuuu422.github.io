@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>7u21 - Theoyu</title>
 
 <meta name="description" content="前言深度好文：JDK反序列化Gadgets 7u21lalajun 的文章永远是那么通俗易懂。readObject的点我更改了一下，大家主要用的都是HashSet.readObject()，不过实际上几个Hash数据结构都殊途同归，我们完全也可以选择CC7 hash冲突的Source点 –&gt; Hashtab...">
-<link rel="canonical" href="https://theoyu.top/java/deserialize/7u21"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="http://localhost:4000/java/deserialize/7u21"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -606,7 +606,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
               <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
 
 <!-- end custom main top snippet -->
-<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>7u21</h1></header></div><meta itemprop="headline" content="7u21"><div class="article__info clearfix"><ul class="right-col menu"></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-11-22T01:44:24+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
+<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>7u21</h1></header></div><meta itemprop="headline" content="7u21"><div class="article__info clearfix"><ul class="right-col menu"></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2023-01-21T20:25:34+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
 <!-- end custom article top snippet -->
 <div class="article__content" itemprop="articleBody"><h2 id="前言">前言</h2>
@@ -832,7 +832,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 <p>经过调试发现，导致导致<code class="language-plaintext highlighter-rouge">tmpl.hashCode</code>的值发生变化的原因在于是用 <strong>javassist</strong>框架生成字节码时，<code class="language-plaintext highlighter-rouge">CtClass tempExploitClass = pool.makeClass("theoyu");</code>每次都会生成一个新类，导致后续hashCode值发生变化。暂时没能想到好的解决办法，除非写循环判断，挑选满足条件的tmpl。</p>
 
 <p>很好奇为什么网上的文章都跳过了这一点…有一些是没有考虑本地触发，有一些直接忽略了hashCode随机的问题</p>
-</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-11-22T01:44:24+08:00"><!-- start custom article footer snippet -->
+</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2023-01-21T20:25:34+08:00"><!-- start custom article footer snippet -->
 
 <!-- end custom article footer snippet -->
 </footer>
@@ -871,7 +871,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'https://theoyu.top/java/deserialize/7u21';
+    this.page.url = 'http://localhost:4000/java/deserialize/7u21';
     this.page.identifier = '7u21';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>『 CMU-15445 』课程小结 - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="https://theoyu.top/2022/cource/15445_notes"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="http://localhost:4000/2022/cource/15445_notes"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -611,22 +611,36 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>以下内容为我归纳整理的一些问答式：</p>
 
-<pre><code class="language-txt">1. 和 CSV 文件相比，使用数据库的优势是什么？
-2. 为什么不使用 OS 自带的磁盘管理模块 （mmap）？
-3. 1
-4. 存储模型 N-Ary Storage Model (NSM) 和 Decomposition Storage Model (DSM) 的优缺性？
-5. 为什么会有 buffer pool？
-6. buffer pool 可以做哪些优化？
-7. 为什么数据库BUFFER POOL需要LRU-K的策略？
-8. 有哪一些哈希方案？
-9. 为什么使用B+ Tree 而不是用 B Tree
-10. 是否当有节点不到 half-full，就 MERGE 节点？
+<pre><code class="language-txt">1. 为什么不使用 OS 自带的磁盘管理模块 （mmap）？
+2. 存储模型 N-Ary Storage Model (NSM) 和 Decomposition Storage Model (DSM) 的优缺性？
+3. 为什么会有 buffer pool？
+4. buffer pool 可以做哪些优化？
+5. 为什么数据库BUFFER POOL需要LRU-K的策略？
+6. 有哪一些哈希方案？
+7. 是否当有节点不到 half-full，就 MERGE 节点？
+8. B+ 树的优化
+9. B+树的 Latch Crabbing 是什么？
+10. Lock 和 Latch 的区别是什么？
+11. 108个页，内存 buffer pools 中只能容下5个页，怎么利用 General (K-way) Merge Sort 做外部排序？
+12. 有哪一些做 aggregation（聚集）的方案？
+13. join算法有哪些？以下述例子分析复杂的：
+14. 有哪一些数据库执行模型？
+15. 有哪一些数据读取的方法？
+16. 单个 Intra-Query 如何做并行？
+17. 谈一谈数据库执行的逻辑优化和物理优化？
+18. 简单介绍一下ACID？
+19. 如何判断事务的执行顺序（schedule）是否与其串行执行（serial）等价？
+20. 什么是 View Serializability？
+21. 什么是两阶段锁？如何解决集联中止和死锁的问题？
+22. 什么是 LOCK GRANULARITIES ，为什么要这么设计？
+23. 如何基于时间戳进行并发控制？
+24. 并行事务可能出现怎样的问题？事务有哪几种隔离级别，有什么特点及其实现？
+25. MVCC 设计需要考虑哪几个方面？
+26. 能否不使用 LOG 实现 undo 和 redo？
+27. 什么是 WAL？
 </code></pre>
 
 <ol>
-  <li>
-    <p>和 CSV 文件相比，使用数据库的优势是什么？</p>
-  </li>
   <li>
     <p>为什么不使用 OS 自带的磁盘管理模块 （mmap）？</p>
 
@@ -634,14 +648,9 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
       <p>if i die in this class , you  want to have a memorial something just Say Andy hated mmap</p>
     </blockquote>
 
-    <p>论文</p>
+    <p>Andy专门写了一篇论文批判不应该在数据库中使用 mmap ：<a href="https://db.cs.cmu.edu/mmap-cidr2022/">Are You Sure You Want to Use MMAP in Your Database Management System? (CIDR 2022)</a></p>
 
-    <p>https://www.codedump.info/post/20220327-weekly-11/</p>
-
-    <p>作为底层的操作系统，他只能看到毫无规律的读取和调用，而 DBMS 希望自己拥有足够的控制权</p>
-  </li>
-  <li>
-    <p>页？</p>
+    <p>简单来说作为底层的操作系统，他只能看到毫无规律的读取和调用，而 DBMS 希望自己拥有足够的控制权。</p>
   </li>
   <li>
     <p>存储模型 N-Ary Storage Model (NSM) 和 Decomposition Storage Model (DSM) 的优缺性？</p>
@@ -735,11 +744,6 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
     </ul>
   </li>
   <li>
-    <p>为什么使用B+ Tree 而不是用 B Tree</p>
-
-    <p>写了一篇关于树的总结。</p>
-  </li>
-  <li>
     <p>是否当有节点不到 half-full，就 MERGE 节点？</p>
 
     <p>MERGE  有一定的开销，可以先把该节点保存，然后过一段时间周期性的批量处理这些节点（重新建树）。</p>
@@ -765,17 +769,8 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
       </li>
       <li>
         <p>Pointer Swizzling</p>
-
-        <p>？</p>
       </li>
     </ol>
-  </li>
-  <li>
-    <p>Lock 和 Latch 的区别是什么？</p>
-
-    <p>Lock 是一个高级别，逻辑意义上的锁，一般特指事务锁，用于保护数据库内容免受其他 transactions 的影响 ，而且需要考虑一个事务回滚的问题。</p>
-
-    <p>Latch 是一个低级别的锁，用于维护 DBMS 内部数据结构在多线程情况下安全读写，比如互斥锁 mutex。</p>
   </li>
   <li>
     <p>B+树的 Latch Crabbing 是什么？</p>
@@ -790,6 +785,13 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
     </ul>
 
     <p>上面这样有一个问题，我们发现根节点始终是一个上锁的状态，这样对效率的影响比较大。我们可以采取一个 『 乐观 』的态度，我们假设叶子节点都是安全的，所以无论是增还是删都先上读锁，等到具体情况如果发现并不安全，则重头再按照写锁的逻辑来一次。</p>
+  </li>
+  <li>
+    <p>Lock 和 Latch 的区别是什么？</p>
+
+    <p>Lock 是一个高级别，逻辑意义上的锁，一般特指事务锁，用于保护数据库内容免受其他 transactions 的影响 ，而且需要考虑一个事务回滚的问题。</p>
+
+    <p>Latch 是一个低级别的锁，用于维护 DBMS 内部数据结构在多线程情况下安全读写，比如互斥锁 mutex。</p>
   </li>
   <li>
     <p>108个页，内存 buffer pools 中只能容下5个页，怎么利用 General (K-way) Merge Sort 做外部排序？</p>
@@ -825,7 +827,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
     </ol>
   </li>
   <li>
-    <p>join算法有哪些·？以下述例子分析复杂的：</p>
+    <p>join算法有哪些？以下述例子分析复杂的：</p>
 
     <blockquote>
       <ul>
@@ -1119,34 +1121,34 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
     <p>MVCC 设计需要考虑哪几个方面？</p>
 
     <p>MVCC （Multi- Version Concurrency Control）的核心思想为读写互不堵塞，一共需要考虑以下四个方面：</p>
-  </li>
-  <li>
-    <p>Concurrency Control Protocol</p>
-
-    <p>选取一种并发控制协议，也就是我们前面所谈到的 2PL、T/O、OCC 等。</p>
-  </li>
-  <li>
-    <p>Version Storage</p>
-
-    <p>DBMS 为每个 tuple 维护了一个全局属性表， tuple 不同版本之间通过链表连接起来，根据存储逻辑的不同也分为三种：</p>
 
     <ul>
-      <li>Append-Only Storage：全部 tuple 存储到一个表空间内。</li>
-      <li>Time - Travel Storage：用一个 单独的 time-travel 表维护老版本的 tuple。</li>
-      <li>Delta Storage：和前者类似，不过表内只维护变化的数据，而不是整个列数据。</li>
+      <li>
+        <p>Concurrency Control Protocol</p>
+
+        <p>选取一种并发控制协议，也就是我们前面所谈到的 2PL、T/O、OCC 等。</p>
+      </li>
+      <li>
+        <p>Version Storage</p>
+
+        <p>DBMS 为每个 tuple 维护了一个全局属性表， tuple 不同版本之间通过链表连接起来，根据存储逻辑的不同也分为三种：</p>
+
+        <ul>
+          <li>Append-Only Storage：全部 tuple 存储到一个表空间内。</li>
+          <li>Time - Travel Storage：用一个 单独的 time-travel 表维护老版本的 tuple。</li>
+          <li>Delta Storage：和前者类似，不过表内只维护变化的数据，而不是整个列数据。</li>
+        </ul>
+      </li>
+      <li>
+        <p>Garbage Collection</p>
+
+        <p>那些用不上的旧版本属性，我们需要垃圾回收，GC可以站在 tuple 的角度，一些线程定时扫描整个 table，寻找可回收的旧版本；或者站在事务的角度，事务自身决定哪些  tuple 需要被回收。</p>
+      </li>
+      <li>
+        <p>Index Management
+我们可以通过索引查询数据，所以索引也是需要链接到多版本的。</p>
+      </li>
     </ul>
-  </li>
-  <li>
-    <p>Garbage Collection</p>
-
-    <p>那些用不上的旧版本属性，我们需要垃圾回收，GC可以站在 tuple 的角度，一些线程定时扫描整个 table，寻找可回收的旧版本；或者站在事务的角度，事务自身决定哪些  tuple 需要被回收。</p>
-  </li>
-  <li>
-    <p>Index Management</p>
-
-    <p>我们可以通过索引查询数据，所以索引也是需要链接到多版本的。</p>
-
-    <p>？</p>
   </li>
   <li>
     <p>能否不使用 LOG 实现 undo 和 redo？</p>
@@ -1232,7 +1234,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'https://theoyu.top/2022/cource/15445_notes';
+    this.page.url = 'http://localhost:4000/2022/cource/15445_notes';
     this.page.identifier = 'CMU-15445';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

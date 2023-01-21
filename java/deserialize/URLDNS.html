@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>URLDNS - Theoyu</title>
 
 <meta name="description" content="前言URLDNS利用链不依赖任何第三方库，同时对JDK版本也没有限制，所以通常用于确认readobject反序列化利用点的存在。漏洞复现package com.theoyu.urldns;import java.io.*;import java.lang.reflect.Field;import java.net...">
-<link rel="canonical" href="https://theoyu.top/java/deserialize/URLDNS"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="http://localhost:4000/java/deserialize/URLDNS"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -606,7 +606,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
               <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
 
 <!-- end custom main top snippet -->
-<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>URLDNS</h1></header></div><meta itemprop="headline" content="URLDNS"><div class="article__info clearfix"><ul class="right-col menu"></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-11-22T01:44:24+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
+<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>URLDNS</h1></header></div><meta itemprop="headline" content="URLDNS"><div class="article__info clearfix"><ul class="right-col menu"></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2023-01-21T20:25:34+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
 <!-- end custom article top snippet -->
 <div class="article__content" itemprop="articleBody"><h2 id="前言">前言</h2>
@@ -732,7 +732,7 @@ java.util.HashMap -&gt; <code class="language-plaintext highlighter-rouge">reado
 
 <p>在SilentURLStreamHandler中强行把getHostAddress直接return一个null，也就绕过了本地解析，并且ysoseria专门写了一个<code class="language-plaintext highlighter-rouge">Reflections</code>类处理反射所需要的各种操作，也就直接设置了hashCode为-1.</p>
 
-</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-11-22T01:44:24+08:00"><!-- start custom article footer snippet -->
+</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2023-01-21T20:25:34+08:00"><!-- start custom article footer snippet -->
 
 <!-- end custom article footer snippet -->
 </footer>
@@ -771,7 +771,7 @@ java.util.HashMap -&gt; <code class="language-plaintext highlighter-rouge">reado
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'https://theoyu.top/java/deserialize/URLDNS';
+    this.page.url = 'http://localhost:4000/java/deserialize/URLDNS';
     this.page.identifier = 'URLDNS';
   };
   (function() { // DON'T EDIT BELOW THIS LINE
