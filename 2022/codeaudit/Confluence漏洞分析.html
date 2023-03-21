@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>Confluence 漏洞分析 - Theoyu</title>
 
 <meta name="description" content="FROM CVE-2021-26084 TO  CVE-2022-26134 ,Bypass Sandbox And Inject Memory Shell">
-<link rel="canonical" href="http://localhost:4000/2022/codeaudit/Confluence%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2022/codeaudit/Confluence%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -638,15 +638,15 @@ queryString=%5cu0027%2b%7b233*233%7d%2b%5cu0027
 
 <p>转化后到AST可以在 <strong>org.apache.velocity.Template</strong> 下的<strong>data</strong>属性查看：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164131.png" alt="image-20220608172206591" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164131.png" alt="image-20220608172206591" /></p>
 
 <p>搜索子树，可以定位 <strong>queryString</strong>：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164139.png" alt="image-20220608172118978" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164139.png" alt="image-20220608172118978" /></p>
 
 <p>确定好模版之后，就是获取 <code class="language-plaintext highlighter-rouge">pages/createpage-entervariables.vm</code> 标签中所定义的变量：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164142.png" alt="image-20220608190418386" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164142.png" alt="image-20220608190418386" /></p>
 
 <p>其中的velocity基本语法：</p>
 
@@ -657,15 +657,15 @@ queryString=%5cu0027%2b%7b233*233%7d%2b%5cu0027
 
 <p>在<code class="language-plaintext highlighter-rouge">AbstractTagDirective.createPropertyMap()</code>下创建了一个map，用于保存tag中的键值对：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164150.png" alt="image-20220608200447599" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164150.png" alt="image-20220608200447599" /></p>
 
 <p>之后进入<code class="language-plaintext highlighter-rouge">processTag()</code>方法，用于处理tag：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164154.png" alt="image-20220608232231071" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164154.png" alt="image-20220608232231071" /></p>
 
 <p>在<code class="language-plaintext highlighter-rouge">processTag()</code>的末尾，调用了<code class="language-plaintext highlighter-rouge">doEndTag()</code>方法，跟进<code class="language-plaintext highlighter-rouge">evaluateParams(stack)</code>，其实就是用Ognl表达式去处理tag中的内容。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164157.png" alt="image-20220608234226356" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164157.png" alt="image-20220608234226356" /></p>
 
 <p>可以看到在执行Ognl表达式之前，还经过了一次表达式检查，这个我们放在后面说，需要注意的是我们的expr是被<code class="language-plaintext highlighter-rouge">''</code>所包裹的，所以Ognl并不会解析里面的内容，而在执行之前expr会经过一轮<code class="language-plaintext highlighter-rouge">OgnlUtil.compile(expr)</code>，支持对unicode编码的解码，所以可以利用<code class="language-plaintext highlighter-rouge">\u0027</code>闭合单引号 。</p>
 
@@ -673,11 +673,11 @@ queryString=%5cu0027%2b%7b233*233%7d%2b%5cu0027
 
 <p>首先<code class="language-plaintext highlighter-rouge">Ognl.getValue()</code> 解析 Ongl语句，就会将其转化为一颗 ASTChain 语法树执行，比如表达式：<code class="language-plaintext highlighter-rouge">@java.lang.Runtime@getRuntime().exec("calc")</code>，下图为其所对应的语法树：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164205.png" alt="image-20220609104544611" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164205.png" alt="image-20220609104544611" /></p>
 
 <p>现在看安全防护的问题：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164212.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164212.png" alt="" /></p>
 
 <p>针对以上检测，有以下两种方式绕过检测以获取Class对象：</p>
 
@@ -688,7 +688,7 @@ queryString=%5cu0027%2b%7b233*233%7d%2b%5cu0027
 {Class}
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164215.png" alt="image-20220610001758198" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164215.png" alt="image-20220610001758198" /></p>
 
 <p>当Ongl解析一个属性 <strong>a</strong>  或者 <strong>A</strong>时，都会从  Context 键值对中调用 <code class="language-plaintext highlighter-rouge">getA</code> 来尝试获取属性，而检测中只过滤了小写<strong>class</strong>的情况，我们完全可以利用大写 <strong>Class</strong> 属性来调用context中的 <code class="language-plaintext highlighter-rouge">getClass()</code> 方法从而获取Class对象。</p>
 
@@ -699,11 +699,11 @@ queryString=%5cu0027%2b%7b233*233%7d%2b%5cu0027
 {['class']}
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164222.png" alt="image-20220610003243339" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164222.png" alt="image-20220610003243339" /></p>
 
 <p>这一绕过也是利用Ognl在解析时的差异，针对 <code class="language-plaintext highlighter-rouge">['class']</code> 属性，是和 <code class="language-plaintext highlighter-rouge">.class</code> 一样都可以调用到<code class="language-plaintext highlighter-rouge">getClass()</code>方法，而在检测时是调用被测属性的<code class="language-plaintext highlighter-rouge">toString</code>方法，而<code class="language-plaintext highlighter-rouge">['class']</code> 相当于返回自身，故绕过了检测。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164225.png" alt="image-20220610004326852" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164225.png" alt="image-20220610004326852" /></p>
 
 <p>拿到Class对象之后，利用就好说了，利用forName就可以调用各种方法。</p>
 
@@ -723,19 +723,19 @@ queryString=%5cu0027%2b%7b233*233%7d%2b%5cu0027
 
 <p>其中大部分拦截器在处理时，又会回到<code class="language-plaintext highlighter-rouge">invocation.invoke()</code>方法，形成一个循环：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164230.png" alt="image-20220613030021374" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164230.png" alt="image-20220613030021374" /></p>
 
 <p>但是第10号拦截器 <strong>actionAccessChecker</strong> 不一样，其判断了请求的action，并默认返回 <strong>notpermitted</strong>，从而跳出了循环：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164234.png" alt="image-20220613023859251" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164234.png" alt="image-20220613023859251" /></p>
 
 <p>跳出后，走到<code class="language-plaintext highlighter-rouge">this.execteResult()</code>:</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164239.png" alt="image-20220613024215763" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164239.png" alt="image-20220613024215763" /></p>
 
 <p>之后一路跟进，进入最后的执行点<code class="language-plaintext highlighter-rouge">TextParseUtil.translateVariables(this.namespace, stack)</code>，这里对 <strong>namespace</strong> (在转发器 ServletDispatcher 对url做的提取) 进行了ognl表达式处理：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164243.png" alt="image-20220613030947118" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164243.png" alt="image-20220613030947118" /></p>
 
 <p>同样还有熟悉的<code class="language-plaintext highlighter-rouge">safeExpressionUtil.isSafeExpression(expr)</code>, confluence 在7.13.0之后改写了这个模块，引入了更加复杂的黑名单以及白名单机制：</p>
 
@@ -879,7 +879,7 @@ queryString=%5cu0027%2b%7b233*233%7d%2b%5cu0027
 
 <p>为什么会引入白名单呢？因为13之后的 <code class="language-plaintext highlighter-rouge">UNSAFE_NODE_TYPES</code> 允许了 <strong>ognl.ASTStaticMethod</strong>  类型的节点，不过把可以调用的类限制在了白名单内：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164250.png" alt="image-20220613110143920" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164250.png" alt="image-20220613110143920" /></p>
 
 <h3 id="绕过踩坑">绕过踩坑</h3>
 
@@ -892,7 +892,7 @@ queryString=%5cu0027%2b%7b233*233%7d%2b%5cu0027
 
 <p>看到我就感觉挺奇怪的，因为在CVE-2021-26084的检测中就已经把赋值语句给禁止了，并且即使调用静态方法 <strong>org.apache.commons.io.IOUtils</strong> 也不在白名单内：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164348.png" alt="image-20220613105853012" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164348.png" alt="image-20220613105853012" /></p>
 
 <p>后来才知道网上流传比较广泛的大多都是针对还没有沙箱的版本（7.4 以下），实际上在7.18版本 confluence都还没能把大写 <strong>Class</strong> 加入到 unsafePropertyNames 中，所以我们还是可以通过<code class="language-plaintext highlighter-rouge">${Class.forName()}</code>拿到Class对象：</p>
 
@@ -914,7 +914,7 @@ ${(Class.forName('jav'+'ax.script.ScriptEngineManager').newInstance().getEngineB
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>${Class.forName('com.opensymphony.webwork.ServletActionContext').getMethod('getResponse',null).invoke(null,null).setHeader('X-CMD',Class.forName('jav'+'ax.script.ScriptEngineManager').newInstance().getEngineByName('JavaScript').eval('org.apache.commons.io.IOUtils.toString(java.lang.Runtime.getRuntime().exec("whoami").getInputStream())'))}
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164355.png" alt="image-20220613165315157" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220617164355.png" alt="image-20220613165315157" /></p>
 
 <h3 id="注入内存木马">注入内存木马</h3>
 
@@ -1061,7 +1061,7 @@ o.newInstance();
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2022/codeaudit/Confluence%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90';
+    this.page.url = 'https://theoyu.top/2022/codeaudit/Confluence%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90';
     this.page.identifier = 'Confluence 漏洞分析';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

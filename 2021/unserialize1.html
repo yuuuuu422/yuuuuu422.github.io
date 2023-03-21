@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>某群一道反序列化题 - Theoyu</title>
 
 <meta name="description" content="五一忽然就要过了..感觉要学的好没学，考试也没复习，早上12点在某ctf群看到在讨论这道题，就起床做做了…">
-<link rel="canonical" href="http://localhost:4000/2021/unserialize1"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2021/unserialize1"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -639,7 +639,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>给了源码就好说，在本地测试一下。我们可以对<code class="language-plaintext highlighter-rouge">settings.inc</code>文件进行写入，那自然想到的就是写入一句话然后进行文件包含，找一下有没有原生调用函数的方法。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-04-image-20210504171255837.png" alt="image-20210504171255837" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-04-image-20210504171255837.png" alt="image-20210504171255837" /></p>
 
 <p>就在官网手册的<strong>unserialize()</strong> 处发现了这个函数，官方给出的实例是这样的</p>
 
@@ -662,7 +662,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 <p>如果要包含<code class="language-plaintext highlighter-rouge">settings.inc</code>，就得实例化这个类，但php类名是不能存在<code class="language-plaintext highlighter-rouge">.</code>这个字符的，over，翻手册，找到了
 一个<code class="language-plaintext highlighter-rouge">spl_autoload</code>函数。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-04-image-20210504235914738.png" alt="image-20210504235914738" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-04-image-20210504235914738.png" alt="image-20210504235914738" /></p>
 
 <p>这个函数支持使用<code class="language-plaintext highlighter-rouge">spl_autoload_extensions</code>拓展文件名</p>
 
@@ -689,7 +689,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>在<code class="language-plaintext highlighter-rouge">settings.inc</code>中写入<code class="language-plaintext highlighter-rouge">&lt;?php echo "hello world"?&gt;</code></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505001830321.png" alt="image-20210505001830321" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505001830321.png" alt="image-20210505001830321" /></p>
 
 <p>在实例化<strong>settings</strong>这个类时调用了回调函数，执行<code class="language-plaintext highlighter-rouge">spl_autoload('settings')</code>，成功进行文件包含，那原题思路就很清晰了。</p>
 
@@ -731,13 +731,13 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>思路是回调函数可控，调用回调函数时如果不存在就会报错，然后把函数设置为一句话即可。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505005235360.png" alt="image-20210505005235360" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505005235360.png" alt="image-20210505005235360" /></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505005919242.png" alt="image-20210505005919242" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505005919242.png" alt="image-20210505005919242" /></p>
 
 <p>看群里好像是有人为了防止<code class="language-plaintext highlighter-rouge">&lt;$</code>类似字符转义，多加了一个<code class="language-plaintext highlighter-rouge">html_errors=true</code>,结果导致被转义了…</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505010415279.png" alt="image-20210505010415279" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505010415279.png" alt="image-20210505010415279" /></p>
 
 <p>看来是这位师傅多此一举，事实上出题人确实可以用默认为转义模式，需要我们构造<code class="language-plaintext highlighter-rouge">html_errors=false</code>去反转义，也是一个思路。</p>
 </div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2021-05-02T16:24:32+08:00"><!-- start custom article footer snippet -->
@@ -786,7 +786,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2021/unserialize1';
+    this.page.url = 'https://theoyu.top/2021/unserialize1';
     this.page.identifier = '某群一道反序列化题';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

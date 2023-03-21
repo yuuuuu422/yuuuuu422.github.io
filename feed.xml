@@ -1,116 +1,51 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-01-22T01:13:30+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Theoyu</title><subtitle>Be cool,but also be warm.
-</subtitle><author><name>Theoyu</name><email>zeyu.ou@foxmail.com</email></author><entry><title type="html">2022 - DONE LIST</title><link href="http://localhost:4000/2023/About2022" rel="alternate" type="text/html" title="2022 - DONE LIST" /><published>2023-01-21T00:00:00+08:00</published><updated>2023-01-21T00:00:00+08:00</updated><id>http://localhost:4000/2023/About2022</id><content type="html" xml:base="http://localhost:4000/2023/About2022"><![CDATA[<!--more-->
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="https://theoyu.top/feed.xml" rel="self" type="application/atom+xml" /><link href="https://theoyu.top/" rel="alternate" type="text/html" /><updated>2023-03-22T00:14:44+08:00</updated><id>https://theoyu.top/feed.xml</id><title type="html">Theoyu</title><subtitle>Be cool,but also be warm.
+</subtitle><author><name>Theoyu</name><email>zeyu.ou@foxmail.com</email></author><entry><title type="html">关于 2022</title><link href="https://theoyu.top/2023/About2022" rel="alternate" type="text/html" title="关于 2022" /><published>2023-03-17T00:00:00+08:00</published><updated>2023-03-17T00:00:00+08:00</updated><id>https://theoyu.top/2023/About2022</id><content type="html" xml:base="https://theoyu.top/2023/About2022"><![CDATA[<!--more-->
 
-<ul class="task-list">
-  <li class="task-list-item">
-    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />买一辆摩托</p>
-  </li>
-  <li class="task-list-item">
-    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />换一台主机</p>
-  </li>
-  <li class="task-list-item">
-    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />买一把乐器</p>
+<h2 id="一">一</h2>
 
-    <p><img class="image image--xl" src="../../assets/images/image-20230122010008529.png" />  <img class="image image--xl" src="../../assets/images/image-20230122010040476.png" /></p>
-  </li>
-  <li class="task-list-item">
-    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />学了几首曲子</p>
+<p>我最喜欢的季节是冬天，喜欢系上围巾，把手揣在兜里的感觉，然后随着耳机的音乐点头、呼吸，雾气把眼镜朦胧了也没有关系。</p>
 
-    <ul class="task-list">
-      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />『 Whatsername 』</li>
-      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />『 Wake me up when September ends 』</li>
-      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />『 I Really Want To Stay At Your House 』</li>
-    </ul>
-  </li>
-  <li class="task-list-item">
-    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />看了一些书</p>
-    <ul class="task-list">
-      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />『 史蒂夫·乔布斯传 』</li>
-      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />『 成为:米歇尔 · 奥巴马自传 』</li>
-      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />『 This is Going to Hurt 』</li>
-    </ul>
-  </li>
-</ul>
+<p>我最讨厌夏天，无论是郴州的、徐州的、还是北京的，特别是要下雨的时候，闷热、潮湿，仿佛人都要融化了一般。我的宿舍比较节约，所以我经常跑去活动室吹空调，不过那好像已经是快两年前的事情。</p>
 
-<hr />
+<h2 id="二">二</h2>
 
-<ul class="task-list">
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />出国留学</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />找到一份工作</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />回炉重造
-    <ul class="task-list">
-      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" /><a href="https://tai-e.pascal-lab.net/">『南京大学-软件分析』</a></li>
-      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" /><a href="https://www.bilibili.com/video/BV1Vt411X7JF/?spm_id_from=333.337.search-card.all.click&amp;vd_source=e819eb50e6922faa168dcd4a543a67e0">『区块链技术与应用』</a></li>
-      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" /><a href="http://web.stanford.edu/class/cs106l/">『 CS106L 』</a></li>
-      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" /><a href="https://15445.courses.cs.cmu.edu/fall2020/">『 CMU-15445 』</a></li>
-      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" /><a href="https://cs61c.org/">『 CS61C 』</a></li>
-      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />『 MIT 6.S081 』</li>
-      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />『 ASU CSE466 』</li>
-      <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />『 MIT 6.858 』</li>
-    </ul>
-  </li>
-</ul>
+<p>我经常会看之前写的年终总结和随笔，一是它可以帮我回忆那一年大概是个什么样的光景，二是它时刻提醒着我<strong>那一年我想成为怎样的人</strong>。</p>
 
-<hr />
+<p>失败还是成功？就目前而言我并不能对此下结论。读书时期年轻气盛，大一时我想在 CTF 上有所建树；大二我想成为一名红队；大三我执着于安全研究；但最后我找到了一份 CyberSecurity Construction 的工作。我大概率无法成为我想成为的人，但是我还是在努力让自己不成为讨厌的那个人。</p>
 
-<p>GAME TIMELINE</p>
+<p>很多次我也会质疑自己的能力，质疑自己的工作，从 Destroy 到 Create 的转变需要一个过程，这一次我告诉自己我会留下，而不是选择逃避。</p>
 
-<ul class="task-list">
-  <li class="task-list-item">
-    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />APEX</p>
-  </li>
-  <li class="task-list-item">
-    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />大富翁10</p>
-  </li>
-  <li class="task-list-item">
-    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />星露谷物语</p>
+<h2 id="三">三</h2>
 
-    <p><img src="../../assets/images/image-20230122011231483.png" alt="image-20230122011231483" /></p>
-  </li>
-  <li class="task-list-item">
-    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />奥日与萤火意志</p>
-  </li>
-  <li class="task-list-item">
-    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />鹅鸭杀</p>
-  </li>
-  <li class="task-list-item">
-    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />森林</p>
+<blockquote>
+  <p>很多人习惯于把最差和最糟糕的一面留给最熟悉的人，却把宽容和耐心留给陌生人。</p>
+</blockquote>
 
-    <p><img src="../../assets/images/image-20230122011305531.png" alt="image-20230122011305531" /></p>
-  </li>
-  <li class="task-list-item">
-    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />文明6</p>
-  </li>
-  <li class="task-list-item">
-    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />怪物猎人 世界</p>
+<p>很不巧，我刚好踩到了上面这一点。不过与其说是在亲密的人面前展现了糟糕的一面，不如说是把真实的自己无防备的展露出来。在 20 年的总结上我写到：『 我是一个疲于长期维护一段感情的人 』，我比较自负，当我的观点和别人不一致时，我会下意识的否定别人。对朋友而言，我不是一个好的听众，甚至有一些刻薄。</p>
 
-    <p><img src="../../assets/images/image-20230122011326740.png" alt="image-20230122011326740" /></p>
-  </li>
-  <li class="task-list-item">
-    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />泰坦陨落2</p>
-  </li>
-  <li class="task-list-item">
-    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />全面战争 · 战锤2</p>
-  </li>
-  <li class="task-list-item">
-    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />荒野大镖客2</p>
-  </li>
-  <li class="task-list-item">
-    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />神界：原罪2</p>
-  </li>
-  <li class="task-list-item">
-    <p><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />艾尔登法环</p>
-  </li>
-</ul>
+<p>很感谢在 22 年有几位真心朋友点出了我的缺点，新的一年里我需要学会管理自己的情绪，控制表达自己的情感。</p>
 
-<hr />
+<h2 id="四">四</h2>
 
-<ul class="task-list">
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" /><strong>Know how to destroy.</strong></li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" /><strong>Learning how to create.</strong></li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" /><strong><em>everything is meaningless.</em></strong></li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" /><strong><em>but I’m full of expectation.</em></strong></li>
-</ul>]]></content><author><name>Theoyu</name></author><category term="essay" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">网络安全秋招之路</title><link href="http://localhost:4000/2022/essay/SecInterview" rel="alternate" type="text/html" title="网络安全秋招之路" /><published>2022-11-01T00:00:00+08:00</published><updated>2022-11-01T00:00:00+08:00</updated><id>http://localhost:4000/2022/essay/SecInterview</id><content type="html" xml:base="http://localhost:4000/2022/essay/SecInterview"><![CDATA[<!--more-->
+<p>从去年找到工作到现在，我基本上是一篇技术文章都没有输出，明显感到自己对研究技术的精力、甚至兴趣都消减了很多，这让我感到有一些不安。后来看到了 yds 的博客，以及和 mentor  主动 one one 之后我明白了一个道理：『<strong>顺势而为</strong>』。借用 Jobs 演讲中的一段话：</p>
+
+<blockquote>
+  <p>工作将占据你生命中很大的一部分</p>
+
+  <p>Your work is going to fill a large part of your life</p>
+
+  <p>只有相信自己所做的是伟大的工作，你才能获得快乐</p>
+
+  <p>and the only way to be truly satisfied is to do what you believe is great work</p>
+</blockquote>
+
+<p>我的工作肯定说不上伟大， 而且也确实消磨了我生活的大部分意志，但无论我如何主观的去思考它，它都不会变得有意义或者失去意义，我能做的通过自己的努力让这份工作变得有意义。顺势，才能有所作为。这是工作教会我的第一课。</p>
+
+<h2 id="五">五</h2>
+
+<p>今年的总结比较简单，本来已经没有打算写了，但想了想这是大学的最后一篇总结，还是打算补上，有一些仪式感的味道。</p>
+
+<p>最后也祝看到这里的你身体健康，万事如意。</p>]]></content><author><name>Theoyu</name></author><category term="essay" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">网络安全秋招之路</title><link href="https://theoyu.top/2022/essay/SecInterview" rel="alternate" type="text/html" title="网络安全秋招之路" /><published>2022-11-01T00:00:00+08:00</published><updated>2022-11-01T00:00:00+08:00</updated><id>https://theoyu.top/2022/essay/SecInterview</id><content type="html" xml:base="https://theoyu.top/2022/essay/SecInterview"><![CDATA[<!--more-->
 
 <div><iframe class="extensions extensions--audio" width="330" height="86" src="//music.163.com/outchain/player?type=2&amp;id=22821107&amp;auto=1&amp;height=66" frameborder="no" border="0" marginwidth="0" marginheight="0">
 </iframe>
@@ -118,7 +53,7 @@
 
 <h2 id="写在前面">写在前面</h2>
 
-<p>我最初的意向是打算出国读个硕士（主要考虑北欧和西欧），大约在8月初左右结束了暑期实习，一直到9月中旬中秋前一直都在准备留学相关工作（成绩、雅思、文书等等），比较闲还上了国外几门很优秀的公开课（具体可见前面几篇文章），最后因为一些家庭因素暂时终止了这个想法，之前的准备可以说是毫无作用了 &gt;_&lt;（仅仅针对秋招来说）。我也了解今年秋招是属于地狱难度，并且这个时间点也已经过了大多数提前批的截止日期，不过好在我自身也属于一个比较善于规划的人，于是在中秋三天里花了一天整理自己的简历，花了一天收集秋招公司信息，再花了一天海投，最后就是数不清的测评、笔试、面试，一直到十月末才差不多结束 ;-(。回顾我的秋招历程，其实并没有太多时间给我准备，基本上就是边面试边复盘总结的过程，于是有了此文。</p>
+<p>我最初的意向是打算出国读个硕士（主要考虑北欧和西欧），大约在8月初左右结束了暑期实习，一直到9月中旬中秋前一直都在准备留学相关工作（成绩、雅思、文书等等），比较闲还上了国外几门很优秀的公开课（具体可见前面几篇文章），最后因为一些家庭因素<strong>暂时</strong>终止了这个想法。我也了解今年秋招是属于地狱难度，并且这个时间点也已经过了大多数提前批的截止日期，不过好在我自身也属于一个比较善于规划的人，于是在中秋三天里花了一天整理自己的简历，花了一天收集秋招公司信息，再花了一天海投，最后就是数不清的测评、笔试、面试，一直到十月末才差不多结束 ;-(。回顾我的秋招历程，其实并没有太多时间给我准备，基本上就是边面试边复盘总结的过程，于是有了此文。</p>
 
 <p>不过所谓面试指南，经验、技巧等等，我认为都是建立在面试者已经具备了一定合格的能力的基础上，更何况信息安全本身也是一门重视实操的学科。如果面试者自身基础不扎实，哪怕问到了一些准备过的问题，面试官也很容易通过一些 <strong>follow-up</strong> 的提问问出面试者的真实水平。</p>
 
@@ -128,7 +63,7 @@
 
 <h2 id="甲方-or-乙方的选择">甲方 or 乙方的选择</h2>
 
-<p>在秋招之前我已有了两段乙方实习经验，所以个人对乙方的安全产品研发以及红队攻防也有了一定了解。最初我还是向往乙方，因为觉得乙方的工作更加纯粹，并且在某个垂直领域能有比较深入的学习，像一些实验室性质的工作受业务压力影响较少，会有很多时间研究自己感兴趣的东西。产生去甲方的想法是实习一次吃饭时，和华子哥聊到 SAST、以及漏洞挖掘相关话题，在这之前我上过一段时间南大的 <a href="https://www.bilibili.com/video/BV1b7411K7P4/?zw">程序分析课程</a> ，但我发现红队向的漏洞挖掘（直白一些就是面向 Pre-GetShell 的审计）更多的还是依靠人工的能力，我也有想过尝试自动化去辅助，但不同项目、业务的代码质量良莠不齐，基本上还是属于审完一套换一套的流水线。这时华子哥和我说如果受限于目前的工作模式，可以考虑去甲方看看。的确在甲方庞大的业务代码下，想只依靠人工直接审计的方式有些不太现实，也衍生出了 SAST、DAST、IAST 等等自动化测试技术以及 devsecops 的理念。这一些知识是在乙方环境下比较难去触碰的。</p>
+<p>在秋招之前我已有了两段乙方实习经验，所以个人对乙方的安全产品研发以及红队攻防也有了一定了解。最初我还是向往乙方，因为觉得乙方的工作更加纯粹，并且在某个垂直领域能有比较深入的学习，像一些实验室性质的工作受业务压力影响较少，会有很多时间研究自己感兴趣的东西。产生去甲方的想法是实习一次吃饭时，和华子哥聊到 SAST、以及漏洞挖掘相关话题，在这之前我上过一段时间南大的 <a href="https://www.bilibili.com/video/BV1b7411K7P4/?zw">程序分析课程</a> ，但我发现红队向的漏洞挖掘（直白一些就是面向 Pre-GetShell 的审计）更多的还是依靠人工的能力，我也有想过尝试自动化去辅助，但不同项目、业务的代码质量良莠不齐，基本上还是属于审完一套换一套的流水线。这时华子哥和我说如果受限于目前的工作模式，可以考虑去甲方看看。的确在甲方庞大的业务代码下，想只依靠人工直接审计的方式有些不太现实，也衍生出了 SAST、DAST、IAST 等等自动化测试技术以及 DevSecOps 的理念。这一些知识是在乙方环境下比较难去触碰的。</p>
 
 <p>如果是站在甲方的这一点，我们可以考虑的就有非常多了，上到互联网、金融、区块链、最近火热的新能源汽车；下到国企、银行、医疗等等。在甲方公司进行选择的话，抛开物质上的因素（薪资、工作城市等等，虽然这个很重要，不过一般是放在拿到 offer 之后再需要考虑的），我在意的点只有有一个：<strong>公司业务是否对安全有真正的诉求</strong>，换句话来说就是<strong>安全部门是否有真正的话语权</strong>。上有喜茶网络安全部门被裁，下有马斯克血洗 Twitter 网安部门，虽然在进入信息安全专业那一天起，我们系主任就嚷嚷着：『没有网络安全就没有国家安全。』但我们不得不承认：安全的确不会带来直接的利益。如果公司对安全没有强诉求，对信息安全建设的重视和投入不足，那么安全部门在公司可能只是一个背锅的存在，在这样的环境下提心吊胆的工作我认为也是一件很痛苦的事情。</p>
 
@@ -148,7 +83,7 @@
 
 <p>这里的基础我分为三样：算法基础、计算机基础、安全基础。</p>
 
-<p>算法基础是很多同学都容易忽视的一点，包括我在春招找实习时，笔试需要做算法的公司我都一律 pass (´▽｀) 后来秋招意识到不对，基本上大多数公司的笔试题都有算法，有的甚至和开发放在一起纯算法笔试，不过我还是没有进行系统的准备，大约就简单温习了 STL 一些数据结构的调用。直到中秋后的第一场面试，整体都比较顺利，快结束时面试官说我们走个流程做一道算法吧，卒，然后面试官换了一道，磕磕碰碰写了出来，但结果不对，我说能不能让我在 Clion 上调试一下，面试官看了看时间让我说思路就行，卒 &gt;_&lt; 。之后便找了开发的同学，推荐了 <a href="https://programmercarl.com/">代码随想录</a>，大约花了一周，每天 10 小时左右爆刷，因为时间实在是不够，争取做一道就总结一道，前前后后大概做了 100 出头，少部分见下图（贪心和动态规划以及后面刷的一些题目没有纳入其中）：</p>
+<p>算法基础是很多同学都容易忽视的一点，包括我在春招找实习时，笔试需要做算法的公司我都一律 pass (´▽｀) 后来秋招意识到不对，基本上大多数公司的笔试题都有算法，有的甚至和开发放在一起纯算法笔试，不过我还是没有进行系统的准备，大约就简单温习了 STL 一些数据结构的调用。直到中秋后的第一场面试，整体都比较顺利，快结束时面试官说我们走个流程做一道算法吧，卒，然后面试官换了一道，磕磕碰碰写了出来，但结果不对，我说能不能让我在 Clion 上调试一下，面试官看了看时间让我说思路就行，卒 。之后便找了开发的同学，推荐了 <a href="https://programmercarl.com/">代码随想录</a>，大约花了一周，每天 10 小时左右爆刷，因为时间实在是不够，争取做一道就总结一道，前前后后大概做了 100 出头，少部分见下图（贪心和动态规划以及后面刷的一些题目没有纳入其中）：</p>
 
 <p><img src="../../assets/images/image-20221108173126777.png" alt="image-20221108173126777" /></p>
 
@@ -208,7 +143,7 @@ WAF如何检测sql注入、RASP如何检测、了解AST吗？
 
 <p>也要感谢在寒冬下没有放弃的自己。</p>
 
-<p>开启一段新的征途吧。</p>]]></content><author><name>Theoyu</name></author><category term="essay" /><category term="essay" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">『 CS61C 』 Labs</title><link href="http://localhost:4000/2022/cource/cs61c_labs" rel="alternate" type="text/html" title="『 CS61C 』 Labs" /><published>2022-09-10T00:00:00+08:00</published><updated>2022-09-10T00:00:00+08:00</updated><id>http://localhost:4000/2022/cource/cs61c_labs</id><content type="html" xml:base="http://localhost:4000/2022/cource/cs61c_labs"><![CDATA[<!--more-->
+<p>开启一段新的征途吧。</p>]]></content><author><name>Theoyu</name></author><category term="essay" /><category term="essay" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">『 CS61C 』 Labs</title><link href="https://theoyu.top/2022/cource/cs61c_labs" rel="alternate" type="text/html" title="『 CS61C 』 Labs" /><published>2022-09-10T00:00:00+08:00</published><updated>2022-09-10T00:00:00+08:00</updated><id>https://theoyu.top/2022/cource/cs61c_labs</id><content type="html" xml:base="https://theoyu.top/2022/cource/cs61c_labs"><![CDATA[<!--more-->
 
 <h2 id="lab-1-c--cgdb">Lab 1: C &amp; CGDB</h2>
 
@@ -527,7 +462,7 @@ node_1-&gt;next=NULL;
 
 <h2 id="lab-9-thread-level-parallelism">Lab 9: Thread-Level Parallelism</h2>
 
-<h2 id="lab-10-virtual-memory">Lab 10: Virtual Memory</h2>]]></content><author><name>Theoyu</name></author><category term="cource" /><category term="cource" /><category term="CS61C" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">『 CS61C 』Project 2 Classify</title><link href="http://localhost:4000/2022/cource/cs61c_project2" rel="alternate" type="text/html" title="『 CS61C 』Project 2 Classify" /><published>2022-09-05T00:00:00+08:00</published><updated>2022-09-05T00:00:00+08:00</updated><id>http://localhost:4000/2022/cource/cs61c_project2</id><content type="html" xml:base="http://localhost:4000/2022/cource/cs61c_project2"><![CDATA[<!--more-->
+<h2 id="lab-10-virtual-memory">Lab 10: Virtual Memory</h2>]]></content><author><name>Theoyu</name></author><category term="cource" /><category term="cource" /><category term="CS61C" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">『 CS61C 』Project 2 Classify</title><link href="https://theoyu.top/2022/cource/cs61c_project2" rel="alternate" type="text/html" title="『 CS61C 』Project 2 Classify" /><published>2022-09-05T00:00:00+08:00</published><updated>2022-09-05T00:00:00+08:00</updated><id>https://theoyu.top/2022/cource/cs61c_project2</id><content type="html" xml:base="https://theoyu.top/2022/cource/cs61c_project2"><![CDATA[<!--more-->
 
 <h2 id="part-a">Part A</h2>
 
@@ -848,8 +783,8 @@ node_1-&gt;next=NULL;
 <span class="mf">.</span><span class="n">text</span>
 <span class="c1"># ==============================================================================</span>
 <span class="c1"># FUNCTION: Allocates memory and reads in a binary file as a matrix of integers</span>
-<span class="c1">#</span>
-<span class="c1"># FILE FORMAT:</span>
+<span class="c1">#
+# FILE FORMAT:</span>
 <span class="c1">#   The first 8 bytes are two 4 byte ints representing the # of rows and columns</span>
 <span class="c1">#   in the matrix. Every 4 bytes afterwards is an element of the matrix in</span>
 <span class="c1">#   row-major order.</span>
@@ -1051,7 +986,7 @@ node_1-&gt;next=NULL;
 <span class="n">fwrite_error</span><span class="o">:</span>
 	<span class="n">li</span> <span class="n">a0</span><span class="p">,</span> <span class="mi">30</span>
 	<span class="n">j</span> <span class="k">exit</span>
-</code></pre></div></div>]]></content><author><name>Theoyu</name></author><category term="cource" /><category term="cource" /><category term="CS61C" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">『 CMU-15445 』课程小结</title><link href="http://localhost:4000/2022/cource/15445_notes" rel="alternate" type="text/html" title="『 CMU-15445 』课程小结" /><published>2022-08-30T00:00:00+08:00</published><updated>2022-08-30T00:00:00+08:00</updated><id>http://localhost:4000/2022/cource/15445_notes</id><content type="html" xml:base="http://localhost:4000/2022/cource/15445_notes"><![CDATA[<!--more-->
+</code></pre></div></div>]]></content><author><name>Theoyu</name></author><category term="cource" /><category term="cource" /><category term="CS61C" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">『 CMU-15445 』课程小结</title><link href="https://theoyu.top/2022/cource/15445_notes" rel="alternate" type="text/html" title="『 CMU-15445 』课程小结" /><published>2022-08-30T00:00:00+08:00</published><updated>2022-08-30T00:00:00+08:00</updated><id>https://theoyu.top/2022/cource/15445_notes</id><content type="html" xml:base="https://theoyu.top/2022/cource/15445_notes"><![CDATA[<!--more-->
 
 <p>我的学习顺序，快速过一遍 Notes，了解一下这一节的大纲和重点，之后根据自己的能力选择是看视频还是直接看 slides（并发控制之前的章节难度还 ok ），学习完一章后，尝试用自己的话把一章的重点梳理一遍，最后选择性阅读帆船书。</p>
 
@@ -1632,9 +1567,9 @@ node_1-&gt;next=NULL;
 
 <blockquote>
   <p>后续一部分关于分布式数据库的知识，打算有时间结合 6.824 一起学习。</p>
-</blockquote>]]></content><author><name>Theoyu</name></author><category term="cource" /><category term="cource" /><category term="CMU-15445" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">『 CMU-15445 』Project 4 并发控制</title><link href="http://localhost:4000/2022/cource/15445_proj4" rel="alternate" type="text/html" title="『 CMU-15445 』Project 4 并发控制" /><published>2022-08-26T00:00:00+08:00</published><updated>2022-08-26T00:00:00+08:00</updated><id>http://localhost:4000/2022/cource/15445_proj4</id><content type="html" xml:base="http://localhost:4000/2022/cource/15445_proj4"><![CDATA[<!--more-->
+</blockquote>]]></content><author><name>Theoyu</name></author><category term="cource" /><category term="cource" /><category term="CMU-15445" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">『 CMU-15445 』Project 4 并发控制</title><link href="https://theoyu.top/2022/cource/15445_proj4" rel="alternate" type="text/html" title="『 CMU-15445 』Project 4 并发控制" /><published>2022-08-26T00:00:00+08:00</published><updated>2022-08-26T00:00:00+08:00</updated><id>https://theoyu.top/2022/cource/15445_proj4</id><content type="html" xml:base="https://theoyu.top/2022/cource/15445_proj4"><![CDATA[<!--more-->
 
-<p>这一部分主要是涉及到数据库并发控制，这是一个很大并且很有意思的领域，光是课程上的理论知识就足够消化很长一段时间。包括后面还有一些分布式数据库的知识，因为时间关系先暂时搁置，以后有机会再结合 6.824 一起学习。</p>]]></content><author><name>Theoyu</name></author><category term="cource" /><category term="cource" /><category term="CMU-15445" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">『 CMU-15445 』Project 3 Query Execution</title><link href="http://localhost:4000/2022/cource/15445_proj3" rel="alternate" type="text/html" title="『 CMU-15445 』Project 3 Query Execution" /><published>2022-08-25T00:00:00+08:00</published><updated>2022-08-25T00:00:00+08:00</updated><id>http://localhost:4000/2022/cource/15445_proj3</id><content type="html" xml:base="http://localhost:4000/2022/cource/15445_proj3"><![CDATA[<!--more-->
+<p>这一部分主要是涉及到数据库并发控制，这是一个很大并且很有意思的领域，光是课程上的理论知识就足够消化很长一段时间。包括后面还有一些分布式数据库的知识，因为时间关系先暂时搁置，以后有机会再结合 6.824 一起学习。</p>]]></content><author><name>Theoyu</name></author><category term="cource" /><category term="cource" /><category term="CMU-15445" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">『 CMU-15445 』Project 3 Query Execution</title><link href="https://theoyu.top/2022/cource/15445_proj3" rel="alternate" type="text/html" title="『 CMU-15445 』Project 3 Query Execution" /><published>2022-08-25T00:00:00+08:00</published><updated>2022-08-25T00:00:00+08:00</updated><id>https://theoyu.top/2022/cource/15445_proj3</id><content type="html" xml:base="https://theoyu.top/2022/cource/15445_proj3"><![CDATA[<!--more-->
 
 <h2 id="前言">前言</h2>
 
@@ -1790,7 +1725,7 @@ src/include/storage/page/tmp_tuple_page.h
 
 <p><img src="../../assets/images/image-20220828085926610.png" alt="image-20220828085926610" /></p>
 
-<p><img src="../../assets/images/image-20220828090016838.png" alt="image-20220828090016838" /></p>]]></content><author><name>Theoyu</name></author><category term="cource" /><category term="cource" /><category term="CMU-15445" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">『 CMU-15445 』Project 2 哈希索引</title><link href="http://localhost:4000/2022/cource/15445_proj2" rel="alternate" type="text/html" title="『 CMU-15445 』Project 2 哈希索引" /><published>2022-08-15T00:00:00+08:00</published><updated>2022-08-15T00:00:00+08:00</updated><id>http://localhost:4000/2022/cource/15445_proj2</id><content type="html" xml:base="http://localhost:4000/2022/cource/15445_proj2"><![CDATA[<!--more-->
+<p><img src="../../assets/images/image-20220828090016838.png" alt="image-20220828090016838" /></p>]]></content><author><name>Theoyu</name></author><category term="cource" /><category term="cource" /><category term="CMU-15445" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">『 CMU-15445 』Project 2 哈希索引</title><link href="https://theoyu.top/2022/cource/15445_proj2" rel="alternate" type="text/html" title="『 CMU-15445 』Project 2 哈希索引" /><published>2022-08-15T00:00:00+08:00</published><updated>2022-08-15T00:00:00+08:00</updated><id>https://theoyu.top/2022/cource/15445_proj2</id><content type="html" xml:base="https://theoyu.top/2022/cource/15445_proj2"><![CDATA[<!--more-->
 
 <h2 id="前言">前言</h2>
 
@@ -1979,7 +1914,7 @@ MappingType array_[1];
 
 <p><img src="../../assets/images/image-20220816163255496.png" alt="image-20220816163255496" /></p>
 
-<p>排名感觉还不错，另外前 20 名时间都在 1s 内，估计是把 test 给 bypass 了，面向测试用例编程  💤。</p>]]></content><author><name>Theoyu</name></author><category term="cource" /><category term="cource" /><category term="CMU-15445" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">『 CMU-15445 』Project 1 缓冲池管理器</title><link href="http://localhost:4000/2022/cource/15445_proj1" rel="alternate" type="text/html" title="『 CMU-15445 』Project 1 缓冲池管理器" /><published>2022-08-05T00:00:00+08:00</published><updated>2022-08-05T00:00:00+08:00</updated><id>http://localhost:4000/2022/cource/15445_proj1</id><content type="html" xml:base="http://localhost:4000/2022/cource/15445_proj1"><![CDATA[<!--more-->
+<p>排名感觉还不错，另外前 20 名时间都在 1s 内，估计是把 test 给 bypass 了，面向测试用例编程  💤。</p>]]></content><author><name>Theoyu</name></author><category term="cource" /><category term="cource" /><category term="CMU-15445" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">『 CMU-15445 』Project 1 缓冲池管理器</title><link href="https://theoyu.top/2022/cource/15445_proj1" rel="alternate" type="text/html" title="『 CMU-15445 』Project 1 缓冲池管理器" /><published>2022-08-05T00:00:00+08:00</published><updated>2022-08-05T00:00:00+08:00</updated><id>https://theoyu.top/2022/cource/15445_proj1</id><content type="html" xml:base="https://theoyu.top/2022/cource/15445_proj1"><![CDATA[<!--more-->
 
 <p>总完成时长  11小时。</p>
 
@@ -2097,7 +2032,7 @@ MappingType array_[1];
 
 <h2 id="最后">最后：</h2>
 
-<p><img src="../../assets/images/image-20220725234228930.png" alt="image-20220725234228930" /></p>]]></content><author><name>Theoyu</name></author><category term="cource" /><category term="cource" /><category term="CMU-15445" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">『 CS106L 』课程笔记</title><link href="http://localhost:4000/2022/cource/cs106l" rel="alternate" type="text/html" title="『 CS106L 』课程笔记" /><published>2022-07-30T00:00:00+08:00</published><updated>2022-07-30T00:00:00+08:00</updated><id>http://localhost:4000/2022/cource/cs106l</id><content type="html" xml:base="http://localhost:4000/2022/cource/cs106l"><![CDATA[<!--more-->
+<p><img src="../../assets/images/image-20220725234228930.png" alt="image-20220725234228930" /></p>]]></content><author><name>Theoyu</name></author><category term="cource" /><category term="cource" /><category term="CMU-15445" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">『 CS106L 』课程笔记</title><link href="https://theoyu.top/2022/cource/cs106l" rel="alternate" type="text/html" title="『 CS106L 』课程笔记" /><published>2022-07-30T00:00:00+08:00</published><updated>2022-07-30T00:00:00+08:00</updated><id>https://theoyu.top/2022/cource/cs106l</id><content type="html" xml:base="https://theoyu.top/2022/cource/cs106l"><![CDATA[<!--more-->
 
 <p>在这门课之前，我对 c++ 了解多少呢？</p>
 

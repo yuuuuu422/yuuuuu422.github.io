@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>When Mysql read your file - Theoyu</title>
 
 <meta name="description" content="这并不是一个新鲜的漏洞，准确的来说是炒冷饭，不过刚好学了计网，就来分析一下吧，顺便用go来重写一个简易蜜罐。">
-<link rel="canonical" href="http://localhost:4000/2021/mysql-read-file"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2021/mysql-read-file"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -599,7 +599,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
             </li></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2021-08-08T01:20:20+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
 <!-- end custom article top snippet -->
-<div class="article__content" itemprop="articleBody"><p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/08/20210808211512.png" alt="" /></p>
+<div class="article__content" itemprop="articleBody"><p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/08/20210808211512.png" alt="" /></p>
 
 <p>这并不是一个新鲜的漏洞，准确的来说是炒冷饭，不过刚好学了计网，就来分析一下吧，顺便用go来重写一个简易蜜罐。</p>
 
@@ -607,7 +607,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>我们先看一看mysql客户端连接的这个过程，进行了怎样的通讯。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/08/20210808200246.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/08/20210808200246.png" alt="" /></p>
 
 <p>我们无需在意tcp的连接过程，所以直接过滤mysql协议即可。总的来说这里经历了5个过程。</p>
 
@@ -642,7 +642,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>这个包本身没有什么好说的，但是我们重点看第五个字节：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/08/20210808200307.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/08/20210808200307.png" alt="" /></p>
 
 <p>这个flag为<strong>Can Use LOAD DATE LOCAL</strong>,value为1的话，表示允许客户端读取本地文件，关于这个我们后面再讨论。</p>
 
@@ -655,7 +655,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>这样来看好像还没有走到漏洞点，现在通过<code class="language-plaintext highlighter-rouge">load data local</code>来看一看这个过程：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/08/20210808200321.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/08/20210808200321.png" alt="" /></p>
 
 <p>第一个包<strong>Request Query</strong>：<code class="language-plaintext highlighter-rouge">load data local infile "/etc/passwd" into table test;</code>也就是客户端发起的请求，意味把自己的<code class="language-plaintext highlighter-rouge">/etc/passwd</code>读取到test表中，而客户端是否有这个权限也就在于之前说的<strong>Can Use LOAD DATE LOCAL</strong>是否为1，其中<strong>windows和Linux</strong>默认为1，<strong>mac</strong>默认为0。</p>
 
@@ -668,7 +668,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>第三个包是客户端返回的文件信息：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/08/20210808200334.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/08/20210808200334.png" alt="" /></p>
 
 <p>其中前4个字节是我们不需要的，前三个为数据长度，第四个为序列号。</p>
 
@@ -746,7 +746,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2021/mysql-read-file';
+    this.page.url = 'https://theoyu.top/2021/mysql-read-file';
     this.page.identifier = 'When Mysql read your file';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

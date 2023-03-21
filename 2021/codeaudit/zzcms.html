@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>zzcms code Audit - Theoyu</title>
 
 <meta name="description" content="准备工作虽然事先准备审这个cms,但是找源码还是花了不少时间，官网只有最新的版本，这里如果大家想要复现就直接下载这里的就好了。为了模拟真实环境，我们在phpstudy上配置一下站点,并修改hosts文件即可开始动手啦。">
-<link rel="canonical" href="http://localhost:4000/2021/codeaudit/zzcms"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2021/codeaudit/zzcms"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -615,21 +615,21 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>进入界面,就有一个很明显的搜索框,我们尝试<code class="language-plaintext highlighter-rouge">1' or 1=1 #</code></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520195446877.png" alt="image-20210520195446877" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520195446877.png" alt="image-20210520195446877" /></p>
 
 <p>发现单引号被转义，<code class="language-plaintext highlighter-rouge">search.php</code>包含了<code class="language-plaintext highlighter-rouge">/inc/conn.php</code>,而后者又包含了<code class="language-plaintext highlighter-rouge">inc/stopsqlin.php</code>，对应代码:</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520200128259.png" alt="image-20210520200128259" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520200128259.png" alt="image-20210520200128259" /></p>
 
 <p>可以看到这里会对我们<code class="language-plaintext highlighter-rouge">POST</code>,<code class="language-plaintext highlighter-rouge">GET</code>以及<code class="language-plaintext highlighter-rouge">COOKIE</code>中的数据进行转义,那如果想要继续进行下去我们要么就是找到没有包含 <code class="language-plaintext highlighter-rouge">/inc/conn.php</code>的组件，要么就是找到拼接sql语句的地方。</p>
 
 <p><code class="language-plaintext highlighter-rouge">user/check.php</code>是对我们身份进行验证的文件，如果cookie设置有<code class="language-plaintext highlighter-rouge">username</code>和<code class="language-plaintext highlighter-rouge">password</code>，就会执行一次sql查询,并且该文件奇幻的是没有包含上面说的过滤文件，还自己写了一个过滤函数，还只对<code class="language-plaintext highlighter-rouge">username</code>进行过滤,那么我们尝试一下password处。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520201929542.png" alt="image-20210520201929542" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520201929542.png" alt="image-20210520201929542" /></p>
 
 <p>不过这个路由设有对验证码的识别，而<code class="language-plaintext highlighter-rouge">user/index.php</code>包含了该函数,那我们可以直接在<code class="language-plaintext highlighter-rouge">index.php</code>测试。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520203435308.png" alt="image-20210520203435308" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520203435308.png" alt="image-20210520203435308" /></p>
 
 <p>那么这里也理所当然可以通过盲注拿数据,不过我在本地搭建的环境比较慢，平均延迟在4秒左右，就没有跑了，师傅们见谅。</p>
 
@@ -639,7 +639,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>在<code class="language-plaintext highlighter-rouge">user/adv.php</code>处，</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520205041873.png" alt="image-20210520205041873" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520205041873.png" alt="image-20210520205041873" /></p>
 
 <p>不得不说这种对<code class="language-plaintext highlighter-rouge">$_REQUEST</code>没有限制的代码真的很恐怖,逻辑其实很简单只要<code class="language-plaintext highlighter-rouge">$action</code>等于<strong>modify</strong>和<code class="language-plaintext highlighter-rouge">$img</code>不等于<code class="language-plaintext highlighter-rouge">$oldimg</code>即可，并且这里没有对<code class="language-plaintext highlighter-rouge">$oldimg</code>过滤导致我们可以直接把<code class="language-plaintext highlighter-rouge">../../admin/admin.php</code>删除。</p>
 
@@ -647,9 +647,9 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>在Install目录下，step1.php会首先判断是否存在install.lock文件，但是在step2.php及之后的文件都没有对其进行判断,并且step可控。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520205732410.png" alt="image-20210520205732410" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520205732410.png" alt="image-20210520205732410" /></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520210143862.png" alt="image-20210520210143862" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520210143862.png" alt="image-20210520210143862" /></p>
 
 <h2 id="0x04-任意密码修改">0x04 任意密码修改</h2>
 
@@ -671,19 +671,19 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p><code class="language-plaintext highlighter-rouge">$_SESSION['username']</code>有一个被我们赋值的过程，那我们只需先在step1中输入需要修改的username获取session，就可直接跳到step3修改密码。步骤如下：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520221904775.png" alt="image-20210520221904775" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520221904775.png" alt="image-20210520221904775" /></p>
 
 <p>然后直接修改密码,把action改为step3即可。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520222027782.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520222027782.png" alt="" /></p>
 
 <h2 id="0x05-反射型xss">0x05 反射型xss</h2>
 
 <p>在<code class="language-plaintext highlighter-rouge">inc/top.php</code>处没有包含<code class="language-plaintext highlighter-rouge">inc/conn.php</code>，我们只需要将标签闭合即可实现反射型xss。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520210717678.png" alt="image-20210520210717678" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520210717678.png" alt="image-20210520210717678" /></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520212245204.png" alt="image-20210520212245204" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520212245204.png" alt="image-20210520212245204" /></p>
 
 <p>事实上<code class="language-plaintext highlighter-rouge">admin</code>用户的后台管理基本上没有什么过滤，存在很多存储型xss,但归于业务原因, 拿到admin权限也就不在乎这个级别漏洞了,感兴趣的师傅可以自行复现。</p>
 
@@ -715,11 +715,11 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>首先判断是否存在文件,再判断文件大小，然后判断文件类型,这里用<strong>GIF89a</strong>可以绕过，最后是一个黑名单的后缀验证,我们使用phtml即可绕过。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520214742983.png" alt="image-20210520214742983" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520214742983.png" alt="image-20210520214742983" /></p>
 
 <p>需要注意的是，<code class="language-plaintext highlighter-rouge">phtml</code>需要管理员在apche配置中设置,不然会直接把源码打印没有解析,并且我在测试的过程中发现php7即使设置了解析,访问<code class="language-plaintext highlighter-rouge">.phtml</code>文件的效果是直接下载文件,而php5版本可以成功。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520220014941.png" alt="image-20210520220014941" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520220014941.png" alt="image-20210520220014941" /></p>
 
 <h2 id="总结">总结</h2>
 
@@ -773,7 +773,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2021/codeaudit/zzcms';
+    this.page.url = 'https://theoyu.top/2021/codeaudit/zzcms';
     this.page.identifier = 'zzcms code Audit';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>浅谈php序列化与反序列化 - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="http://localhost:4000/2020/%E5%BA%8F%E5%88%97%E5%8C%96"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2020/%E5%BA%8F%E5%88%97%E5%8C%96"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -939,7 +939,7 @@ __get()
         <span class="k">public</span> <span class="nv">$file</span> <span class="o">=</span><span class="s1">'index.php'</span><span class="p">;</span>
         <span class="k">function</span> <span class="n">__destruct</span><span class="p">()</span>
         <span class="p">{</span>
-            <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nb">empty</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">file</span><span class="p">))</span>
+            <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="k">empty</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">file</span><span class="p">))</span>
             <span class="p">{</span>
                 <span class="k">if</span><span class="p">(</span><span class="nb">strchr</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">file</span><span class="p">,</span><span class="s2">"</span><span class="se">\\</span><span class="s2">"</span><span class="p">)</span><span class="o">===</span><span class="kc">false</span> <span class="o">&amp;&amp;</span> <span class="nb">strchr</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">file</span><span class="p">,</span><span class="s1">'/'</span><span class="p">)</span><span class="o">===</span><span class="kc">false</span><span class="p">)</span>
                 <span class="p">{</span>
@@ -1136,7 +1136,7 @@ __get()
   <p>PHP 在反序列化时，底层代码是以 <code class="language-plaintext highlighter-rouge">;</code> 作为字段的分隔，以 <code class="language-plaintext highlighter-rouge">}</code> 作为结尾(字符串除外)，并且是根据长度判断内容。</p>
 </blockquote>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-526902876.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-526902876.png" alt="" /></p>
 
 <p>可以看到<code class="language-plaintext highlighter-rouge">}</code>以外的部分并没有反序列化。</p>
 
@@ -1160,7 +1160,7 @@ __get()
 </code></pre></div></div>
 <p>在这个例子中，<code class="language-plaintext highlighter-rouge">filter</code>会把字符串中的t替换为两个w
 我们看看输出：
-<img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-2412547197.png" alt="" />
+<img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-2412547197.png" alt="" />
 可以看到filter后，我们的username变成了<code class="language-plaintext highlighter-rouge">wwheoyu</code>，为7个字符，但filter是在序列化后，所以其6个字节的长度并没有更改，也就导致了反序列失败。</p>
 
 <p>这里我们假设一点，username是一个我们可以控制输入的变量，<code class="language-plaintext highlighter-rouge">$age=20</code>是一个不可更改的量，那我们就可以利用上面的filter函数来篡改age。</p>
@@ -1169,7 +1169,7 @@ __get()
 
 <p>我们已经知道了一点，filter函数的存在，username内每一个<code class="language-plaintext highlighter-rouge">t</code>将被替换为<code class="language-plaintext highlighter-rouge">ww</code>，就会导致长度+1,如果我们想构造username=<code class="language-plaintext highlighter-rouge">xxxx";i:1;i:18;}</code>,就需要把长度增加12位，那么我只需要构造username=<code class="language-plaintext highlighter-rouge">tttttttttttt";i:1;i:18;}</code>即可。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-1602856666.png" alt="" />
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-1602856666.png" alt="" />
 如果后面我们需要添加的内容不是前面每次增加字符的整数倍，可以在<code class="language-plaintext highlighter-rouge">}</code>外面随便加一些内容使长度为前面的倍数。</p>
 
 <h4 id="函数使字符变少">函数使字符变少</h4>
@@ -1191,7 +1191,7 @@ __get()
 <span class="nb">var_dump</span><span class="p">(</span><span class="nb">unserialize</span><span class="p">(</span><span class="nf">filter</span><span class="p">(</span><span class="nv">$s</span><span class="p">)));</span>
 <span class="cp">?&gt;</span>
 </code></pre></div></div>
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-2167858145.png" alt="" />
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-2167858145.png" alt="" />
 字符减少的情况一般不止一个可修改的变量，这里我们加入<code class="language-plaintext highlighter-rouge">$love</code>变量，为什么要加入呢？与之前字符增加不一样，这里字符减少，只会把我们后面的一个变量的内容吞并，所以我要做的就是在username处构造适当的<code class="language-plaintext highlighter-rouge">tt</code>，把<code class="language-plaintext highlighter-rouge">$love</code>的关于长度部分给吞并掉，然后在<code class="language-plaintext highlighter-rouge">love</code>部分构造<code class="language-plaintext highlighter-rouge">;i:1;s:4:"game";i:2;i:18;}</code>把前面被吞掉的部分补上，后面再伪造虚拟的<code class="language-plaintext highlighter-rouge">$age</code>,即可篡改。</p>
 
 <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
@@ -1213,9 +1213,9 @@ __get()
 
 <span class="cp">?&gt;</span>
 </code></pre></div></div>
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-3288670259.png" alt="" />
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-3288670259.png" alt="" />
 我们数一下被应该被吞的部分 ，就是<code class="language-plaintext highlighter-rouge">";i:1;s:26:</code>,一共是11个字符，那么我们构造22个<code class="language-plaintext highlighter-rouge">t</code>即可。
-<img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-510433908.png" alt="" /></p>
+<img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-510433908.png" alt="" /></p>
 
 <h2 id="参考">参考</h2>
 
@@ -1269,7 +1269,7 @@ __get()
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2020/%E5%BA%8F%E5%88%97%E5%8C%96';
+    this.page.url = 'https://theoyu.top/2020/%E5%BA%8F%E5%88%97%E5%8C%96';
     this.page.identifier = '浅谈php序列化与反序列化';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

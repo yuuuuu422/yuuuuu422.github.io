@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>利用 phar 拓展 php 反序列化漏洞攻击面 - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="http://localhost:4000/2021/phar"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2021/phar"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -620,12 +620,12 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 <h3 id="a-manifest">a manifest</h3>
 <p>phar文件本质上是一种压缩文件，其中每个被压缩文件的权限、属性等信息都放在这部分。这部分还会以序列化的形式存储用户自定义的meta-data，也是反序列化中我们可以利用的部分。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-307317592.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-307317592.png" alt="" /></p>
 
 <h3 id="file-contents">file contents</h3>
 <p>被压缩文件的内容。</p>
 <h3 id="a-signature">a signature</h3>
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-3050303077.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-3050303077.png" alt="" /></p>
 <h2 id="demo">demo</h2>
 <p>通过一个简单案例创建phar文件，记住要把<code class="language-plaintext highlighter-rouge">php.ini</code>中的<strong>phar.readonly</strong>设置为<strong>Off</strong>。</p>
 <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
@@ -642,7 +642,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 </code></pre></div></div>
 <p>可以看到meta-data是以序列化的形式存储的：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-390463059.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-390463059.png" alt="" /></p>
 
 <p>有序列化数据必然会有反序列化操作，php一大部分的文件系统函数在通过<code class="language-plaintext highlighter-rouge">phar://</code>伪协议解析phar文件时，都会将meta-data进行反序列化，测试后受影响的函数如下：</p>
 
@@ -726,7 +726,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
     <span class="nv">$phar</span><span class="o">-&gt;</span><span class="nf">stopBuffering</span><span class="p">();</span>
 <span class="cp">?&gt;</span>
 </code></pre></div></div>
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-3155836478.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-3155836478.png" alt="" /></p>
 
 <p>即使把phar后缀修改，也不会影响利用。</p>
 <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
@@ -768,14 +768,14 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 <span class="k">include</span> <span class="s1">'class.php'</span><span class="p">;</span> 
 <span class="nb">ini_set</span><span class="p">(</span><span class="s1">'open_basedir'</span><span class="p">,</span><span class="s1">'/var/www/html/'</span><span class="p">);</span> 
 <span class="nv">$file</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s2">"file"</span><span class="p">]</span> <span class="o">?</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'file'</span><span class="p">]</span> <span class="o">:</span> <span class="s2">""</span><span class="p">;</span> 
-<span class="k">if</span><span class="p">(</span><span class="nb">empty</span><span class="p">(</span><span class="nv">$file</span><span class="p">))</span> <span class="p">{</span> 
+<span class="k">if</span><span class="p">(</span><span class="k">empty</span><span class="p">(</span><span class="nv">$file</span><span class="p">))</span> <span class="p">{</span> 
     <span class="k">echo</span> <span class="s2">"&lt;h2&gt;There is no file to show!&lt;h2/&gt;"</span><span class="p">;</span> 
 <span class="p">}</span> 
 <span class="nv">$show</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Show</span><span class="p">();</span> 
 <span class="k">if</span><span class="p">(</span><span class="nb">file_exists</span><span class="p">(</span><span class="nv">$file</span><span class="p">))</span> <span class="p">{</span> 
     <span class="nv">$show</span><span class="o">-&gt;</span><span class="n">source</span> <span class="o">=</span> <span class="nv">$file</span><span class="p">;</span> 
     <span class="nv">$show</span><span class="o">-&gt;</span><span class="nf">_show</span><span class="p">();</span> 
-<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">empty</span><span class="p">(</span><span class="nv">$file</span><span class="p">)){</span> 
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">empty</span><span class="p">(</span><span class="nv">$file</span><span class="p">)){</span> 
     <span class="k">die</span><span class="p">(</span><span class="s1">'file doesn\'t exists.'</span><span class="p">);</span> 
 <span class="p">}</span> 
 <span class="cp">?&gt;</span> 
@@ -868,19 +868,19 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 </ol>
 
 <p>跟进第一处发现有所过滤
-<img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-10780885.png" alt="" /></p>
+<img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-10780885.png" alt="" /></p>
 
 <p><code class="language-plaintext highlighter-rouge">f1ag</code>被ban，无法读取，看另外一处。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-2480299101.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-2480299101.png" alt="" /></p>
 
 <p>在<code class="language-plaintext highlighter-rouge">get()</code>函数下发现有调用<code class="language-plaintext highlighter-rouge">file_get()</code>,<code class="language-plaintext highlighter-rouge">__get()</code>调用了<code class="language-plaintext highlighter-rouge">get()</code>，现在需要找到调用不可访问对象的地方。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-2434843641.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-2434843641.png" alt="" /></p>
 
 <p>只要把Test实例化的对象存储在str的数组中，然后再去调用source属性（即Test中不存在的属性），就可以触发<code class="language-plaintext highlighter-rouge">__get()</code>了。现在找一找把对象当作字符串处理的地方。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-1513267936.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-16-1513267936.png" alt="" /></p>
 
 <p>不出意外的找到了，整个利用链也十分清晰。</p>
 <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
@@ -976,7 +976,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2021/phar';
+    this.page.url = 'https://theoyu.top/2021/phar';
     this.page.identifier = '利用 phar 拓展 php 反序列化漏洞攻击面';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>浅谈Java预编译 - Theoyu</title>
 
 <meta name="description" content="之前面试问到了预编译相关的问题，感觉回答的不是很好，通过几个例子深入学习一下。">
-<link rel="canonical" href="http://localhost:4000/2022/Java-Prepstatementared"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2022/Java-Prepstatementared"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -628,15 +628,15 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>其对应的Java代码为：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428130250.png" alt="image-20220428005016462" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428130250.png" alt="image-20220428005016462" /></p>
 
 <p>我们通过Wireshark可以发现的确是在服务端进行了处理：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428130252.png" alt="image-20220428005148389" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428130252.png" alt="image-20220428005148389" /></p>
 
 <p>那如果我们传入的username带一个单引号，预编译会怎么处理呢？</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428130253.png" alt="image-20220428005407244" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428130253.png" alt="image-20220428005407244" /></p>
 
 <p>可以看到mysql服务端对我们传入的字段进行了转义，规避了单引号的闭合。不过说到底预编译的本身目的还是为了性能和效率，我认为其预防SQL注入只是处理时加上的一个特性而已（埋一个坑，有机会去看看Mysql源码）。</p>
 
@@ -644,15 +644,15 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>在<code class="language-plaintext highlighter-rouge">connnect</code>连接时，不设置<strong>useServerPrepStmts</strong>（默认为false），则采用的是驱动包（<strong>mysql-connector-java</strong>）内的处理。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428130256.png" alt="image-20220428093236263" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428130256.png" alt="image-20220428093236263" /></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428130300.png" alt="image-20220428094239596" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428130300.png" alt="image-20220428094239596" /></p>
 
 <p>上图可以看到我们传入的<code class="language-plaintext highlighter-rouge">admin'</code>被处理为了<code class="language-plaintext highlighter-rouge">'admin'''</code>，最外层的单引号是本身会加上的，不过预处理把我们额外添加的单引号后又追加了一个单引号，规避了其闭合。同时注意一点wireshark抓包可见在服务端并没有 <strong>Prepare</strong>的处理。</p>
 
 <p>我们在  <code class="language-plaintext highlighter-rouge">preparedStatement.setString(1,username);</code>处打下断点，定位到<code class="language-plaintext highlighter-rouge">ClientPreparedQueryBindings.setString</code>:</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428130302.png" alt="image-20220428130231581" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428130302.png" alt="image-20220428130231581" /></p>
 
 <p>逻辑其实很简单，先是对检查传入的字符串室友存在<strong>Escaped</strong>字符，如果存在则根据具体情况处理，最后再往前后添加单引号。其实简单来看也相当于是一个消毒处理。</p>
 
@@ -670,11 +670,11 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 39 39 32 79 82 32 49 61 49 32 35 
 </code></pre>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428130305.png" alt="image-20220427214109417" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428130305.png" alt="image-20220427214109417" /></p>
 
 <p>监控的执行情况：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428130310.png" alt="image-20220427214524712" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428130310.png" alt="image-20220427214524712" /></p>
 
 <p>发现数据库的确是执行了注入语句，打印了所有users信息。</p>
 
@@ -754,17 +754,17 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p><code class="language-plaintext highlighter-rouge">prepare stmt from 'select * from ? where username = ?';</code></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428193632.png" alt="image-20220428135058981" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428193632.png" alt="image-20220428135058981" /></p>
 
 <p>发现报错了，其实很好理解，<strong>表名和列名是不能够被预编译的</strong>，因为生成语法树的过程中，预处理器在进一步检查解析后的语法树时，<strong>检查数据表和数据列是否存在</strong>，如果这两个值是占位符<code class="language-plaintext highlighter-rouge">	?</code>所代替，自然会报错。</p>
 
 <p>从驱动包的角度，之前所说java预编译会在占位符前后自动添加两个单引号，那么如果我们执行以下的语句：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428193629.png" alt="image-20220428135913397" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428193629.png" alt="image-20220428135913397" /></p>
 
 <p>实际上执行的语句为：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428193627.png" alt="image-20220428140036366" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220428193627.png" alt="image-20220428140036366" /></p>
 
 <p>Mysql表名不允许使用单引号，所以会报语法错误。</p>
 
@@ -819,7 +819,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2022/Java-Prepstatementared';
+    this.page.url = 'https://theoyu.top/2022/Java-Prepstatementared';
     this.page.identifier = '浅谈Java预编译';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>网络安全秋招之路 - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="http://localhost:4000/2022/essay/SecInterview"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2022/essay/SecInterview"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -610,7 +610,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <h2 id="写在前面">写在前面</h2>
 
-<p>我最初的意向是打算出国读个硕士（主要考虑北欧和西欧），大约在8月初左右结束了暑期实习，一直到9月中旬中秋前一直都在准备留学相关工作（成绩、雅思、文书等等），比较闲还上了国外几门很优秀的公开课（具体可见前面几篇文章），最后因为一些家庭因素暂时终止了这个想法，之前的准备可以说是毫无作用了 &gt;_&lt;（仅仅针对秋招来说）。我也了解今年秋招是属于地狱难度，并且这个时间点也已经过了大多数提前批的截止日期，不过好在我自身也属于一个比较善于规划的人，于是在中秋三天里花了一天整理自己的简历，花了一天收集秋招公司信息，再花了一天海投，最后就是数不清的测评、笔试、面试，一直到十月末才差不多结束 ;-(。回顾我的秋招历程，其实并没有太多时间给我准备，基本上就是边面试边复盘总结的过程，于是有了此文。</p>
+<p>我最初的意向是打算出国读个硕士（主要考虑北欧和西欧），大约在8月初左右结束了暑期实习，一直到9月中旬中秋前一直都在准备留学相关工作（成绩、雅思、文书等等），比较闲还上了国外几门很优秀的公开课（具体可见前面几篇文章），最后因为一些家庭因素<strong>暂时</strong>终止了这个想法。我也了解今年秋招是属于地狱难度，并且这个时间点也已经过了大多数提前批的截止日期，不过好在我自身也属于一个比较善于规划的人，于是在中秋三天里花了一天整理自己的简历，花了一天收集秋招公司信息，再花了一天海投，最后就是数不清的测评、笔试、面试，一直到十月末才差不多结束 ;-(。回顾我的秋招历程，其实并没有太多时间给我准备，基本上就是边面试边复盘总结的过程，于是有了此文。</p>
 
 <p>不过所谓面试指南，经验、技巧等等，我认为都是建立在面试者已经具备了一定合格的能力的基础上，更何况信息安全本身也是一门重视实操的学科。如果面试者自身基础不扎实，哪怕问到了一些准备过的问题，面试官也很容易通过一些 <strong>follow-up</strong> 的提问问出面试者的真实水平。</p>
 
@@ -620,7 +620,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <h2 id="甲方-or-乙方的选择">甲方 or 乙方的选择</h2>
 
-<p>在秋招之前我已有了两段乙方实习经验，所以个人对乙方的安全产品研发以及红队攻防也有了一定了解。最初我还是向往乙方，因为觉得乙方的工作更加纯粹，并且在某个垂直领域能有比较深入的学习，像一些实验室性质的工作受业务压力影响较少，会有很多时间研究自己感兴趣的东西。产生去甲方的想法是实习一次吃饭时，和华子哥聊到 SAST、以及漏洞挖掘相关话题，在这之前我上过一段时间南大的 <a href="https://www.bilibili.com/video/BV1b7411K7P4/?zw">程序分析课程</a> ，但我发现红队向的漏洞挖掘（直白一些就是面向 Pre-GetShell 的审计）更多的还是依靠人工的能力，我也有想过尝试自动化去辅助，但不同项目、业务的代码质量良莠不齐，基本上还是属于审完一套换一套的流水线。这时华子哥和我说如果受限于目前的工作模式，可以考虑去甲方看看。的确在甲方庞大的业务代码下，想只依靠人工直接审计的方式有些不太现实，也衍生出了 SAST、DAST、IAST 等等自动化测试技术以及 devsecops 的理念。这一些知识是在乙方环境下比较难去触碰的。</p>
+<p>在秋招之前我已有了两段乙方实习经验，所以个人对乙方的安全产品研发以及红队攻防也有了一定了解。最初我还是向往乙方，因为觉得乙方的工作更加纯粹，并且在某个垂直领域能有比较深入的学习，像一些实验室性质的工作受业务压力影响较少，会有很多时间研究自己感兴趣的东西。产生去甲方的想法是实习一次吃饭时，和华子哥聊到 SAST、以及漏洞挖掘相关话题，在这之前我上过一段时间南大的 <a href="https://www.bilibili.com/video/BV1b7411K7P4/?zw">程序分析课程</a> ，但我发现红队向的漏洞挖掘（直白一些就是面向 Pre-GetShell 的审计）更多的还是依靠人工的能力，我也有想过尝试自动化去辅助，但不同项目、业务的代码质量良莠不齐，基本上还是属于审完一套换一套的流水线。这时华子哥和我说如果受限于目前的工作模式，可以考虑去甲方看看。的确在甲方庞大的业务代码下，想只依靠人工直接审计的方式有些不太现实，也衍生出了 SAST、DAST、IAST 等等自动化测试技术以及 DevSecOps 的理念。这一些知识是在乙方环境下比较难去触碰的。</p>
 
 <p>如果是站在甲方的这一点，我们可以考虑的就有非常多了，上到互联网、金融、区块链、最近火热的新能源汽车；下到国企、银行、医疗等等。在甲方公司进行选择的话，抛开物质上的因素（薪资、工作城市等等，虽然这个很重要，不过一般是放在拿到 offer 之后再需要考虑的），我在意的点只有有一个：<strong>公司业务是否对安全有真正的诉求</strong>，换句话来说就是<strong>安全部门是否有真正的话语权</strong>。上有喜茶网络安全部门被裁，下有马斯克血洗 Twitter 网安部门，虽然在进入信息安全专业那一天起，我们系主任就嚷嚷着：『没有网络安全就没有国家安全。』但我们不得不承认：安全的确不会带来直接的利益。如果公司对安全没有强诉求，对信息安全建设的重视和投入不足，那么安全部门在公司可能只是一个背锅的存在，在这样的环境下提心吊胆的工作我认为也是一件很痛苦的事情。</p>
 
@@ -640,7 +640,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>这里的基础我分为三样：算法基础、计算机基础、安全基础。</p>
 
-<p>算法基础是很多同学都容易忽视的一点，包括我在春招找实习时，笔试需要做算法的公司我都一律 pass (´▽｀) 后来秋招意识到不对，基本上大多数公司的笔试题都有算法，有的甚至和开发放在一起纯算法笔试，不过我还是没有进行系统的准备，大约就简单温习了 STL 一些数据结构的调用。直到中秋后的第一场面试，整体都比较顺利，快结束时面试官说我们走个流程做一道算法吧，卒，然后面试官换了一道，磕磕碰碰写了出来，但结果不对，我说能不能让我在 Clion 上调试一下，面试官看了看时间让我说思路就行，卒 &gt;_&lt; 。之后便找了开发的同学，推荐了 <a href="https://programmercarl.com/">代码随想录</a>，大约花了一周，每天 10 小时左右爆刷，因为时间实在是不够，争取做一道就总结一道，前前后后大概做了 100 出头，少部分见下图（贪心和动态规划以及后面刷的一些题目没有纳入其中）：</p>
+<p>算法基础是很多同学都容易忽视的一点，包括我在春招找实习时，笔试需要做算法的公司我都一律 pass (´▽｀) 后来秋招意识到不对，基本上大多数公司的笔试题都有算法，有的甚至和开发放在一起纯算法笔试，不过我还是没有进行系统的准备，大约就简单温习了 STL 一些数据结构的调用。直到中秋后的第一场面试，整体都比较顺利，快结束时面试官说我们走个流程做一道算法吧，卒，然后面试官换了一道，磕磕碰碰写了出来，但结果不对，我说能不能让我在 Clion 上调试一下，面试官看了看时间让我说思路就行，卒 。之后便找了开发的同学，推荐了 <a href="https://programmercarl.com/">代码随想录</a>，大约花了一周，每天 10 小时左右爆刷，因为时间实在是不够，争取做一道就总结一道，前前后后大概做了 100 出头，少部分见下图（贪心和动态规划以及后面刷的一些题目没有纳入其中）：</p>
 
 <p><img src="../../assets/images/image-20221108173126777.png" alt="image-20221108173126777" /></p>
 
@@ -712,7 +712,7 @@ WAF如何检测sql注入、RASP如何检测、了解AST吗？
       </a>
     </p>
   </div></div></footer>
-<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/2022/cource/cs61c_labs">『 CS61C 』 Labs</a></div><div class="next"><span>NEXT</span><a href="/2023/About2022">2022 - DONE LIST</a></div></div></div>
+<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/2022/cource/cs61c_labs">『 CS61C 』 Labs</a></div><div class="next"><span>NEXT</span><a href="/2023/About2022">关于 2022</a></div></div></div>
 
 </div>
 
@@ -747,7 +747,7 @@ WAF如何检测sql注入、RASP如何检测、了解AST吗？
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2022/essay/SecInterview';
+    this.page.url = 'https://theoyu.top/2022/essay/SecInterview';
     this.page.identifier = '网络安全秋招之路';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

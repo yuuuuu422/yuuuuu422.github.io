@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>漫谈解释器 - Theoyu</title>
 
 <meta name="description" content="前言开个新坑，本来是打算学学编译器的，但是发现基础太薄弱了，就先学习解释器相关吧，刚好大创也需要这一块的知识。">
-<link rel="canonical" href="http://localhost:4000/2021/talk-about-interpreter"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2021/talk-about-interpreter"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -599,7 +599,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
             </li></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2021-09-19T22:24:32+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
 <!-- end custom article top snippet -->
-<div class="article__content" itemprop="articleBody"><p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/09/20210901224626.png" alt="image-20210901150504552" /></p>
+<div class="article__content" itemprop="articleBody"><p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/09/20210901224626.png" alt="image-20210901150504552" /></p>
 
 <h2 id="前言">前言</h2>
 
@@ -630,7 +630,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>java从源代码编译为字节码，然后在JVM上运行字节码执行，JVM是一种字节码的解释器，JVM的实现包括一个运行时的编译器，称为JIT(just-in-time)编译器，其最大的优势在于<strong>可以在运行时进行及时优化</strong>。更多关于JIT的知识可参考<a href="https://aboullaite.me/understanding-jit-compiler-just-in-time-compiler/">这篇文章</a>.</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/09/20210901224636.png" alt="image-20210901173603017" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/09/20210901224636.png" alt="image-20210901173603017" /></p>
 
 <p>在知乎看到一个很有意思的提问：</p>
 
@@ -652,7 +652,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <h2 id="编译器构成">编译器构成</h2>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/09/20210902230041.png" alt="image-20210902230038132" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/09/20210902230041.png" alt="image-20210902230038132" /></p>
 
 <p>现在国内外大多教材(虽然我都没看过)在编译器这一块是头重脚轻的，比重前端»后端&gt;优化器，虽然对于编译器这样非常不合理，不过站在学习静态分析的方向，更多的关注点还是放在前端，当然优化部分也不可忽视，比如这个值得反复揣摩的<a href="https://www.zhihu.com/question/27730062/answer/44638989">问答</a>。</p>
 
@@ -727,7 +727,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 		<span class="p">}</span>
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/09/20210921114712.png" alt="image-20210921114710885" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/09/20210921114712.png" alt="image-20210921114710885" /></p>
 
 <h4 id="语法分析器">语法分析器</h4>
 
@@ -787,7 +787,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>如果想把简单的let语句化为一颗AST,差不多是下面这样：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/09/20210921165139.png" alt="image-20210921165137173" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/09/20210921165139.png" alt="image-20210921165137173" /></p>
 
 <p>那<code class="language-plaintext highlighter-rouge">LetStatement</code>的雏形差不多有了：</p>
 
@@ -805,13 +805,13 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>比如对于<code class="language-plaintext highlighter-rouge">let x =5</code>, 可以得到</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/09/20210921170351.png" alt="image-20210921170349884" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/09/20210921170351.png" alt="image-20210921170349884" /></p>
 
 <p>上面的例子的expression只是5，但比如<code class="language-plaintext highlighter-rouge">let x = 3+2*5</code>这种的表达式更为复杂，书中用到的方法叫<strong>Top Down Operator Precedence</strong>,或者<strong>Pratt Parsin</strong>。这里就不过多阐述，详细可参考<a href="https://tdop.github.io/">原文章</a>.</p>
 
 <p>这样对于复杂表达式，我们也能解析：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/09/20210921171859.png" alt="image-20210921171857411" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/09/20210921171859.png" alt="image-20210921171857411" /></p>
 
 <h3 id="优化器">优化器</h3>
 
@@ -865,7 +865,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2021/talk-about-interpreter';
+    this.page.url = 'https://theoyu.top/2021/talk-about-interpreter';
     this.page.identifier = '漫谈解释器';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

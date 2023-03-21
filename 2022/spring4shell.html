@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>CVE-2022-22965 SpringFramework 漏洞分析 - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="http://localhost:4000/2022/spring4shell"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2022/spring4shell"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -611,7 +611,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>这个洞爆发的第二天，在拿到exp并复现成功后，其实心里是想着趁热度发一下文章的，但完完整整跟进完这个漏洞后，我发现我也只是停留在 <em>复现</em> 的层面上，这也让我思考一个问题，<strong>写一篇漏洞分析的文章，需要具备怎样的素养？</strong></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220408134504.png" alt="image-20220407174417845" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220408134504.png" alt="image-20220407174417845" /></p>
 
 <p>虽然作为初学者，所谓漏洞分析大多都是站在前人的肩膀上，不过还是希望可以写出一些自己的东西，踩的坑也好一些无关痛痒的理解也罢。希望读完这篇文章，你可以基本上解答以下几个问题：</p>
 
@@ -639,7 +639,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>在idea中就支持自动根据属性填充<code class="language-plaintext highlighter-rouge">setter&amp;getter</code>，实现一个简单的JavaBean。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220420125751.png" alt="image-20220420115200100" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220420125751.png" alt="image-20220420115200100" /></p>
 
 <p>如果你之前对SpringMVC没有任何了解的话，建议手动搭建一下相关<a href="https://theoyu.top/2022/04/06/springMVC01.html#%E9%80%9A%E8%BF%87%E5%AE%9E%E4%BD%93-bean-%E6%8E%A5%E6%94%B6%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0">环境</a>，在这个控制器里我们就通过JavaBean接收请求参数：</p>
 
@@ -652,7 +652,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>发送以下请求：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421175428.png" alt="image-20220420104726972" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421175428.png" alt="image-20220420104726972" /></p>
 
 <p>可以看到SpringMVC自动把GET传入的参数注入到了bean对象中。</p>
 
@@ -693,19 +693,19 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421175434.png" alt="image-20220420130721427" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421175434.png" alt="image-20220420130721427" /></p>
 
 <p>在输出的结果中，后两者是我们预想范围内的，但是这个class属性是怎么来的呢？</p>
 
 <p>原因在于在Java中，所有类都会继承于<code class="language-plaintext highlighter-rouge">Object</code>类，而在<code class="language-plaintext highlighter-rouge">Object</code>中又存在<code class="language-plaintext highlighter-rouge">getClass()</code>方法，由于内省机制就会认为存在一个class属性。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421175437.png" alt="image-20220420131236499" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421175437.png" alt="image-20220420131236499" /></p>
 
 <p>可以拿到class属性，不过好在class属性并没有<code class="language-plaintext highlighter-rouge">WriteMethod</code>，即没有set方法去设置其值，所以这也不算是一个严峻的问题。</p>
 
 <p>走到这，我们有必要走进SpringMVC数据绑定的步骤，在上述的参数绑定过程，主要发生在下图的第五步中。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220412155730.png" alt="image-20220410141300306" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220412155730.png" alt="image-20220410141300306" /></p>
 
 <p>我们不一一展开调用链，挑几个关键类、方法分析：</p>
 
@@ -715,7 +715,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>JavaBean的核心处理抽象类，包含set、get等处理逻辑实现以及 <strong>嵌套属性</strong> 的处理。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421175441.png" alt="image-20220421160055832" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421175441.png" alt="image-20220421160055832" /></p>
 
 <p>从这个方法所引申的几个方法主要是解决了递归调用的问题，比如如果我在java中想调用<code class="language-plaintext highlighter-rouge">user.getInfo().getAge()</code>，那么传入的参数就为<code class="language-plaintext highlighter-rouge">user.info.age</code>，在解析流程中会对<code class="language-plaintext highlighter-rouge">.</code>进行了分割识别，并递归返回调用对象。</p>
 
@@ -731,7 +731,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p><code class="language-plaintext highlighter-rouge">BeanWrapper</code>接口的实现类和抽象类<code class="language-plaintext highlighter-rouge">AbstractNestablePropertyAccessor</code>的子类，其对JavaBean进行了封装，其<code class="language-plaintext highlighter-rouge">setValue</code>方法通过反射完成了最终的属性注入。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421175444.png" alt="image-20220421161153787" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421175444.png" alt="image-20220421161153787" /></p>
 
 <p>总结以上三点，目前我们得知的内容为：</p>
 
@@ -747,7 +747,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>在<code class="language-plaintext highlighter-rouge">CachedIntrospectionResults</code>的构造方法中，有一个很明显的黑名单：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421175450.png" alt="image-20220421163405170" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421175450.png" alt="image-20220421163405170" /></p>
 
 <p>相当于如果调用<code class="language-plaintext highlighter-rouge">class.classLoader</code>则会被直接拦截。</p>
 
@@ -953,7 +953,7 @@ class.classLoader.resources.context.parent.pipeline.first.suffix=.jsp
 
 <p>实际上除了Array类型，Map、Set类型也同样可以直接赋值：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220422190501.png" alt="image-20220421182917229" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220422190501.png" alt="image-20220421182917229" /></p>
 
 <p>我认为这应该只是对特定类型的一种补充，但有不少文章都把这个特性纳入到了最后的属性注入上去，这是我不太能理解的点，因为目前来看我们利用的属性还没有需要用到这个特性的。</p>
 
@@ -961,11 +961,11 @@ class.classLoader.resources.context.parent.pipeline.first.suffix=.jsp
 
 <p>下图为tomcat war包启动，获取到的classLoader：WebappClassLoader</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421175457.png" alt="image-20220421110653486" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421175457.png" alt="image-20220421110653486" /></p>
 
 <p>下图为单应用（springboot jar）启动，获取到的classLoader：JDK自带的AppClassLoader</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421175459.png" alt="image-20220421110809107" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421175459.png" alt="image-20220421110809107" /></p>
 
 <p>两者的差别在于获取到classLoader的后利用上，WebappClassLoader采用了类隔离机制(之前RASP这块踩了好多坑)，拥有更多的属性，所以只是在拓展面上有所差异，不过我们目前所已知的利用方法都是在WebappClassLoader上。</p>
 
@@ -989,20 +989,20 @@ class.module.classLoader.DefaultAssertionStatus=x
 
 <p>这样我们可以通过发两次包，从两次的返回状态码进行判断。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421231217.png" alt="image-20220421225051339" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421231217.png" alt="image-20220421225051339" /></p>
 
 <ol>
   <li><code class="language-plaintext highlighter-rouge">class.module.classLoader.resources.context.configFile</code></li>
 </ol>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421231222.png" alt="image-20220421225545352" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421231222.png" alt="image-20220421225545352" /></p>
 
 <p>位于<code class="language-plaintext highlighter-rouge">org.apache.catalina.core.StandardContext</code>的<code class="language-plaintext highlighter-rouge">configFile</code>属性为URL类型， 默认为file协议，访问缓存在本地的xml文件，可修改为http协议达到反连检测的目的。</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://localhost:8080/login5?username=theoyu&amp;class.module.classLoader.resources.context.configFile=http://127.0.0.1:20022&amp;class.module.classLoader.resources.context.configFile.content.config=config.conf
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421231225.png" alt="image-20220421231211477" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421231225.png" alt="image-20220421231211477" /></p>
 
 <p>以上两种方法均已添加至 <a href="https://github.com/yuuuuu422/Gopo">Gopo</a>的YAML规则。</p>
 
@@ -1012,11 +1012,11 @@ class.module.classLoader.DefaultAssertionStatus=x
 
 <p>Spring官方做了两点限制，一是把黑名单改为了白名单：要求<code class="language-plaintext highlighter-rouge">pd.getName</code>必须是以『Name』结尾，而是返回的类型不能为<code class="language-plaintext highlighter-rouge">classLoader</code>类型。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421234356.png" alt="image-20220421191637423" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421234356.png" alt="image-20220421191637423" /></p>
 
 <p>Tomcat则直接把获取resources的方法给改成了<code class="language-plaintext highlighter-rouge">return null</code>。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421234400.png" alt="image-20220421190048440" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220421234400.png" alt="image-20220421190048440" /></p>
 
 <p>如果还想进一步绕过的话，可以通过 … 如果我知道的话 …</p>
 
@@ -1079,7 +1079,7 @@ class.module.classLoader.DefaultAssertionStatus=x
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2022/spring4shell';
+    this.page.url = 'https://theoyu.top/2022/spring4shell';
     this.page.identifier = 'CVE-2022-22965';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

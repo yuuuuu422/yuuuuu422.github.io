@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>水文 - JAVA CC链 - Theoyu</title>
 
 <meta name="description" content="流水账式文章，打开将浪费你的时间，我甚至都忘了为什么当初会画很长的一段时间去复现和记录，只是感觉大家都在学，我不学就会落后，很焦虑。但是无脑跟着别人复现这么多条链对自己到底有没有收获呢？Maybe，但是性价比极低，究其根本还是自己想用行动上的勤奋掩盖思想上的懒惰，希望自己加以反思，做正确的事比正确的做事更重要。">
-<link rel="canonical" href="http://localhost:4000/2021/java/CommonsCollections"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2021/java/CommonsCollections"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -724,13 +724,13 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p><strong>org.apache.commons.collections.functors.InvokerTransformer</strong>-&gt;<code class="language-plaintext highlighter-rouge">transfrom(Object input)</code></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122084854.png" alt="image-20211122084854543" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122084854.png" alt="image-20211122084854543" /></p>
 
 <p>上面的构造函数，即一一对应我们传入的<strong>methodName</strong>,<strong>paramTypes</strong>以及<strong>args</strong>，重点在下面的<code class="language-plaintext highlighter-rouge">transform</code>，非常典型的反射调用。</p>
 
 <p>ok sink我们找着了，但这样只能自己打自己，模拟一下客户端服务端模式试一试</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122090423.png" alt="image-20211122090423755" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122090423.png" alt="image-20211122090423755" /></p>
 
 <p>理想的情况下，服务端应该什么也不需要准备，但是由于sink并不是在readobject的时候触发，而是转化为特定的对象，重新执行，并且还需要传入一个恶意的对象作为参数，这就需要服务端<strong>主动配合</strong>我们的payload，满足其上下文要求。越想越离谱，接下来就需要逐一构造chain，来<strong>简化服务端利用的需求</strong></p>
 
@@ -742,7 +742,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>这里我们找到了一个很重要的类-&gt;<strong>ChainedTransformer</strong></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122091751.png" alt="image-20211122091751490" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122091751.png" alt="image-20211122091751490" /></p>
 
 <p>它可以把我们的Transformer构造成一条链，并逐一执行链中对象的transform方法，并且注意每次transform传入的参数，都是上一个对象transform的返回值。</p>
 
@@ -750,7 +750,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>答案就是<strong>ConstantTransformer</strong>，顾名思义其transfrom方法就是直接返回一个对象</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122092900.png" alt="image-20211122092900033" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122092900.png" alt="image-20211122092900033" /></p>
 
 <p>本地写一个看看</p>
 
@@ -770,19 +770,19 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>模拟客户端服务端试试</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122093447.png" alt="image-20211122093447018" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122093447.png" alt="image-20211122093447018" /></p>
 
 <p>报错了，因为构造链的时候，Runtime类根本没有继承Serializable，写入和读取都会失败</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122094143.png" alt="image-20211122094143647" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122094143.png" alt="image-20211122094143647" /></p>
 
 <p>换个思路，因为sink的触发是一个反射调用，反射第一步就是找到Class对象，这里我们传入的<code class="language-plaintext highlighter-rouge">Runtime.getRuntime()</code>在transfrom方法里也会调用<code class="language-plaintext highlighter-rouge">getClass()</code>方法去找到<strong>java.lang.Runtime</strong>的Class对象</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122084854.png" alt="image-20211122084854543" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122084854.png" alt="image-20211122084854543" /></p>
 
 <p>因为Class类是继承于Serializable，那我们直接传入一个<strong>Runtime.class</strong>试试</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122170250.png" alt="image-20211122170250409" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122170250.png" alt="image-20211122170250409" /></p>
 
 <p>报错了，但是报错理由很奇怪: <strong>java.lang.Class</strong>这个类找不到<strong>exec</strong>方法，问题是我们传入的不是<strong>java.lang.Runtime</strong>的Class对象吗，为什么会找到奇奇怪怪的地方去。</p>
 
@@ -797,7 +797,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>getClass是native方法，用c或者c++实现，并不能直接看到源码，需要在openjdk的jre中查看。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122173747.png" alt="image-20211122173747654" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122173747.png" alt="image-20211122173747654" /></p>
 
 <p>这里直接引用大佬的原话</p>
 
@@ -829,7 +829,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 <span class="o">};</span>
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122182000.png" alt="image-20211122182000656" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122182000.png" alt="image-20211122182000656" /></p>
 
 <p>现在好了一些，至少对于服务端而言，他是察觉不到Runtime类的存在了，不过这里我们还可以把利用更加简化一些。</p>
 
@@ -864,9 +864,9 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>可以看到如果我们可以控制TransformedMap中的transformValue成员对象，就可以调用这个对象的transform方法，TransformedMap的构造方法是protected修饰，不过其提供了静态方法<code class="language-plaintext highlighter-rouge">decorate()</code>可以用来创建。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/01/20220127112614.png" alt="image-20220127112614446" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/01/20220127112614.png" alt="image-20220127112614446" /></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122195148.png" alt="image-20211122195148749" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122195148.png" alt="image-20211122195148749" /></p>
 
 <p>这样我们就可以把触发条件从显性的调用<strong>转换链的transform函数</strong>延伸到<strong>修改map的值</strong>。很明显后者是一个常规操作，极有可能被触发。</p>
 
@@ -965,13 +965,13 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 +----------------+               +------------------+
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/01/20220127144033.png" alt="image-20220127144033596" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/01/20220127144033.png" alt="image-20220127144033596" /></p>
 
 <h3 id="寻找-kick-off-">寻找『 kick-off 』</h3>
 
 <p>其实走到这，触发已经比较容易了，在jdk1.7中就存在一个完美的readobject复写点的类<code class="language-plaintext highlighter-rouge">sun.reflect.annotation.AnnotationInvocationHandler</code></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122200418.png" alt="image-20211122200418634" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211122200418.png" alt="image-20211122200418634" /></p>
 
 <p>虽然一眼就看到了<code class="language-plaintext highlighter-rouge">setValue</code>，这里的利用也有些复杂，不过调试一遍还算明了。</p>
 
@@ -985,11 +985,11 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 <span class="o">...</span>
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/01/20220127153345.png" alt="image-20220127153345945" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/01/20220127153345.png" alt="image-20220127153345945" /></p>
 
 <p>这里var2通过反射和注解，获取到了一个实例，其memberTypes-&gt;<strong>var3</strong>中包含一个键名为<code class="language-plaintext highlighter-rouge">value</code>的HashMap，注意到这都是我们不可控的范围，也就是说这里的<strong>var3</strong>的值是确定的。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/01/20220127153851.png" alt="image-20220127153851741" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/01/20220127153851.png" alt="image-20220127153851741" /></p>
 
 <p>接下里你肯定不会陌生，这里的<strong>memberValues</strong>正是我们传入的TransformedMap，而紧随其后<code class="language-plaintext highlighter-rouge">entrySet().iterator()</code>正是返回了EntrySetIterator ，var5调用了<code class="language-plaintext highlighter-rouge">next()</code>方法也就得到了我们事先定义的键值对。</p>
 
@@ -1030,7 +1030,7 @@ var6: fakevalue
 
 <p>在Java 8u71之后，<code class="language-plaintext highlighter-rouge">sun.reflect.annotation.AnnotationInvocationHandler</code>的readobject发生了变动</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/01/20220125184650.png" alt="image-20220125184650286" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/01/20220125184650.png" alt="image-20220125184650286" /></p>
 
 <p>可以看到这里不再针对我们想要赋值的map进行操作，而是重新创建了一个<strong>LinkedHashMap</strong>操作，那也就达不到触发sink的目的了。</p>
 
@@ -1339,11 +1339,11 @@ var6: fakevalue
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/01/20220129120346.png" alt="image-20220129120346854" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/01/20220129120346.png" alt="image-20220129120346854" /></p>
 
 <p>结果居然报错了，<code class="language-plaintext highlighter-rouge">writeObject()</code>了一个非可序列化对象，可是我们构造的hashmap应该没有问题，跟进一下：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/01/20220129120943.png" alt="image-20220129120943867" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/01/20220129120943.png" alt="image-20220129120943867" /></p>
 
 <p>答案就在本地命令执行之后，我们<strong>hashmap</strong>的<strong>key</strong>-&gt;<strong>tiedMapEntry</strong>的<strong>value</strong>从<strong>LazyMap</strong>变成了<strong>java.lang.UNIXProcess</strong>类型，从我们熟悉的<strong>ProcessPipe</strong>也可以看出来这的确和命令执行有关。</p>
 
@@ -1390,7 +1390,7 @@ var6: fakevalue
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220221113532.png" alt="image-20220221113532506" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220221113532.png" alt="image-20220221113532506" /></p>
 
 <p>虽然我们初始化hashmap只有一个元素<code class="language-plaintext highlighter-rouge">hashmap.put("123","456");</code>但是Entry的大小却是16，我们需要迭代来找到初始化的那一个键值对进行修改。</p>
 
@@ -2219,7 +2219,7 @@ var6: fakevalue
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2021/java/CommonsCollections';
+    this.page.url = 'https://theoyu.top/2021/java/CommonsCollections';
     this.page.identifier = 'CommonsCollections';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

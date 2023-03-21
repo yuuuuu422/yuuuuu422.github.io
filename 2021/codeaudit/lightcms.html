@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>lightcms 1.3.7rce - Theoyu</title>
 
 <meta name="description" content="lightCMS是一个轻量级的CMS系统，基于Laravel 6.x开发，前端框架基于layui。">
-<link rel="canonical" href="http://localhost:4000/2021/codeaudit/lightcms"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2021/codeaudit/lightcms"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -609,23 +609,23 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>在后台<code class="language-plaintext highlighter-rouge">/admin/entity/2/contents/create</code>处，我们可以上传图片。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616174448320.png" alt="image-20210616174448320" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616174448320.png" alt="image-20210616174448320" /></p>
 
 <p>通过js的event，我们可以看到与php的绑定。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616174924679.png" alt="image-20210616174924679" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616174924679.png" alt="image-20210616174924679" /></p>
 
 <p>看一下源码：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616183345964.png" alt="image-20210616183345964" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616183345964.png" alt="image-20210616183345964" /></p>
 
 <p>跟进<code class="language-plaintext highlighter-rouge">isValidImage</code>：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616183519683.png" alt="image-20210616183519683" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616183519683.png" alt="image-20210616183519683" /></p>
 
 <p><code class="language-plaintext highlighter-rouge">config</code>配置在<code class="language-plaintext highlighter-rouge">/config/light.php</code>下：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616191616366.png" alt="image-20210616191616366" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616191616366.png" alt="image-20210616191616366" /></p>
 
 <p>同时，代码在<code class="language-plaintext highlighter-rouge">Intervention\Image\Facades\Image</code>还对图片进行了一次解析，不过这次比较松散，只要<strong>GIF89a</strong>文件头就可以绕过。</p>
 
@@ -633,7 +633,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>与文件上传同处，可以发现一处<code class="language-plaintext highlighter-rouge">catchImage</code>:</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616192655410.png" alt="image-20210616192655410" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616192655410.png" alt="image-20210616192655410" /></p>
 
 <p>该函数可以通过post请求，下载外部图片于本地。在下载前，有一处<code class="language-plaintext highlighter-rouge">fetchImageFile</code>对文件进行检测，我们跟进观察：</p>
 
@@ -641,15 +641,15 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 file=http://127.0.0.1/theoyu.txt
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616193421841.png" alt="image-20210616193421841" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616193421841.png" alt="image-20210616193421841" /></p>
 
 <p>可以看到这里开启了<code class="language-plaintext highlighter-rouge">curl</code>对我们的文件进行了请求，最后对我们<code class="language-plaintext highlighter-rouge">$data</code>内容进行一次判断，不为<strong>Webp</strong>格式的话则进入<code class="language-plaintext highlighter-rouge">Image::make</code>，不断调试，最后我们将顺利走到<code class="language-plaintext highlighter-rouge">init()</code>处:</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616195743275.png" alt="image-20210616195743275" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616195743275.png" alt="image-20210616195743275" /></p>
 
 <p>我们重点关注<code class="language-plaintext highlighter-rouge">isUrl()</code>处，因为可以发现<code class="language-plaintext highlighter-rouge">initFromUrl</code>中：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616195929712.png" alt="image-20210616195929712" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616195929712.png" alt="image-20210616195929712" /></p>
 
 <p>会触发file_get_contents进行解析，而该函数可以完美触发phar,接下来看看对<code class="language-plaintext highlighter-rouge">isUrl()</code>的处理。</p>
 
@@ -728,14 +728,14 @@ file=http://127.0.0.1/theoyu.txt
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616201629961.png" alt="image-20210616201629961" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616201629961.png" alt="image-20210616201629961" /></p>
 
 <p>拿到文件地址，需下载的文件我就直接写在本地了：</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>phar://./upload/image/202106/3nEb7QNkMnVrxyKtlkrBHMyTSH9slDSL7Nl9hRbL.gif
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616201744680.png" alt="image-20210616201744680" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-16-image-20210616201744680.png" alt="image-20210616201744680" /></p>
 
 <p>参考：</p>
 
@@ -786,7 +786,7 @@ file=http://127.0.0.1/theoyu.txt
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2021/codeaudit/lightcms';
+    this.page.url = 'https://theoyu.top/2021/codeaudit/lightcms';
     this.page.identifier = 'lightcms 1.3.7rce';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

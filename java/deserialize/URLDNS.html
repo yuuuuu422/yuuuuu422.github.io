@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>URLDNS - Theoyu</title>
 
 <meta name="description" content="前言URLDNS利用链不依赖任何第三方库，同时对JDK版本也没有限制，所以通常用于确认readobject反序列化利用点的存在。漏洞复现package com.theoyu.urldns;import java.io.*;import java.lang.reflect.Field;import java.net...">
-<link rel="canonical" href="http://localhost:4000/java/deserialize/URLDNS"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/java/deserialize/URLDNS"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -606,7 +606,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
               <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
 
 <!-- end custom main top snippet -->
-<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>URLDNS</h1></header></div><meta itemprop="headline" content="URLDNS"><div class="article__info clearfix"><ul class="right-col menu"></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2023-01-22T01:13:30+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
+<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>URLDNS</h1></header></div><meta itemprop="headline" content="URLDNS"><div class="article__info clearfix"><ul class="right-col menu"></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2023-03-22T00:14:44+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
 <!-- end custom article top snippet -->
 <div class="article__content" itemprop="articleBody"><h2 id="前言">前言</h2>
@@ -644,7 +644,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211107141306.png" alt="image-20211107141306641" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211107141306.png" alt="image-20211107141306641" /></p>
 
 <h2 id="漏洞分析">漏洞分析</h2>
 
@@ -667,20 +667,20 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>java.net.URLStreamHandler-&gt;<code class="language-plaintext highlighter-rouge">hashcode()</code></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211105214623.png" alt="image-20211105214616560" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211105214623.png" alt="image-20211105214616560" /></p>
 
 <p>想必你已经差不多知道sink点在哪了，就是<code class="language-plaintext highlighter-rouge">getHostAddress()</code>，在这里触发了DNS查询，或者再往上说一些，只要我们对URL类型的key进行了<code class="language-plaintext highlighter-rouge">hashcode()</code>运算，也就达到了目的。</p>
 
 <p>现在我们从HashMap的<code class="language-plaintext highlighter-rouge">readobject()</code>从头梳理一遍
 java.util.HashMap -&gt; <code class="language-plaintext highlighter-rouge">readobject()</code></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211107153401.png" alt="image-20211107153401061" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211107153401.png" alt="image-20211107153401061" /></p>
 
 <p>这里的s也就是ObjectInputStream对象，从里面强制读取key和value，重点关注下一步<code class="language-plaintext highlighter-rouge">putVal()</code>的第一个参数，跟进</p>
 
 <p>java.util.HashMap -&gt; <code class="language-plaintext highlighter-rouge">hash()</code></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211107154416.png" alt="image-20211107154416512" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211107154416.png" alt="image-20211107154416512" /></p>
 
 <p>这里调用了key的<code class="language-plaintext highlighter-rouge">hashcode()</code>的方法，而我们只需要把key实例化为URL的对象，那么就接上了最开始的java.net.URLStreamHandler-&gt;<code class="language-plaintext highlighter-rouge">hashcode()</code>，这样看其实只需要三步</p>
 
@@ -698,11 +698,11 @@ java.util.HashMap -&gt; <code class="language-plaintext highlighter-rouge">reado
 
 <p>但是回头看PoC，似乎多了三步</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211107155709.png" alt="image-20211107155709277" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211107155709.png" alt="image-20211107155709277" /></p>
 
 <p>如果没有这三步，直接put对象，会怎么样呢？其实也比较好理解，我们在构造Poc的时候hashMap.put直接触发<code class="language-plaintext highlighter-rouge">hashCode()</code>,也就导致了DNS解析,并且写入URL对象的私有成员hashCode也是已经经过了计算之后的值。我们回头看看java.net.URL-&gt;<code class="language-plaintext highlighter-rouge">hashcode()</code></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211107161200.png" alt="image-20211107161200555" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211107161200.png" alt="image-20211107161200555" /></p>
 
 <p>对私有成员hashCode进行了判断，如果hashCode不等于 -1 那么就直接进行返回了，也就是说如果安装最初的流程，DNS解析并不是发生在目标readobject，而是我们本地生成poc….😅那么上面新加的三步也就可以很好的解释：</p>
 
@@ -732,7 +732,7 @@ java.util.HashMap -&gt; <code class="language-plaintext highlighter-rouge">reado
 
 <p>在SilentURLStreamHandler中强行把getHostAddress直接return一个null，也就绕过了本地解析，并且ysoseria专门写了一个<code class="language-plaintext highlighter-rouge">Reflections</code>类处理反射所需要的各种操作，也就直接设置了hashCode为-1.</p>
 
-</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2023-01-22T01:13:30+08:00"><!-- start custom article footer snippet -->
+</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2023-03-22T00:14:44+08:00"><!-- start custom article footer snippet -->
 
 <!-- end custom article footer snippet -->
 </footer>
@@ -771,7 +771,7 @@ java.util.HashMap -&gt; <code class="language-plaintext highlighter-rouge">reado
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/java/deserialize/URLDNS';
+    this.page.url = 'https://theoyu.top/java/deserialize/URLDNS';
     this.page.identifier = 'URLDNS';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

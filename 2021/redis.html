@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>Redis Unauthorized Access - Theoyu</title>
 
 <meta name="description" content="0x01 前言REmote DIctionary Server(Redis) 是完全开源免费的，遵守BSD协议，Redis是一个由Salvatore Sanfilippo写的key-value存储系统。">
-<link rel="canonical" href="http://localhost:4000/2021/redis"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2021/redis"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -630,7 +630,7 @@ make
 <span class="nb">sudo</span> ./redis-server
 <span class="c">#最新版本redis已经默认启动为普通用户 写ssh公钥和定时计划需root用户</span>
 </code></pre></div></div>
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-08-image-20210608213959530.png" alt="image-20210608213959530" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-08-image-20210608213959530.png" alt="image-20210608213959530" /></p>
 
 <h2 id="0x03-写-webshell">0x03 写 Webshell</h2>
 
@@ -688,7 +688,7 @@ OK
 OK
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-08-image-20210608221440872.png" alt="image-20210608221440872" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-08-image-20210608221440872.png" alt="image-20210608221440872" /></p>
 
 <h2 id="0x06-redis-rce">0x06 Redis RCE</h2>
 
@@ -728,11 +728,11 @@ OK
 "theoyu"
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-08-image-20210608223621767.png" alt="image-20210608223621767" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-08-image-20210608223621767.png" alt="image-20210608223621767" /></p>
 
 <p><strong>Hex Dump</strong>:</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-08-image-20210608224917392.png" alt="image-20210608224917392" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/06/2021-06-08-image-20210608224917392.png" alt="image-20210608224917392" /></p>
 
 <p>正如前面所说，客户端向将命令作为<code class="language-plaintext highlighter-rouge">Bulk Strings</code>的RESP数组发送到Redis服务器，比如第一条指令可认作:<code class="language-plaintext highlighter-rouge">["set","name","theoyu"]</code>,<code class="language-plaintext highlighter-rouge">*3</code>表示数组长度为3，<code class="language-plaintext highlighter-rouge">$3</code>表示字符串长度，<code class="language-plaintext highlighter-rouge">0d0a</code>也就是<code class="language-plaintext highlighter-rouge">\r\n</code>为结束符。</p>
 
@@ -823,7 +823,7 @@ rename-command EVAL ""
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2021/redis';
+    this.page.url = 'https://theoyu.top/2021/redis';
     this.page.identifier = 'Redis Unauthorized Access';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

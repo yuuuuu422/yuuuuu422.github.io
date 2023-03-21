@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>study springMVC 基础配置 - Theoyu</title>
 
 <meta name="description" content="接触java以来web相关的东西都是springboot开箱即用，基本上没有配置过springMVC，打算还是从0到1接触接触。">
-<link rel="canonical" href="http://localhost:4000/2022/springMVC01"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2022/springMVC01"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -623,17 +623,17 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>网上随便搜索就有很多关于MVC的概念，在spring中，JavaBean作为数据分装(Model)，JSP可用作数据显示(View)，Servlet则是处理用户请求(Controller)，刚好一一对应上述的MVC。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220410120311.png" alt="image-20220409235704925" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220410120311.png" alt="image-20220409235704925" /></p>
 
 <h2 id="0x01-快速启用">0x01 快速启用</h2>
 
 <p>创建项目选择 <strong>Java Enterprise</strong></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220410120314.png" alt="image-20220409225544372" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220410120314.png" alt="image-20220409225544372" /></p>
 
 <p>在<strong>dependencies</strong>中选择以下两项：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220410120318.png" alt="image-20220409225923947" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220410120318.png" alt="image-20220409225923947" /></p>
 
 <p>之后在<code class="language-plaintext highlighter-rouge">pom.xml</code>中添加：</p>
 
@@ -915,13 +915,13 @@ This is Login Page , Hello ${name}
 
 <p>部署后，访问<code class="language-plaintext highlighter-rouge">/login</code>即可看见：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220412155724.png" alt="image-20220412002135766" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220412155724.png" alt="image-20220412002135766" /></p>
 
 <p>我们配置了最简单的mvc，后续我们慢慢基于它进行一些完善，不过在这之前有必要了解一下从第一个Servlet到返回视图这个过程经历了什么。</p>
 
 <h2 id="0x02-springmvc执行流程">0x02 SpringMVC执行流程</h2>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220412155730.png" alt="image-20220410141300306" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/04/20220412155730.png" alt="image-20220410141300306" /></p>
 
 <p>上图一共包含以下六个组件：</p>
 
@@ -1210,7 +1210,7 @@ This is Login Page , Hello ${user.username}
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2022/springMVC01';
+    this.page.url = 'https://theoyu.top/2022/springMVC01';
     this.page.identifier = 'study springMVC 基础配置';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

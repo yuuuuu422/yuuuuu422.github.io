@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>学习jvm和字节码 - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="http://localhost:4000/2022/jvmANDbytecode"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2022/jvmANDbytecode"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -612,7 +612,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <h2 id="jvm解释执行">jvm解释执行</h2>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220209190348.png" alt="image-20220209190348623" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220209190348.png" alt="image-20220209190348623" /></p>
 
 <p>在Java语言中，Javac编译器完成了程序代码经过词法分析、语法分析到抽象语法树，再遍历语法树生成线性的字节码指令流的过程。</p>
 
@@ -787,7 +787,7 @@ Constant pool:
 
 <p>在idea插件中下载jclasslib后，就可以直接打开class文件查看</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220210155153.png" alt="image-20220210155153889" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220210155153.png" alt="image-20220210155153889" /></p>
 
 <p><strong>classpy &amp;&amp; ClassViewer</strong></p>
 
@@ -795,11 +795,11 @@ Constant pool:
 
 <p><strong>ClassViewer</strong>：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220210161545.png" alt="image-20220210161545940" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220210161545.png" alt="image-20220210161545940" /></p>
 
 <p>字节码文件按照以下10个部分的固定顺序组成。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220210170340.png" alt="image-20220210170340077" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220210170340.png" alt="image-20220210170340077" /></p>
 
 <p>根据《Java虚拟机规范》的规定，Class文件格式采用一种类似于C语言结构体的伪结构来存储数据，这种伪结构中只有两种数据类型:“无符号数”和“表”，无符号数属于基本数据结构，表由多个无符号数或者其他表作为数据项构成，为了区分，表的命名以<strong>_info</strong>结尾，所以上述10个部分又可以列作为：</p>
 
@@ -831,7 +831,7 @@ Constant pool:
 
 <p>常见的文件头还有zip文件头<strong>504B0304</strong>，JPEG文件头<strong>FFD8FF</strong>等。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220210180039.png" alt="image-20220210180039782" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220210180039.png" alt="image-20220210180039782" /></p>
 
 <h3 id="2版本号version">(2)版本号(Version)</h3>
 
@@ -841,7 +841,7 @@ Constant pool:
 
 <p>常量池是是Class文件里的资源仓库，首先是常量池容量计数器(constant_pool_count)，说白了就是用来记录常量池中常量的个数，用2个字节来记录。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220212104824.png" alt="image-20220212104824796" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220212104824.png" alt="image-20220212104824796" /></p>
 
 <p>这里常量池容量计数器值为为41，但我们打印发现实际上常量个数只有40个：</p>
 
@@ -896,7 +896,7 @@ Constant pool:
 
 <p>我们以最为<strong>CONSTANT_utf8_info</strong>为例，其tag为01，对应utf8类型，接下来两个字节标识该字符串的长度Length，然后Length个字节为这个字符串具体的值。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220212115637.png" alt="image-20220212115637072" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220212115637.png" alt="image-20220212115637072" /></p>
 
 <p>其他类型的cp_info不再赘述，整体结构大同小异，总的来说就是以下几个过程：</p>
 
@@ -917,11 +917,11 @@ Constant pool:
 
 <h3 id="4访问标志access_flag">(4)访问标志(access_flag)</h3>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220212124300.png" alt="image-20220212124300303" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220212124300.png" alt="image-20220212124300303" /></p>
 
 <p>常量池结束之后的两个字节，描述该Class是类还是接口，以及是否被Public、Abstract、Final等修饰符修饰。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220212124411.png" alt="image-20220212124411633" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220212124411.png" alt="image-20220212124411633" /></p>
 
 <p>如上图 <strong>00 21</strong>，其还可以表示一种组合，是<strong>0x0001+0x0020</strong> ，即<strong>ACC_PUBLIC和ACC_SUPER</strong>。</p>
 
@@ -929,7 +929,7 @@ Constant pool:
 
 <p>在类的访问标志下方就是<strong>类索引</strong>，占2个字节，在字节码中找到是<strong>00 06</strong>，它的涵义是索引，所以我们就去常量池表中找索引为6的值，发现指向的就是<strong>demo/Test2</strong>的索引</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220212130645.png" alt="image-20220212130645934" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220212130645.png" alt="image-20220212130645934" /></p>
 
 <p>父类索引同理，父类索引后为两字节的接口计数器，描述了该类或父类实现的接口数量。紧接着的n个字节是所有接口名称的字符串常量的索引值。</p>
 
@@ -946,7 +946,7 @@ Constant pool:
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220213161459.png" alt="image-20220213161459739" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220213161459.png" alt="image-20220213161459739" /></p>
 
 <p>最开始的两个字节为<strong>访问标志</strong>，这个我们已经比较熟悉了，往后分别是<strong>字段名称</strong>和<strong>字段描述符</strong>，对应的都是常量池的索引，可以查询其值。</p>
 
@@ -974,13 +974,13 @@ Constant pool:
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220213164330.png" alt="image-20220213164330423" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220213164330.png" alt="image-20220213164330423" /></p>
 
 <p>方法的权限修饰符和之前的访问权限大同小异，方法名和方法的描述符都是常量池中的索引值，可以通过索引值在常量池中找到。所以我们把重点放在<strong>方法的Code属性表</strong>这一部分。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220213164711.png" alt="image-20220213164711916" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220213164711.png" alt="image-20220213164711916" /></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220213173739.png" alt="image-20220213173739500" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220213173739.png" alt="image-20220213173739500" /></p>
 
 <p><strong>attribute_name_index</strong>是一项指向<strong>CONSTANT_Utf8_info</strong>型常量的索引，此常量值固定为“Code”，<strong>attribute_length</strong> 代表属性值的长度。</p>
 
@@ -999,7 +999,7 @@ Constant pool:
 
 <p>我们结合指令和局部变量表对下述代码的main函数分析，先提一下局部变量表的start_pc和length属性分别代表了这个局部变量的生命周期开始的字节码偏移量及其作用范围覆盖 的长度，两者结合起来就是这个局部变量在字节码之中的作用域范围。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220213205102.png" alt="image-20220213205101911" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220213205102.png" alt="image-20220213205101911" /></p>
 
 <ul>
   <li>0 <code class="language-plaintext highlighter-rouge">bipush 10</code>：把 10 放在栈顶</li>
@@ -1096,7 +1096,7 @@ Constant pool:
 
 <p><code class="language-plaintext highlighter-rouge">generate()</code>方法使用ASM框架生成字节数组，<code class="language-plaintext highlighter-rouge">outputClazz()</code>将字节数组输出为<code class="language-plaintext highlighter-rouge">AsmHelloWorld.class</code>，在out的同级目录下：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220215212618.png" alt="image-20220215212618111" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/02/20220215212618.png" alt="image-20220215212618111" /></p>
 
 <p>刚刚生成了字节码文件只用到了<code class="language-plaintext highlighter-rouge">ClassWriter</code>这一个类，因为我们并没有涉及到修改已有字节码文件的步骤，下一步我们要求在输出<code class="language-plaintext highlighter-rouge">Hello World ASM!</code>后，再输出一行<code class="language-plaintext highlighter-rouge">Hello World ASM Again!</code>。</p>
 
@@ -1328,7 +1328,7 @@ Constant pool:
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2022/jvmANDbytecode';
+    this.page.url = 'https://theoyu.top/2022/jvmANDbytecode';
     this.page.identifier = '20220211';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

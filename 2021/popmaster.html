@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>popMaster - Theoyu</title>
 
 <meta name="description" content="强网杯popmaster这题一直耿耿于怀，用正则毕竟不是作者的本意。刚好在看静态分析这块，纯理论实在太难顶，就再重新揣摩揣摩。">
-<link rel="canonical" href="http://localhost:4000/2021/popmaster"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2021/popmaster"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -864,13 +864,13 @@ CODE;</span>
 
 <p>先看下面这一个类：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/10/20211012002816.png" alt="image-20211006152537265" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/10/20211012002816.png" alt="image-20211006152537265" /></p>
 
 <p><code class="language-plaintext highlighter-rouge">c830sD</code>是我们的入口函数，往下两个if语句构成了两个分支，实际上本题也就是需要我们从一个一个分支后找到正确的一条路径。</p>
 
 <p>因为参数可控，把输入的参数定为污点，每次跳转到新的一层则可看作污点传播，如果在最后eval语句里污点仍存在，即可输出路径。那现在我们也就需要关注到特殊的程序点(Sink)，是否有对污点的消毒处理是否有效。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/10/20211012002825.png" alt="image-20211006160304743" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/10/20211012002825.png" alt="image-20211006160304743" /></p>
 
 <p>在上面的例子里，第一项虽然对eval语句里的参数进行了字符串拼接，但我们只要在命令执行的后面加上<code class="language-plaintext highlighter-rouge">//</code>即可无视拼接语句，故消毒无效。</p>
 
@@ -920,7 +920,7 @@ CODE;</span>
             <span class="s">)</span>
             <span class="s">args</span><span class="err">:</span> <span class="s">array(</span>
                 <span class="s">0</span><span class="err">:</span> <span class="s">Arg(</span>
-                    <span class="s">name</span><span class="err">:</span> <span class="no">null</span>
+                    <span class="s">name</span><span class="err">:</span> <span class="kc">null</span>
                     <span class="s">value</span><span class="err">:</span> <span class="s">Expr_PropertyFetch(</span>
                         <span class="s">var</span><span class="err">:</span> <span class="s">Expr_Variable(</span>
                             <span class="s">name</span><span class="err">:</span> <span class="s">this</span>
@@ -929,16 +929,16 @@ CODE;</span>
                             <span class="s">name</span><span class="err">:</span> <span class="s">rHzhIHw</span>
                         <span class="s">)</span>
                     <span class="s">)</span>
-                    <span class="s">byRef</span><span class="err">:</span> <span class="no">false</span>
-                    <span class="s">unpack</span><span class="err">:</span> <span class="no">false</span>
+                    <span class="s">byRef</span><span class="err">:</span> <span class="kc">false</span>
+                    <span class="s">unpack</span><span class="err">:</span> <span class="kc">false</span>
                 <span class="s">)</span>
                 <span class="s">1</span><span class="err">:</span> <span class="s">Arg(</span>
-                    <span class="s">name</span><span class="err">:</span> <span class="no">null</span>
+                    <span class="s">name</span><span class="err">:</span> <span class="kc">null</span>
                     <span class="s">value</span><span class="err">:</span> <span class="s">Scalar_String(</span>
                         <span class="s">value</span><span class="err">:</span> <span class="s">kzPUMm</span>
                     <span class="s">)</span>
-                    <span class="s">byRef</span><span class="err">:</span> <span class="no">false</span>
-                    <span class="s">unpack</span><span class="err">:</span> <span class="no">false</span>
+                    <span class="s">byRef</span><span class="err">:</span> <span class="kc">false</span>
+                    <span class="s">unpack</span><span class="err">:</span> <span class="kc">false</span>
                 <span class="s">)</span>
             <span class="s">)</span>
         <span class="s">)</span>
@@ -958,12 +958,12 @@ CODE;</span>
                     <span class="s">)</span>
                     <span class="s">args</span><span class="err">:</span> <span class="s">array(</span>
                         <span class="s">0</span><span class="err">:</span> <span class="s">Arg(</span>
-                            <span class="s">name</span><span class="err">:</span> <span class="no">null</span>
+                            <span class="s">name</span><span class="err">:</span> <span class="kc">null</span>
                             <span class="s">value</span><span class="err">:</span> <span class="s">Expr_Variable(</span>
                                 <span class="s">name</span><span class="err">:</span> <span class="s">NEaSt</span>
                             <span class="s">)</span>
-                            <span class="s">byRef</span><span class="err">:</span> <span class="no">false</span>
-                            <span class="s">unpack</span><span class="err">:</span> <span class="no">false</span>
+                            <span class="s">byRef</span><span class="err">:</span> <span class="kc">false</span>
+                            <span class="s">unpack</span><span class="err">:</span> <span class="kc">false</span>
                         <span class="s">)</span>
                     <span class="s">)</span>
                 <span class="s">)</span>
@@ -971,7 +971,7 @@ CODE;</span>
         <span class="s">)</span>
         <span class="s">elseifs</span><span class="err">:</span> <span class="s">array(</span>
         <span class="s">)</span>
-        <span class="s">else</span><span class="err">:</span> <span class="no">null</span>
+        <span class="s">else</span><span class="err">:</span> <span class="kc">null</span>
     <span class="s">)</span>
 </code></pre></div></div>
 
@@ -993,12 +993,12 @@ CODE;</span>
             <span class="s">)</span>
             <span class="s">args</span><span class="err">:</span> <span class="s">array(</span>
                 <span class="s">0</span><span class="err">:</span> <span class="s">Arg(</span>
-                    <span class="s">name</span><span class="err">:</span> <span class="no">null</span>
+                    <span class="s">name</span><span class="err">:</span> <span class="kc">null</span>
                     <span class="s">value</span><span class="err">:</span> <span class="s">Expr_Variable(</span>
                         <span class="s">name</span><span class="err">:</span> <span class="s">NEaSt</span>
                     <span class="s">)</span>
-                    <span class="s">byRef</span><span class="err">:</span> <span class="no">false</span>
-                    <span class="s">unpack</span><span class="err">:</span> <span class="no">false</span>
+                    <span class="s">byRef</span><span class="err">:</span> <span class="kc">false</span>
+                    <span class="s">unpack</span><span class="err">:</span> <span class="kc">false</span>
                 <span class="s">)</span>
             <span class="s">)</span>
         <span class="s">)</span>
@@ -1039,7 +1039,7 @@ CODE;</span>
 
 <p>其实走到这，我们就拿到了pop链的路线，不过作者还写了一个<code class="language-plaintext highlighter-rouge">ParseClassVisitor</code>,可以通过最后一次遍历pop数组即可拿到序列化后的字符串。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/10/20211010231317.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/10/20211010231317.png" alt="" /></p>
 
 <p>本来我以为这就结束了,直到我们看到了方法5，实在不得不惊叹师傅对问题的钻研精神。</p>
 
@@ -1140,7 +1140,7 @@ CODE;</span>
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2021/popmaster';
+    this.page.url = 'https://theoyu.top/2021/popmaster';
     this.page.identifier = 'popMaster';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

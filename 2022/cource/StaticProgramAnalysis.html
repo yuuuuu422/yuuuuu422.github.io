@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>『南京大学-软件分析』课程笔记 - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="http://localhost:4000/2022/cource/StaticProgramAnalysis"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2022/cource/StaticProgramAnalysis"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -618,14 +618,13 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 <ul>
   <li><a href="https://space.bilibili.com/2919428/video">课程视频</a></li>
   <li><a href="https://pascal-group.bitbucket.io/teaching.html">课程官网</a>，包含Slides以及Assignments</li>
-  <li><a href="https://spa-book.pblo.gq/">课程教材</a>，南大一位学生整合Slides做的开源教程</li>
 </ul>
 
 <h2 id="课程介绍">课程介绍</h2>
 
 <h3 id="为什么我们需要静态分析">为什么我们需要静态分析</h3>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220311121426.png" alt="image-20220310205025687" /></p>
+<p><img src="../../assets/images/20220311121426.png" alt="image-20220310205025687" /></p>
 
 <ul>
   <li>
@@ -654,7 +653,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>程序分析不存在 <strong>exact answer</strong></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220311121431.png" alt="image-20220310222205046" /></p>
+<p><img src="../../assets/images/20220311121431.png" alt="image-20220310222205046" /></p>
 
 <blockquote>
   <p>Sound &gt; Truth&gt; Complete</p>
@@ -670,7 +669,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 </ul>
 
 <blockquote>
-  <p>注意这里『妥协』的概念，不然很容易弄反。(弹幕已经吵起来了)</p>
+  <p>注意这里『妥协』的概念，不然很容易弄反。</p>
 
   <p>妥协 soundness，不是倾向于 Sound，而是相反<strong>不接收</strong> Sound，也就是把Sound范围缩小到Complete，造成了漏报。</p>
 
@@ -687,7 +686,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <h3 id="compilers-and-static-analyzers">Compilers and Static Analyzers</h3>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220311121435.png" alt="image-20220311102630000" /></p>
+<p><img src="../../assets/images/20220311121435.png" alt="image-20220311102630000" /></p>
 
 <p>编译器将源代码（Source code） 转换为机器代码（Machine Code）。其中的流程框架是：</p>
 
@@ -706,21 +705,21 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
     <p>语法分析为什么是<strong>Context-Free Grammar</strong>？</p>
 
     <blockquote>
-      <p>现在的编程语言完全足够，context-Sensitive Grammar更适合分析人讲的语言(NLP？)</p>
+      <p>现在的编程语言完全足够，context-Sensitive Grammar更适合分析人讲的语言(NLP、ChatGPT)</p>
     </blockquote>
   </li>
   <li>
     <p>为什么不直接拿Source code做静态分析，而是要经过到IR的这一系列步骤？</p>
 
     <blockquote>
-      <p>分析代码漏洞，这是 non-trivial 的事情，做non-trivial 之前 应该把trivial的部分交给各种分析器去做。</p>
+      <p>分析代码漏洞，这是 non-trivial 的事情，做non-trivial 之前 应该把 trivial 的部分交给各种分析器去做。</p>
     </blockquote>
   </li>
 </ol>
 
 <h3 id="ast-vs-ir">AST vs. IR</h3>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220311121439.png" alt="image-20220311121248887" /></p>
+<p><img src="../../assets/images/20220311121439.png" alt="image-20220311121248887" /></p>
 
 <ul>
   <li>
@@ -775,7 +774,7 @@ q = p + q    q2 = p2 + q1
 
 <p>但这样如果多个控制流汇聚到一个块，会导致多个变量备选的问题：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220312174225.png" alt="image-20220312154526879" /></p>
+<p><img src="../../assets/images/20220312174225.png" alt="image-20220312154526879" /></p>
 
 <p>解决：使用合并操作符$\phi$（phi-function），根据控制流的信息确定使用哪个变量</p>
 
@@ -797,28 +796,28 @@ q = p + q    q2 = p2 + q1
 
 <p>控制流分析（Control Flow Analysis）通常指的是构建控制流图（Control Flow Graph, CFG），并以 CFG 作为基础结构进行静态分析的过程。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220312174223.png" alt="image-20220312171312499" /></p>
+<p><img src="../../assets/images/20220312174223.png" alt="image-20220312171312499" /></p>
 
 <p>The node in CFG can be an individual 3-address instruction, or (usually) a Basic Block (BB)</p>
 
-<p>CFG的节点可以是单独的一条3AC，但更常见的是一个基本块（Basic Block）。</p>
+<p>CFG的节点可以是单独的一条 3AC，但更常见的是一个基本块（Basic Block）。</p>
 
 <p>BB的定义：只有唯一一个入口和唯一一个出口的<strong>最长</strong>3AC连续序列。</p>
 
-<p>如果把连续的3AC识别为一个个BB：</p>
+<p>如果把连续的 3AC 识别为一个个BB：</p>
 
 <ol>
-  <li>找到所有BB的leader(入口)：
+  <li>找到所有 BB 的 leader(入口)：
     <ul>
-      <li>第一条指令就是一个leader</li>
-      <li>跳转指令跳转的目标指令是一个leader（反证法，不然不满足唯一入口）</li>
+      <li>第一条指令就是一个 leader</li>
+      <li>跳转指令跳转的目标指令是一个 leader（反证法，不然不满足唯一入口）</li>
       <li>跳转指令的下一条指令是一个leader（反证法，不然不满足唯一出口）</li>
     </ul>
   </li>
   <li>一个基本块就是一个 leader 及其后续直到下一个 leader 前的所有指令。</li>
 </ol>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220312174226.png" alt="image-20220312173836125" /></p>
+<p><img src="../../assets/images/20220312174226.png" alt="image-20220312173836125" /></p>
 
 <p>除了基本块，CFG 中还会有块到块的边。块 A 和块 B 之间有一条边，当且仅当：</p>
 
@@ -833,11 +832,102 @@ q = p + q    q2 = p2 + q1
 
 <p>这样我们就完成了从3AC到CFG的转化。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/03/20220312174229.png" alt="image-20220312174157931" /></p>
+<p><img src="../../assets/images/20220312174229.png" alt="image-20220312174157931" /></p>
 
 <h2 id="data-flow-analysis">Data Flow Analysis</h2>
 
-<p>学完了再一起做记录吧，有机会再接触一下Soot，这个相关的资料也太少了吧 :(</p>
+<h3 id="reaching-definitions-analysis">Reaching Definitions Analysis</h3>
+
+<p><img src="../../assets/images/image-20230311183233545.png" alt="image-20230311183233545" /></p>
+
+<p><strong>定义：</strong></p>
+
+<ul>
+  <li>
+    <p>假如 p 处给 v 一个定义（赋值）d，从 p 到  q 此路径上没有 v 的其他定义，则称 v 的定值 d 到达（reaches）q。</p>
+  </li>
+  <li>
+    <p>如果这条路径上存在对 v 的重新定义，则称 x 的定值 d 被 killed 。</p>
+  </li>
+</ul>
+
+<p>对于一条赋值语句<code class="language-plaintext highlighter-rouge">D: v = x op y</code>，该语句生成了 v 的一个定值 D，并杀死程序中其它对变量 v 定义的定值。</p>
+
+<p><strong>应用：检测未定义变量使用</strong>：</p>
+
+<ol>
+  <li>
+    <p>在 CFG 中给每一个变量引入一个  dummy 定值。</p>
+  </li>
+  <li>
+    <p>当程序出口时该变量未被 killed，则我们可以认为该变量未被定义。</p>
+  </li>
+</ol>
+
+<p><strong>Transfer Function：</strong>
+\(\mathrm{OUT}[B]=gen_{B} \cup\left(\mathrm{IN}[B]-k i l l_{B}\right)\)</p>
+
+<blockquote>
+  <p>基本块 B 的输出 = B 内的所有变量 v 的定义（赋值/修改）语句 $\cup$ （基本块 B 的输入- 程序中其它所有定义 v 的地方）。本质就是本块与前驱修改变量的语句 作用之和（去掉前驱中已经定义的语句）。</p>
+</blockquote>
+
+<p><strong>Control-flow Handing：</strong>
+\(\mathrm{IN}[B]=\bigcup_{P \text { a predecessor of } B} OUT [P]\)</p>
+
+<blockquote>
+  <p>基本块 B 的输入 = 基本块 B 所有前驱块 P 的输出的<strong>并集</strong>。</p>
+
+  <p>这种数据流适合做  <strong>Forward Analysis</strong></p>
+</blockquote>
+
+<p><strong>算法：</strong></p>
+
+<p><img src="../../assets/images/image-20230312183600205.png" alt="image-20230312183600205" /></p>
+
+<p><strong>Demo：</strong></p>
+
+<p><img src="../../assets/images/image-20230312183724251.png" alt="image-20230312183724251" /></p>
+
+<h3 id="live-variables-analysis">Live Variables Analysis</h3>
+
+<p><img src="../../assets/images/image-20230319145635900.png" alt="image-20230319145635900" /></p>
+
+<p><strong>定义：</strong></p>
+
+<ul>
+  <li>在 CFG 语句 p 上定义的变量 v ，如果从 p 到 exit 快上变量 v 被使用，则称 v 在 p 上是活跃变量。</li>
+  <li>其中有一个隐含条件为 v 在使用前不能被重定义。</li>
+</ul>
+
+<p><strong>应用：寄存器分配：</strong></p>
+
+<ul>
+  <li>寄存器满了需要替换不会被使用的变量。</li>
+</ul>
+
+<p><strong>Control-flow Handing：</strong>
+\(\mathrm{OUT}[\mathrm{B}]=\bigcup_{S \text{ a successor of B}}  {\mathrm{IN}[\mathrm{S}]}\)</p>
+
+<blockquote>
+  <p>基本块 B 的输出  = 所有 B 的后驱块 S 输入的并集</p>
+
+  <p>这种数据流适合做  <strong>Backward Analysis</strong></p>
+</blockquote>
+
+<p><strong>Transfer Function：</strong>
+\(\mathrm{IN}[B]=use_{B} \cup\left(\mathrm{OUT}[B]-def_{B}\right)\)</p>
+
+<blockquote>
+  <p>基本块 B 的输入 = B 中（重定义前）被使用的变量  $\cup$ （ B的输出 -B 中重定义的变量）</p>
+</blockquote>
+
+<p><strong>算法：</strong></p>
+
+<p><img src="../../assets/images/image-20230319173519331.png" alt="image-20230319173519331" /></p>
+
+<p><strong>demo：</strong></p>
+
+<p><img src="../../assets/images/image-20230319175541740.png" alt="image-20230319175541740" /></p>
 </div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-03-10T00:00:00+08:00"><!-- start custom article footer snippet -->
 
 <!-- end custom article footer snippet -->
@@ -884,7 +974,7 @@ q = p + q    q2 = p2 + q1
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2022/cource/StaticProgramAnalysis';
+    this.page.url = 'https://theoyu.top/2022/cource/StaticProgramAnalysis';
     this.page.identifier = 'Static-Program-Analysis';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

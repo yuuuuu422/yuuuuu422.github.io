@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>『Linux高性能服务器编程』读书笔记 - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="http://localhost:4000/2022/cource/LinuxServerProgram"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2022/cource/LinuxServerProgram"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -939,7 +939,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
             <span class="n">printf</span><span class="p">(</span> <span class="s">"get %d bytes of normal data: %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span> <span class="p">);</span>
         <span class="p">}</span>
         <span class="c1">//异常模式</span>
-        <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">FD_ISSET</span><span class="p">(</span> <span class="n">connfd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">exception_fds</span> <span class="p">)</span> <span class="p">)</span>
+        <span class="k">else</span> <span class="nf">if</span><span class="p">(</span> <span class="n">FD_ISSET</span><span class="p">(</span> <span class="n">connfd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">exception_fds</span> <span class="p">)</span> <span class="p">)</span>
         <span class="p">{</span>
             <span class="c1">//使用外带数据的读取函数</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="n">recv</span><span class="p">(</span> <span class="n">connfd</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span> <span class="n">buf</span> <span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">MSG_OOB</span> <span class="p">);</span>
@@ -984,7 +984,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>对应fd_set图：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002527.png" alt="image-20220423131007025" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002527.png" alt="image-20220423131007025" /></p>
 
 <p>上面的例子刚开始我有两个疑问：</p>
 
@@ -997,7 +997,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>有哪一些事件可以归于可读、可写、异常：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002533.png" alt="image-20220423132105311" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002533.png" alt="image-20220423132105311" /></p>
 
 <h3 id="poll">poll</h3>
 
@@ -1018,7 +1018,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>poll支持的事件类型：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002555.png" alt="image-20220423152027889" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002555.png" alt="image-20220423152027889" /></p>
 
 <p>结合书上例子用poll写了一个聊天室，感觉用起来的确比select方便一些</p>
 
@@ -1082,19 +1082,19 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>LT：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002600.png" alt="image-20220425224459784" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002600.png" alt="image-20220425224459784" /></p>
 
 <p>除去换行符出发了4次事件</p>
 
 <p>ET：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002607.png" alt="image-20220425224728772" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002607.png" alt="image-20220425224728772" /></p>
 
 <p>只触发了一次</p>
 
 <h3 id="三组io复用的比较">三组I/O复用的比较</h3>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002603.png" alt="image-20220425225318528" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002603.png" alt="image-20220425225318528" /></p>
 
 <h2 id="信号">信号</h2>
 
@@ -1183,7 +1183,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <h4 id="管道-pipe">管道 Pipe</h4>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002612.png" alt="image-20220430153557938" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002612.png" alt="image-20220430153557938" /></p>
 
 <p>管道本身是单向的，可以用两个管道实现双向传输，也可以使用<code class="language-plaintext highlighter-rouge">socketpair</code>来创建双向管道。</p>
 
@@ -1218,7 +1218,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 <span class="p">};</span>
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002616.png" alt="image-20220430182402389" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002616.png" alt="image-20220430182402389" /></p>
 
 <div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//3. 操作信号量(PV)</span>
 <span class="kt">void</span> <span class="nf">pv</span><span class="p">(</span><span class="kt">int</span> <span class="n">sem_id</span><span class="p">,</span><span class="kt">int</span> <span class="n">op</span><span class="p">){</span>
@@ -1275,7 +1275,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 */</span>
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002620.png" alt="image-20220501165712574" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002620.png" alt="image-20220501165712574" /></p>
 
 <h4 id="共享内存-shared-memory">共享内存 shared memory</h4>
 
@@ -1386,7 +1386,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>这感觉上其实和golang的channel+ select机制差不多，实际上我后续在这里的写法就是仿照go的模式来写的。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002626.png" alt="image-20220508001617260" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002626.png" alt="image-20220508001617260" /></p>
 
 <h2 id="高性能服务器程序框架">高性能服务器程序框架</h2>
 
@@ -1394,7 +1394,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <h3 id="服务器基础框架">服务器基础框架</h3>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002631.png" alt="image-20220505190335651" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002631.png" alt="image-20220505190335651" /></p>
 
 <table>
   <thead>
@@ -1459,7 +1459,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>Reactor 模式的工作流程图：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002636.png" alt="image-20220505191735615" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002636.png" alt="image-20220505191735615" /></p>
 
 <h4 id="proactor模式">Proactor模式</h4>
 
@@ -1486,7 +1486,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>Proactor 模式的工作流程图：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002645.png" alt="image-20220505213405420" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002645.png" alt="image-20220505213405420" /></p>
 
 <h4 id="同步方式的proactor">同步方式的Proactor</h4>
 
@@ -1505,7 +1505,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>同步 I/O 模拟 Proactor 模式的工作流程：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002642.png" alt="image-20220506142214571" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/05/20220508002642.png" alt="image-20220506142214571" /></p>
 
 <p>Reactor 模式和Proactor 模式的主要区别在于：对于工作线程而言，Reactor 发来的是已就绪的读写事件，而Proactor 发来的是已经完成的读写事件（异步I/O的处理在内核中完成，同步I/O在主线程自己实现）</p>
 
@@ -1555,7 +1555,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2022/cource/LinuxServerProgram';
+    this.page.url = 'https://theoyu.top/2022/cource/LinuxServerProgram';
     this.page.identifier = 'Linux高性能服务器编程读书笔记';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

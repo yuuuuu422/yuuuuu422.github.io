@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>利用LD_PRELOAD绕过disable_function - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="http://localhost:4000/2021/disabled_function"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2021/disabled_function"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -693,7 +693,7 @@ sh: 1: /usr/sbin/sendmail: not found
 
 <p>发现确实调用了外部进程..但我没有下载…下载后:</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-03-image-20210503141852067.png" alt="image-20210503141852067" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-03-image-20210503141852067.png" alt="image-20210503141852067" /></p>
 
 <p>我们再跟进看一看<strong>sendmail</strong>：</p>
 
@@ -790,7 +790,7 @@ theoyu
 
 <p>这我不太能接受，如果sendmail根本不需要的话，那文章的后大篇幅关于<strong>__attribute__((constructor))</strong>的讲解也是没有太大意义的，我们回头看看<code class="language-plaintext highlighter-rouge">strace -f php mail.php 2&gt;&amp;1 | grep -A2 -B2 execve</code></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-03-image-20210503160144193.png" alt="image-20210503160144193" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-03-image-20210503160144193.png" alt="image-20210503160144193" /></p>
 
 <p>事实上，顺着作者的思路，我们居然把<strong>/bin/sh</strong>这个调用进程所忽略了，也就是说在这一步，真正加载了动态链接库的其实是<code class="language-plaintext highlighter-rouge">/bin/sh</code> 的进程，其实我们大可不必使用<code class="language-plaintext highlighter-rouge">__attribute__((constructor))</code> ，直接劫持<code class="language-plaintext highlighter-rouge">/bin/sh</code> 的库函数即可,方法与<strong>sendmail</strong> 一致。可以说用<code class="language-plaintext highlighter-rouge">__attribute__((constructor))</code> ，只是为我们免去了挑选库函数的一步而已。</p>
 
@@ -846,7 +846,7 @@ theoyu
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2021/disabled_function';
+    this.page.url = 'https://theoyu.top/2021/disabled_function';
     this.page.identifier = '利用LD_PRELOAD绕过disable_function';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

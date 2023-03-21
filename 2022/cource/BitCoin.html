@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>『区块链技术与应用』学习笔记 - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="http://localhost:4000/2022/cource/BitCoin"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2022/cource/BitCoin"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -649,7 +649,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <h3 id="merkle-tree-默克尔树">Merkle tree （默克尔树）</h3>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220611171217.png" alt="image-20220611145500812" /></p>
+<p><img src="/Users/oker/Documents/theoyu/Images/20220611171217.png" alt="image-20220611145500812" /></p>
 
 <p>如图下方是数据块，上方是节点，默克尔树和二叉树的区别在于前者使用哈希指针代替普通指针，比如AB数据块的父节点就存有其二者的哈希，其父节点同理，所以只需要记住根哈希，便可以检测出对树中任何部位的修改。</p>
 
@@ -661,7 +661,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>当对一个轻节点证明某条交易（tx，<strong>transaction</strong>）是否被写入区块链时，便会用到 Merkle proof。我们把交易到到根节点这一条路径叫做Merkle proof ，如下图，当轻节点确认黄色交易是否属实时，会向全节点请求需要的哈希（下图红色哈希），然后自底向上进行计算，把得到的最终结果和根哈希进行比对，进而进行判断。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/06/20220611171035.png" alt="image-20220611155011261" /></p>
+<p><img src="/Users/oker/Documents/theoyu/Images/20220611171035.png" alt="image-20220611155011261" /></p>
 
 <p>那这样是否是安全的呢？如果待验证交易是虚假的，是否可以再伪造一个红色哈希，来满足验证的需求，我们从哈希的三个性质来看，显然是不成立的。</p>
 
@@ -692,7 +692,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>第一个问题的答案是挖矿，这个部分后面会进行学习。第二个问题，我们通过以下的具体例子进行解决：</p>
 
-<p><img src="../../assets/images/image-20220611220508617.png" alt="image-20220611220508617" /></p>
+<p><img src="/Users/oker/Documents/theoyu/Images/image-20220611220508617.png" alt="image-20220611220508617" /></p>
 
 <p>图中，A具有铸币权，发布了10个比特币，第一个区块内的交易也称为铸币交易。同时A转账给B 5个比特币 C 5个比特币，A对该交易进行签名，同时该交易需要说明花掉这10个比特币的来源 —&gt; 铸币中产生的10个币，之后以此类推。</p>
 
@@ -796,7 +796,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>下面我们再看看在共识中可能出现的几种特殊情况。</p>
 
-<p><img src="../../assets/images/image-20220612214104372.png" alt="	" /></p>
+<p><img src="/Users/oker/Documents/theoyu/Images/image-20220612214104372.png" alt="	" /></p>
 
 <p>上图中，A在第5个区块发布之后，发布了第4’区块，并尝试上传到区块链中，这种情况是否可行？</p>
 
@@ -804,13 +804,13 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>那么这种攻击 ( 分叉攻击 ) 有可能成立吗？如果A在上传4’后，马上又计算好了5’区块，然后计算好了6’区块，之后A同时上传，如果整个区块链网络还没能算好第六个区块，他们就会放弃计算6号区块，转而去计算7’，这就是分叉攻击，4号和5号的所有合法交易都被回滚。</p>
 
-<p><img src="../../assets/images/image-20220612215231599.png" alt="image-20220612215231599" /></p>
+<p><img src="/Users/oker/Documents/theoyu/Images/image-20220612215231599.png" alt="image-20220612215231599" /></p>
 
 <p>理论上是可行的，实际上A所对抗的算力是整个区块链网络的其他所有计算机，所以只有A达到整个系统的 51% 算力，才可能实现。</p>
 
 <p>还有一种情况是自然分叉：</p>
 
-<p><img src="../../assets/images/image-20220612215845702.png" alt="image-20220612215845702" /></p>
+<p><img src="/Users/oker/Documents/theoyu/Images/image-20220612215845702.png" alt="image-20220612215845702" /></p>
 
 <p>两个符合要求的矿工，同时计算到了nonce并广播，在区块链网络中，有一部分人会接受上面的区块，一部分会接受下面的，分别用上面区块的哈希值作为父哈希进行计算，随着时间推移，总有一条链胜出（他的子节点先挖到矿并打包），成为最长合法链，由此保证了区块链的一致性，而被抛弃的区块称为 orphan block （孤儿区块，没有大爹算出来，是这样的），其中的交易就被全部回滚了。</p>
 
@@ -938,7 +938,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>因此，后面变形成了矿池的概念：</p>
 
-<p><img src="../../assets/images/image-20220618201028144.png" alt="image-20220618201028144" /></p>
+<p><img src="/Users/oker/Documents/theoyu/Images/image-20220618201028144.png" alt="image-20220618201028144" /></p>
 
 <p>一个简单的矿池如上：一个全节点驱动多台矿机。矿工只需要不断的计算哈希即可，其他全节点的责任由矿主承担，当获得收益后，对所有矿工进行分配。</p>
 
@@ -986,7 +986,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>随着矿池的出现，算力也变得集中起来，在2014年曾有一个名叫 『 GHash 』的矿池达到了高达 51%的算力：</p>
 
-<p><img src="../../assets/images/image-20220619003824934.png" alt="image-20220619003824934" /></p>
+<p><img src="/Users/oker/Documents/theoyu/Images/image-20220619003824934.png" alt="image-20220619003824934" /></p>
 
 <p>我们之前说到如果算力达到51%就有可能可以发起分叉攻击，如果攻击者不喜欢某个账户A，在监听到A将交易发布到区块链后，立马发动分叉攻击使A无法成为最长合法链，这样便实现对对A的封锁（<strong>Boycott</strong>）。</p>
 
@@ -1032,7 +1032,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>我们假设系统中大多数节点都进行了更新，只有少部分 <strong>守旧派</strong> 不愿意增大（区块增大也会导致网络传输变慢）。我们这里的<strong>大多数</strong>和<strong>少部分</strong>单纯指的是算力，而不是具体的人数。</p>
 
-<p><img src="../../assets/images/image-20220624005710693.png" alt="image-20220624005710693" /></p>
+<p><img src="/Users/oker/Documents/theoyu/Images/image-20220624005710693.png" alt="image-20220624005710693" /></p>
 
 <p>如上草图所示，图 1 为当前区块链，此时协议更新，绿色的新节点挖到了区块，如图2。但是对于旧节点来说因为不向未来兼容，它认为这是一个非法区块，故旧节点依旧照绿色区块前一个区块挖矿，如图三。</p>
 
@@ -1056,13 +1056,13 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>我们假设大多数节点进行了更新（即更新之后的节点算力超过 50%），如果软分叉满足兼容过去，那么应该会出现以下这种情况：</p>
 
-<p><img src="../../assets/images/image-20220624134618348.png" alt="image-20220624134618348" /></p>
+<p><img src="/Users/oker/Documents/theoyu/Images/image-20220624134618348.png" alt="image-20220624134618348" /></p>
 
 <p>虽然旧节点无法识别新规则到真实含义，但因为新节点满足合法的规则，所以新旧节点同处于一条链上，对整个系统的影响比较小。</p>
 
 <p>但也有可能出现软分叉不兼容过去的情况，比如更新后的节点，可以拒绝大小超过0.5MB的区块：</p>
 
-<p><img src="../../assets/images/image-20220624142213372.png" alt="image-20220624142213372" /></p>
+<p><img src="/Users/oker/Documents/theoyu/Images/image-20220624142213372.png" alt="image-20220624142213372" /></p>
 
 <p>如果新节点不认可大于0.5MB的旧节点的话，认为其是一个非法区块，会从其前一个小区块开始，而旧节点一直被抛弃，不在最长合法链上，导致得不到出块奖励，最后逼迫旧节点升级，实现区块链上的所有矿工共同认可新协议，实现软件协议的升级。</p>
 
@@ -1129,9 +1129,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <h3 id="收据树">收据树</h3>
 
-<p>2022 6.20</p>
-
-<p>最近工作比较忙，以太坊这部分就先不整理了。</p>
+<p>工作比较忙，以太坊这部分就不整理了。</p>
 
 <h2 id="参考">参考</h2>
 
@@ -1191,7 +1189,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2022/cource/BitCoin';
+    this.page.url = 'https://theoyu.top/2022/cource/BitCoin';
     this.page.identifier = '『区块链技术与应用』学习笔记';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

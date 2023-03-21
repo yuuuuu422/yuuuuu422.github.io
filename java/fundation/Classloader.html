@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>Classcloader - Theoyu</title>
 
 <meta name="description" content="类从编译到执行的过程  编译器将People.java源文件编译为People.class字节码文件  ClassLoader 将字节码读入内存，转换为JVM中的Class对象  JVM利用Class对象实例化为People对象以上图为例子，创建一个ClassLoaderTest.java文件运行，经过javac...">
-<link rel="canonical" href="http://localhost:4000/java/fundation/Classloader"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/java/fundation/Classloader"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -606,7 +606,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
               <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
 
 <!-- end custom main top snippet -->
-<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>Classcloader</h1></header></div><meta itemprop="headline" content="Classcloader"><div class="article__info clearfix"><ul class="right-col menu"></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2023-01-22T01:13:30+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
+<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>Classcloader</h1></header></div><meta itemprop="headline" content="Classcloader"><div class="article__info clearfix"><ul class="right-col menu"></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2023-03-22T00:14:44+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
 <!-- end custom article top snippet -->
 <div class="article__content" itemprop="articleBody"><h2 id="类从编译到执行的过程">类从编译到执行的过程</h2>
@@ -617,7 +617,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
   <li>JVM利用Class<People>对象实例化为People对象</People></li>
 </ul>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/01/20220116212751.png" alt="image-20220116212751953" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2022/01/20220116212751.png" alt="image-20220116212751953" /></p>
 
 <p>以上图为例子，创建一个ClassLoaderTest.java文件运行，经过javac编译，然后生成ClassLoaderTest.class文件。这个java文件和生成的class文件都是存储在我们的磁盘当中。但如果我们需要将磁盘中的class文件在java虚拟机内存中运行，需要经过一系列的类的生命周期（加载、连接（验证–&gt;准备–&gt;解析）和初始化操作，最后就是我们的java虚拟机内存使用自身方法区中字节码二进制数据去引用堆区的Class对象。</p>
 
@@ -625,7 +625,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <h2 id="类加载器的分类">类加载器的分类</h2>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211121150537.png" alt="img" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/11/20211121150537.png" alt="img" /></p>
 
 <h3 id="引导类加载器bootstrapclassloader">引导类加载器(BootstrapClassLoader)</h3>
 
@@ -837,7 +837,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p>后面获取对象方法涉及到反射的知识，只需获取到返回类对象即可。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/08/20210818000545.png" alt="" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/08/20210818000545.png" alt="" /></p>
 
 <h2 id="urlclassloader">UrlClassLoader</h2>
 
@@ -889,7 +889,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 <span class="o">}</span>
 </code></pre></div></div>
 
-</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2023-01-22T01:13:30+08:00"><!-- start custom article footer snippet -->
+</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2023-03-22T00:14:44+08:00"><!-- start custom article footer snippet -->
 
 <!-- end custom article footer snippet -->
 </footer>
@@ -928,7 +928,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/java/fundation/Classloader';
+    this.page.url = 'https://theoyu.top/java/fundation/Classloader';
     this.page.identifier = 'Classcloader';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

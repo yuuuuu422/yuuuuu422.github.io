@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>laravel v5.7反序列化rce - Theoyu</title>
 
 <meta name="description" content="前言Laravel is a web application framework with expressive, elegant syntax.  We’ve already laid the foundation — freeing you to create without  sweating the sm...">
-<link rel="canonical" href="http://localhost:4000/2021/codeaudit/laravel57"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="https://theoyu.top/2021/codeaudit/laravel57"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -668,31 +668,31 @@ $this-&gt;parameters;  //要执行的php函数的参数  array('whoami')
 
 <p>至于<code class="language-plaintext highlighter-rouge">$test</code>和<code class="language-plaintext highlighter-rouge">$app</code>具体是什么，我们暂时还不得而知，不过我们看看下面需要执行的命令</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530183118698.png" alt="image-20210530183118698" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530183118698.png" alt="image-20210530183118698" /></p>
 
 <p>也就是说，要想命令执行，首先我们得顺利走到try这一步，然后<code class="language-plaintext highlighter-rouge">$app[Kernel::class]</code>需要返回一个具有call方法的实例。</p>
 
 <p>我们先简单写一个雏形，看看调试结果。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530143546672.png" alt="image-20210530143546672" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530143546672.png" alt="image-20210530143546672" /></p>
 
 <p>我们首先会进入<code class="language-plaintext highlighter-rouge">mockConsoleOutput()</code>当中，纵观这个函数有两个地方我们需要注意：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530184311920.png" alt="image-20210530184311920" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530184311920.png" alt="image-20210530184311920" /></p>
 
 <p>因为我们还没有对<code class="language-plaintext highlighter-rouge">$test</code>做任何的处理，所有<code class="language-plaintext highlighter-rouge">$test</code>本身没有任何的属性，所以标注1的<code class="language-plaintext highlighter-rouge">test-&gt;expectedQuestions</code>自然会报错，同理在标注2中进入的<code class="language-plaintext highlighter-rouge">createABufferedOutputMock()</code>也有一步<code class="language-plaintext highlighter-rouge">test-&gt;expectedOutput</code>会失败，如下图。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530143630253.png" alt="image-20210530143630253" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530143630253.png" alt="image-20210530143630253" /></p>
 
 <p>但在两个属性要想直接构造是比较困难的，这里平时做ctf会容易想到一点也就是魔术方法<code class="language-plaintext highlighter-rouge">__get()</code>,我们选择GenericUser类</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530185536721.png" alt="image-20210530185536721" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530185536721.png" alt="image-20210530185536721" /></p>
 
 <p>构造如下，只对<code class="language-plaintext highlighter-rouge">$test</code>进行更改</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530150611621.png" alt="image-20210530150611621" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530150611621.png" alt="image-20210530150611621" /></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530151122289.png" alt="image-20210530151122289" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530151122289.png" alt="image-20210530151122289" /></p>
 
 <p>可以看到我们成功走到了<code class="language-plaintext highlighter-rouge">mockConsoleOutput()</code>的最后一步</p>
 
@@ -703,7 +703,7 @@ $this-&gt;parameters;  //要执行的php函数的参数  array('whoami')
 
 <p>但是由于我们<code class="language-plaintext highlighter-rouge">$app</code>还只是一个字符串，并没有<code class="language-plaintext highlighter-rouge">bind</code>方法，这是因为我最开始的时候走远了，实际上在<strong>PendingCommand</strong>中就写有<code class="language-plaintext highlighter-rouge">$app</code>是在<code class="language-plaintext highlighter-rouge">\Illuminate\Foundation\Application</code>的实例，同时<code class="language-plaintext highlighter-rouge">Application </code>类是继承自<code class="language-plaintext highlighter-rouge">Illuminate\Container\Container</code>。在<code class="language-plaintext highlighter-rouge">Container</code>类中我们可以找到对应的<code class="language-plaintext highlighter-rouge">bind</code>函数,ok那么现在构造如下。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530162308651.png" alt="image-20210530162308651" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530162308651.png" alt="image-20210530162308651" /></p>
 
 <p>再次断点调试,我们终于走到了命令执行最关键的一步，但是在这一步直接挂掉了。</p>
 
@@ -711,29 +711,29 @@ $this-&gt;parameters;  //要执行的php函数的参数  array('whoami')
 
 <p>我们把这一步拆成三步，断点调试：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530162741610.png" alt="image-20210530162741610" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530162741610.png" alt="image-20210530162741610" /></p>
 
 <p>我们发现<code class="language-plaintext highlighter-rouge">Kernel::class</code>是一个常量，返回<code class="language-plaintext highlighter-rouge">Illuminate\Contracts\Console\Kernel</code></p>
 
 <p>发现是在第二步就直接挂掉了，我们跟进看看。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530195743543.png" alt="image-20210530195743543" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530195743543.png" alt="image-20210530195743543" /></p>
 
 <p>这里进入到了一个父类<code class="language-plaintext highlighter-rouge">Container</code>的make函数，跟进resolve</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530200136412.png" alt="image-20210530200136412" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530200136412.png" alt="image-20210530200136412" /></p>
 
 <p>这里的标注1很关键，首先instances数组本身是我们可控的，然后键名<code class="language-plaintext highlighter-rouge">$anstract</code>也已知，那我们完全可以控制这里的return返回值，也就控制了第二步中<code class="language-plaintext highlighter-rouge">$this-&gt;app[Kernel::class]</code>的返回值。</p>
 
 <p>同理，我们跟进标注2 的<code class="language-plaintext highlighter-rouge">getConcrete()</code></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530200455485.png" alt="image-20210530200455485" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530200455485.png" alt="image-20210530200455485" /></p>
 
 <p>可以发现这里同样可以控制返回，那现在我们需要明确的问题是，我们应该返回一个怎样的对象，其含有<code class="language-plaintext highlighter-rouge">call()</code>方法可以让我们进行命令执行。</p>
 
 <p>就在<code class="language-plaintext highlighter-rouge">Illuminate\Foundation\Application</code>所继承的 <code class="language-plaintext highlighter-rouge">Illuminate\Container\Container</code>下，找到了我们需要的函数：</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530201258106.png" alt="image-20210530201258106" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530201258106.png" alt="image-20210530201258106" /></p>
 
 <p>这里进入的话会发现调用了<code class="language-plaintext highlighter-rouge">call_user_func_array</code>回调函数，至此我们的利用链也差不多分析结束。作者返回的是子类<code class="language-plaintext highlighter-rouge">Application</code>,不过是继承关系的也都没有关系嘛。</p>
 
@@ -783,7 +783,7 @@ $this-&gt;parameters;  //要执行的php函数的参数  array('whoami')
 <span class="cp">?&gt;</span>
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530204314832.png" alt="image-20210530204314832" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530204314832.png" alt="image-20210530204314832" /></p>
 
 <p>如果选择标注2的方法，我们需要对<code class="language-plaintext highlighter-rouge">bindings[$abstract]['concrete']</code>进行控制，而<code class="language-plaintext highlighter-rouge">$abstract</code>的值就是<code class="language-plaintext highlighter-rouge">Illuminate\Contracts\Console\Kernel</code>,所以我们能够利用二维数组控制<code class="language-plaintext highlighter-rouge">['concrete']</code>：</p>
 <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
@@ -831,11 +831,11 @@ $this-&gt;parameters;  //要执行的php函数的参数  array('whoami')
 
 </code></pre></div></div>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530205343911.png" alt="image-20210530205343911" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530205343911.png" alt="image-20210530205343911" /></p>
 
 <p>最后关于<code class="language-plaintext highlighter-rouge">callback</code>的回调函数就不多说了。</p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530210120964.png" alt="image-20210530210120964" /></p>
+<p><img src="https://testingcf.jsdelivr.net/gh/yuuuuu422/Myimages/img/2021/05/2021-05-30-image-20210530210120964.png" alt="image-20210530210120964" /></p>
 
 <h2 id="总结">总结</h2>
 
@@ -897,7 +897,7 @@ $this-&gt;parameters;  //要执行的php函数的参数  array('whoami')
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'http://localhost:4000/2021/codeaudit/laravel57';
+    this.page.url = 'https://theoyu.top/2021/codeaudit/laravel57';
     this.page.identifier = 'laravel v5.7反序列化rce';
   };
   (function() { // DON'T EDIT BELOW THIS LINE
