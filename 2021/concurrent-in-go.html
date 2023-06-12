@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>go并发的几个问题 - Theoyu</title>
 
 <meta name="description" content="作为世界上除了PHP之外最好的语言golang，只需go关键字修饰函数，就可以直接启动一个goroutine(协程)运行，但在实际的场景中，我们需要考虑到协程的数量，其之间的同步与通信，以及精确控制其结束。">
-<link rel="canonical" href="https://theoyu.top/2021/concurrent-in-go"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="http://localhost:4000/2021/concurrent-in-go"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -1014,7 +1014,7 @@ internal/poll.(*FD).Write(0xc000110280, 0xc17470e5f0, 0x8, 0x8, 0x0, 0x0, 0x0)
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'https://theoyu.top/2021/concurrent-in-go';
+    this.page.url = 'http://localhost:4000/2021/concurrent-in-go';
     this.page.identifier = 'go并发的几个问题';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

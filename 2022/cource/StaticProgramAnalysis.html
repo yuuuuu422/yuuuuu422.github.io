@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>『南京大学-软件分析』课程笔记 - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="https://theoyu.top/2022/cource/StaticProgramAnalysis"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="http://localhost:4000/2022/cource/StaticProgramAnalysis"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -601,8 +601,8 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
             </li><li>
               <a class="button button--secondary button--pill button--sm"
                 href="/archive.html?tag=cource">cource</a>
-            </li></ul><ul class="right-col menu"><li><i class="fas fa-user"></i> <span>Theoyu</span></li><li><i class="far fa-calendar-alt"></i> <span>Mar 10, 2022</span>
-            </li></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-03-10T00:00:00+08:00">
+            </li></ul><ul class="right-col menu"><li><i class="fas fa-user"></i> <span>Theoyu</span></li><li><i class="far fa-calendar-alt"></i> <span>Mar 20, 2022</span>
+            </li></ul></div><meta itemprop="author" content="Theoyu"/><meta itemprop="datePublished" content="2022-03-20T00:00:00+08:00">
     <meta itemprop="keywords" content="static-analysis,cource"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
 <!-- end custom article top snippet -->
@@ -895,7 +895,7 @@ q = p + q    q2 = p2 + q1
 <p><strong>定义：</strong></p>
 
 <ul>
-  <li>在 CFG 语句 p 上定义的变量 v ，如果从 p 到 exit 快上变量 v 被使用，则称 v 在 p 上是活跃变量。</li>
+  <li>在 CFG 语句 p 上定义的变量 v ，如果从 p 到 exit 上变量 v 被使用，则称 v 在 p 上是活跃变量。</li>
   <li>其中有一个隐含条件为 v 在使用前不能被重定义。</li>
 </ul>
 
@@ -931,7 +931,56 @@ q = p + q    q2 = p2 + q1
 
 <h3 id="available-expression-analysis">Available Expression Analysis</h3>
 
-</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-03-10T00:00:00+08:00"><!-- start custom article footer snippet -->
+<p><img src="../../assets/images/image-20230325154715545.png" alt="image-20230325154715545" /></p>
+
+<p><strong>定义：</strong></p>
+
+<ul>
+  <li>表达式 $x\ op\ y$ 在 p 点为 available 当且仅当
+    <ol>
+      <li>从 entry 到 p 点的每一条路径都经过了表达式</li>
+      <li>每条路径经过表达式后，不能再有对 x 或 y 的重新赋值</li>
+    </ol>
+  </li>
+</ul>
+
+<p><strong>应用：寄存器分配：</strong></p>
+
+<ul>
+  <li>用于优化，检测全局公共子表达式</li>
+</ul>
+
+<p><strong>Control-flow Handing：</strong>
+\(\mathrm{IN}[B]=\bigcap_{P a \text { predecessor of } B} OUT [P]\)</p>
+
+<blockquote>
+  <p>Forward and Must Analysis</p>
+</blockquote>
+
+<p><strong>Transfer Function：</strong></p>
+
+\[\mathrm{OUT}[B]=gen_{B} \cup\left(\mathrm{IN}[B]-kill_{B}\right)\]
+
+<blockquote>
+  <p>$kill_{B}$ 指基本块 B 中部分表达式的变量被重新赋值</p>
+</blockquote>
+
+<p><strong>算法：</strong></p>
+
+<p><img src="../../assets/images/image-20230325160416067.png" alt="image-20230325160416067" /></p>
+
+<blockquote>
+  <p>因为 Must Analysis 是做交集运算，所以 BB的初始化为全集</p>
+</blockquote>
+
+<p><strong>Demo：</strong></p>
+
+<p><img src="../../assets/images/image-20230325160632224.png" alt="image-20230325160632224" /></p>
+
+<h3 id="analysis-comparison">Analysis Comparison</h3>
+
+<p><img src="../../assets/images/image-20230325160902024.png" alt="image-20230325160902024" /></p>
+</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2022-03-20T00:00:00+08:00"><!-- start custom article footer snippet -->
 
 <!-- end custom article footer snippet -->
 <div class="article__subscribe"><div class="subscribe"><i class="fas fa-rss"></i> <a type="application/rss+xml" href="/feed.xml">Subscribe</a></div>
@@ -977,7 +1026,7 @@ q = p + q    q2 = p2 + q1
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'https://theoyu.top/2022/cource/StaticProgramAnalysis';
+    this.page.url = 'http://localhost:4000/2022/cource/StaticProgramAnalysis';
     this.page.identifier = 'Static-Program-Analysis';
   };
   (function() { // DON'T EDIT BELOW THIS LINE

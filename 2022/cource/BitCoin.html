@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>『区块链技术与应用』学习笔记 - Theoyu</title>
 
 <meta name="description" content="">
-<link rel="canonical" href="https://theoyu.top/2022/cource/BitCoin"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+<link rel="canonical" href="http://localhost:4000/2022/cource/BitCoin"><link rel="alternate" type="application/rss+xml" title="Theoyu" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
@@ -649,7 +649,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <h3 id="merkle-tree-默克尔树">Merkle tree （默克尔树）</h3>
 
-<p><img src="/Users/oker/Documents/theoyu/Images/20220611171217.png" alt="image-20220611145500812" /></p>
+<p><img src="../../assets/images/20220611171217.png" alt="image-20220611145500812" /></p>
 
 <p>如图下方是数据块，上方是节点，默克尔树和二叉树的区别在于前者使用哈希指针代替普通指针，比如AB数据块的父节点就存有其二者的哈希，其父节点同理，所以只需要记住根哈希，便可以检测出对树中任何部位的修改。</p>
 
@@ -1058,10 +1058,6 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
 
 <p><img src="/Users/oker/Documents/theoyu/Images/image-20220624134618348.png" alt="image-20220624134618348" /></p>
 
-<p>虽然旧节点无法识别新规则到真实含义，但因为新节点满足合法的规则，所以新旧节点同处于一条链上，对整个系统的影响比较小。</p>
-
-<p>但也有可能出现软分叉不兼容过去的情况，比如更新后的节点，可以拒绝大小超过0.5MB的区块：</p>
-
 <p><img src="/Users/oker/Documents/theoyu/Images/image-20220624142213372.png" alt="image-20220624142213372" /></p>
 
 <p>如果新节点不认可大于0.5MB的旧节点的话，认为其是一个非法区块，会从其前一个小区块开始，而旧节点一直被抛弃，不在最长合法链上，导致得不到出块奖励，最后逼迫旧节点升级，实现区块链上的所有矿工共同认可新协议，实现软件协议的升级。</p>
@@ -1189,7 +1185,7 @@ LTEyVDE0OjIwOjU5KzAwOjAw/4GGiQAAAABJRU5ErkJggg==" />
   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
   var disqus_config = function () {
-    this.page.url = 'https://theoyu.top/2022/cource/BitCoin';
+    this.page.url = 'http://localhost:4000/2022/cource/BitCoin';
     this.page.identifier = '『区块链技术与应用』学习笔记';
   };
   (function() { // DON'T EDIT BELOW THIS LINE
